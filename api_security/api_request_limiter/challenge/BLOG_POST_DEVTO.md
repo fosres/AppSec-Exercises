@@ -224,7 +224,7 @@ Your implementation will face **30 comprehensive tests**:
 
 ### What You'll Get
 
-1. **LeetCode-style test file** (`rate_limiter_30_tests.py`)
+1. **LeetCode-style test file** ([`rate_limiter_30_tests.py`](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/rate_limiter_30_tests.py))
    - Implement your solution in a designated section
    - Run the file to see results instantly
    - Beautiful colored output showing pass/fail
