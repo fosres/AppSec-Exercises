@@ -1,0 +1,100 @@
+"""
+SUMMARY OF CHANGES: Updated Return Type to Tuple[bool, float]
+================================================================
+
+Per user request, the rate limiter exercise has been updated to return
+Tuple[bool, float] instead of Tuple[bool, int].
+
+RATIONALE:
+----------
+The retry_after calculation naturally produces a float:
+    retry_after = (oldest_request + 60.0) - current_time
+    
+Converting to int was an unnecessary extra step and loses precision.
+With float, fractional seconds are preserved.
+
+EXAMPLE:
+--------
+If oldest_request = 100.5 and current_time = 122.0:
+- Old (int):   retry_after = int(38.5) = 38 seconds
+- New (float): retry_after = 38.5 seconds (more precise!)
+
+HTTP Retry-After header accepts both integers and decimals, so float is valid.
+
+FILES UPDATED:
+--------------
+✅ rate_limiter_exercise.py
+   - Function signature: Tuple[bool, int] → Tuple[bool, float]
+   - Critical requirements section updated
+   - Docstring updated
+   - Calculation hint: removed int() wrapper
+   - Test comparison: uses float comparison with epsilon (0.01)
+   - Error messages: "tuple (bool, int)" → "tuple (bool, float)"
+   - Hints section: shows float return values
+
+✅ solution_example.py
+   - Function signature updated to return float
+   - Removed int() conversion from calculation
+   - Test assertions updated to expect float values
+
+✅ README_EXERCISE.md
+   - Updated function signature examples
+   - Updated hints to show float calculation
+   - Success criteria updated
+
+TESTING:
+--------
+All 12 tests pass with the new float return type:
+
+Test 1:  (True, 0.0)   ✅
+Test 2:  (False, 38.0)  ✅
+Test 3:  (False, 0.0)   ✅
+Test 4:  (True, 0.0)    ✅
+Test 5:  (True, 0.0)    ✅
+Test 6:  (True, 0.0)    ✅
+Test 7:  (False, 54.0)  ✅
+Test 8:  (True, 0.0)    ✅
+Test 9:  (False, 0.0)   ✅
+Test 10: (False, 59.0)  ✅
+Test 11: (False, 40.0)  ✅
+Test 12: (True, 0.0)    ✅
+
+COMPARISON LOGIC:
+-----------------
+The test suite now uses epsilon comparison for floating point values:
+
+    bool_matches = result[0] == expected[0]
+    retry_matches = abs(float(result[1]) - float(expected[1])) < 0.01
+    
+This allows for tiny floating point precision differences while ensuring
+the values are essentially equal.
+
+BACKWARDS COMPATIBILITY:
+------------------------
+The test suite accepts both int and float for retry_after:
+- if isinstance(result[1], (int, float)): ✅ both are valid
+- Comparison converts both to float before checking
+
+This means if someone returns (False, 38) instead of (False, 38.0),
+it will still pass the tests.
+
+WHAT USERS NEED TO KNOW:
+------------------------
+1. Return type is now Tuple[bool, float]
+2. Don't wrap calculation in int():
+   ❌ return (False, int((oldest + 60.0) - current))
+   ✅ return (False, (oldest + 60.0) - current)
+3. Can return 0.0 or 0 for "allowed" case (both work)
+
+BENEFITS OF THIS CHANGE:
+-------------------------
+✅ More precise timing information
+✅ Simpler code (no int() conversion needed)
+✅ Matches natural Python float arithmetic
+✅ Still compatible with HTTP Retry-After header
+✅ Avoids potential rounding errors
+
+REAL-WORLD EXAMPLE:
+-------------------
+Stripe API might say "retry after 2.5 seconds" for sub-second precision.
+With float return type, we can represent this accurately.

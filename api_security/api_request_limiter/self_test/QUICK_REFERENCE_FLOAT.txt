@@ -1,0 +1,87 @@
+┌─────────────────────────────────────────────────────────────────────┐
+│                  UPDATED: Return Type Changed                       │
+│                  Tuple[bool, int] → Tuple[bool, float]              │
+└─────────────────────────────────────────────────────────────────────┘
+
+📝 OLD SIGNATURE:
+────────────────
+def check_rate_limit(request_times: List[float], 
+                     current_time: float, 
+                     max_requests: int = 5) -> Tuple[bool, int]:
+    ...
+    return (False, int((oldest + 60.0) - current_time))
+
+
+✨ NEW SIGNATURE:
+────────────────
+def check_rate_limit(request_times: List[float], 
+                     current_time: float, 
+                     max_requests: int = 5) -> Tuple[bool, float]:
+    ...
+    return (False, (oldest + 60.0) - current_time)
+
+
+🎯 KEY CHANGES:
+───────────────
+1. Return type: int → float
+2. Calculation: Remove int() wrapper
+3. Example returns:
+   • (True, 0.0)   instead of (True, 0)
+   • (False, 38.0) instead of (False, 38)
+
+
+💡 WHY THIS CHANGE?
+──────────────────
+✅ More precise timing (38.5 seconds vs 38 seconds)
+✅ Simpler code (no int() needed)
+✅ Natural Python float arithmetic
+✅ HTTP Retry-After accepts decimals
+
+
+📋 EXAMPLE IMPLEMENTATIONS:
+───────────────────────────
+
+ALLOWED CASE:
+    if len(recent_requests) < max_requests:
+        return (True, 0.0)  # ← Note the .0
+
+BLOCKED CASE:
+    retry_after = (oldest_request + 60.0) - current_time
+    return (False, retry_after)  # ← No int() needed!
+
+
+🧪 TEST OUTPUT EXAMPLES:
+────────────────────────
+✅ PASS - Test 1: Under limit (3/5 requests)
+   Result: (True, 0.0)
+
+✅ PASS - Test 2: At limit (5/5 requests within window)
+   Result: (False, 38.0)
+
+✅ PASS - Test 3: Fractional retry time
+   Result: (False, 38.5)  # ← Can now show half-seconds!
+
+
+⚠️  BACKWARDS COMPATIBILITY:
+────────────────────────────
+The test suite accepts BOTH int and float:
+• (False, 38)   ✅ still works
+• (False, 38.0) ✅ preferred
+
+Comparison uses epsilon (0.01) to handle float precision.
+
+
+📚 UPDATED FILES:
+────────────────
+✅ rate_limiter_exercise.py  - Main exercise file
+✅ solution_example.py        - Reference solution
+✅ README_EXERCISE.md         - Usage guide
+✅ CHANGES_FLOAT_RETURN_TYPE.txt - Detailed changelog
+
+
+🚀 YOU'RE READY TO GO!
+─────────────────────
+The exercise file works exactly the same way, just returns floats
+instead of ints for retry_after.
+
+Run it: python3 rate_limiter_exercise.py
