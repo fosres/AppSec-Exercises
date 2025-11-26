@@ -6,7 +6,7 @@
 
 ## The Challenge
 
-You're tasked with implementing a rate limiter - the same defense mechanism that protects Twitter, GitHub, and Stripe from API abuse. Sounds simple? Let's see if your implementation can pass **30 comprehensive tests** covering edge cases, boundary conditions, and security vulnerabilities.
+You're tasked with [implementing a rate limiter](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/rate_limiter_30_tests.py) - the same defense mechanism that protects Twitter, GitHub, and Stripe from API abuse. Sounds simple? Let's see if your implementation can pass **30 comprehensive tests** covering edge cases, boundary conditions, and security vulnerabilities.
 
 [→ Skip to the challenge](#the-exercise)
 
@@ -362,13 +362,28 @@ return (False, retry_after)  # 38.5
 
 ### Get the Exercise Files
 
+#### Option 1:
+
+Just visit (and Star!) my [GitHub repo](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/rate_limiter_30_tests.py)
+
+#### Option 2:
+
+
 ```bash
 # Clone or download the exercise files
-git clone https://github.com/YOUR_USERNAME/rate-limiter-challenge
-cd rate-limiter-challenge
+
+git clone https://github.com/fosres/AppSec-Exercises.git
+
+cd AppSec-Exercises/api_security/api_request_limiter/challenge/
+
+# You will see the [Python challenge
+# file](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/rate_limiter_30_tests.py):
+
+# Edit `rate_limiter_30_tests.py`
 
 # Run the tests
-python3 extended_test_suite.py
+
+python3 rate_limiter_30_tests.py
 ```
 
 **Files included:**
@@ -501,7 +516,8 @@ Share your experience:
 
 Download the exercise and prove your AppSec skills:
 
-👉 **[Get the Exercise Files](#)**
+👉 **[Get the Exercise Files](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/rate_limiter_30_tests.py)**
+
 
 Good luck! And remember - if your solution passes all 30 tests, you've built something production-ready. 🚀
 
@@ -516,6 +532,8 @@ Good luck! And remember - if your solution passes all 30 tests, you've built som
 
 ---
 
-*This exercise is part of a series on practical AppSec skills. Follow for more hands-on security challenges!*
+*This exercise is part of a [series](https://github.com/fosres/AppSec-Exercises) on practical AppSec skills. Follow for more hands-on security challenges!*
+
+*If you like this exercise please leave a star on my GitHub Repo!*
 
 #AppSec #Security #Python #RateLimiting #Challenge #100DaysOfCode
