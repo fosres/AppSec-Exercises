@@ -536,4 +536,8 @@ Good luck! And remember - if your solution passes all 30 tests, you've built som
 
 *If you like this exercise please leave a star on my [GitHub Repo!](https://github.com/fosres/AppSec-Exercises/tree/main)*
 
+*You can see [my solution here](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/my_personal_solution.py)*
+
+*You can see [Claude Code's solution here](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/solution_example.py)*
+
 #AppSec #Security #Python #RateLimiting #Challenge #100DaysOfCode
