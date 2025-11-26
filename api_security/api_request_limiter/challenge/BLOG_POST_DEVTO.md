@@ -534,6 +534,6 @@ Good luck! And remember - if your solution passes all 30 tests, you've built som
 
 *This exercise is part of a [series](https://github.com/fosres/AppSec-Exercises) on practical AppSec skills. Follow for more hands-on security challenges!*
 
-*If you like this exercise please leave a star on my GitHub Repo!*
+*If you like this exercise please leave a star on my [GitHub Repo!](https://github.com/fosres/AppSec-Exercises/tree/main)*
 
 #AppSec #Security #Python #RateLimiting #Challenge #100DaysOfCode
