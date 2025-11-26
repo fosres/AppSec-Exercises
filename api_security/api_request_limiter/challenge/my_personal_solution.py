@@ -59,7 +59,39 @@ def check_rate_limit(request_times: List[float],
 	# TODO: Implement your solution here
 	# Replace 'pass' with your code
 	
-	pass  # Remove this line and add your implementation
+	# Edge case: Empty request history
+	if len(request_times) == 0:
+		return (True, 0)
+	
+	# Step 1: Filter to only requests within last 60 seconds
+	j = 0
+	
+	if current_time > 60.0:
+		time_min = current_time - 60.0
+		j = len(request_times) - 1
+		
+		# Binary search backwards to find first request >= time_min
+		while j >= 0 and request_times[j] >= time_min:
+			j -= 1
+		
+		j += 1  # Move forward to first request within window
+	
+	# Only consider requests within the last 60 seconds
+	request_times = request_times[j:len(request_times)]
+
+	if len(request_times) == 0:
+
+		return (True,0.0)
+
+	elif len(request_times) < max_requests:
+
+		return (True,0.0)
+
+	else:
+
+		return (False,request_times[0] + 60.0 - current_time)
+
+
 
 
 # ============================================================================
