@@ -481,24 +481,6 @@ def is_safe_path(base, path):
 "images/../../../etc/passwd"  # String starts with base, but resolves outside
 ```
 
-### ✅ Correct Approach
-```python
-# CORRECT - Normalize then compare
-import os
-
-def is_safe_path(base, path):
-    # Combine and normalize
-    full_path = os.path.normpath(os.path.join(base, path))
-    base_path = os.path.normpath(base)
-    
-    # Get absolute paths
-    abs_full = os.path.abspath(full_path)
-    abs_base = os.path.abspath(base_path)
-    
-    # Check if full path starts with base
-    return abs_full.startswith(abs_base + os.sep) or abs_full == abs_base
-```
-
 ---
 
 ## Take the Challenge
