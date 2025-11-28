@@ -1,12 +1,12 @@
-# When Your Password Manager Becomes Your Biggest Vulnerability
+Leave a star on the [GitHub repo!](https://github.com/fosres/AppSec-Exercises)
 
-**Week 1 Python Security Challenge: Build a Cryptographic Password Generator**
+[Subscribe to email](https://buttondown.com/fosres) for more exercises!
 
 ⏩ **[Skip to Exercise](#the-challenge-awaits)**
 
 ---
 
-## The Password Generator That Used Your Wall Clock as "Random"
+## A Bad Random Generator Causes Security Breach
 
 Here's what happened: Kaspersky Password Manager, used by millions of people to generate "secure" passwords, had a fatal flaw. Between 2010 and 2019, every password it generated could be brute-forced in minutes.
 
@@ -82,7 +82,7 @@ Here's what's at risk when password generation goes wrong:
 
 ---
 
-## The Challenge Awaits
+## [The Challenge Awaits](https://github.com/fosres/AppSec-Exercises/tree/main/passwords/password_generator)
 
 **Difficulty:** Beginner (Week 1)  
 **Time Required:** 2-3 hours  
@@ -146,6 +146,11 @@ Or clone the entire repository:
 git clone https://github.com/fosres/AppSec-Exercises.git
 cd AppSec-Exercises/passwords/password_generator/
 ```
+---
+
+## My Solution
+
+See my solution [here](https://github.com/fosres/AppSec-Exercises/blob/main/passwords/password_generator/my_solution.py).
 
 ---
 
@@ -242,16 +247,6 @@ When you pass the challenge:
 
 ---
 
-## Coming Up: Week 2
-
-Next week, we'll build on this foundation by creating:
-- **JWT Token Decoder** (String manipulation + Base64 handling)
-- **Input Sanitizer** (Protection against injection attacks)
-
-Both exercises apply Python Workout Chapters 3-4 while introducing real-world security concepts.
-
----
-
 ## The Bottom Line
 
 Kaspersky Password Manager used system time as its only source of randomness. A single implementation choice - using `DateTime.Now` instead of a cryptographically secure random number generator - made every password it generated predictable.
@@ -270,9 +265,9 @@ Because in application security, there's no room for "I thought it was secure en
 
 This is Week 1 of an 18-week AppSec study curriculum designed to take you from Python basics to production-ready Application Security Engineer. Each week builds practical security tools while mastering Python through the exercises in *Python Workout* (2nd Edition).
 
-**Author:** [Your Name]  
+**Author:** [Tanveer Salim](https://www.linkedin.com/in/fosres)  
 **Background:** Former Intel Security Engineer | 553+ Threat Models | Transitioning to AppSec  
-**Goal:** Help aspiring AppSec engineers build the skills that actually matter in production
+**Goal:** Help aspiring AppSec engineers build the skills that matter in production
 
 ---
 
@@ -301,3 +296,4 @@ This is Week 1 of an 18-week AppSec study curriculum designed to take you from P
 ---
 
 *Stay secure. Build better. Start now.* 🔐
+
