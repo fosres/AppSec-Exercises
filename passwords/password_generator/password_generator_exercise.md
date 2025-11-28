@@ -57,7 +57,7 @@ After generating the password, calculate its theoretical strength:
 3. **Strength Rating** (based on entropy):
    - < 50 bits: "Weak - Vulnerable to modern attacks"
    - 50-64 bits: "Moderate - Acceptable for low-security contexts"
-   - 65-80 bits: "Strong - Recommended for most applications"  
+   - 65-79 bits: "Strong - Recommended for most applications"  
    - 80-100 bits: "Very Strong - Suitable for high-security applications"
    - > 100 bits: "Excellent - Resistant to nation-state attacks"
 
@@ -174,7 +174,7 @@ Use these tables to verify your entropy calculations and strength ratings in Par
 
 ### Minimum Length Required for Each Strength Rating
 
-| Character Set | Weak<br>(< 50 bits) | Moderate<br>(50-64 bits) | Strong<br>(65-80 bits) | Very Strong<br>(80-100 bits) | Excellent<br>(> 100 bits) |
+| Character Set | Weak<br>(< 50 bits) | Moderate<br>(50-64 bits) | Strong<br>(65-79 bits) | Very Strong<br>(80-100 bits) | Excellent<br>(> 100 bits) |
 |---------------|---------------------|--------------------------|------------------------|------------------------------|---------------------------|
 | Lowercase (26) | 1-10 chars | 11-13 chars | 14-17 chars | 18-21 chars | 22+ chars |
 | Mixed Case (52) | 1-8 chars | 9-11 chars | 12-14 chars | 15-17 chars | 18+ chars |
@@ -184,7 +184,7 @@ Use these tables to verify your entropy calculations and strength ratings in Par
 **Strength Rating Thresholds:**
 - **Weak**: < 50 bits — Vulnerable to modern attacks
 - **Moderate**: 50-64 bits — Acceptable for low-security contexts
-- **Strong**: 65-80 bits — Recommended for most applications
+- **Strong**: 65-79 bits — Recommended for most applications
 - **Very Strong**: 80-100 bits — Suitable for high-security applications
 - **Excellent**: > 100 bits — Resistant to nation-state attacks
 
