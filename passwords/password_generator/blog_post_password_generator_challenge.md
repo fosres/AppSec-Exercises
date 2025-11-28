@@ -82,7 +82,7 @@ Here's what's at risk when password generation goes wrong:
 
 ---
 
-## The Challenge Awaits
+## [The Challenge Awaits](https://github.com/fosres/AppSec-Exercises/tree/main/passwords/password_generator)
 
 **Difficulty:** Beginner (Week 1)  
 **Time Required:** 2-3 hours  
