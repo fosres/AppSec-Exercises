@@ -1,5 +1,4 @@
 # Token Expiration Validator Challenge
-
 **⚡ Skip to Exercise:** [Download Files](#download-exercise-files) | [View Challenge](#what-youll-implement) | [Get Started](#getting-started)
 
 ---
@@ -279,28 +278,7 @@ This exercise covers common AppSec interview questions:
 - "How do you prevent session fixation attacks?"
 - "What edge cases exist in timestamp-based validation?"
 
-## Real-World Application: The Intel Security Perspective
-
-During my time at Intel Security Engineering, I performed 553+ documented threat models. One recurring vulnerability category? **Time-based authentication bypasses**.
-
-Here's what I learned:
-
-- Most authentication bugs involve boundary conditions (exact expiry time)
-- Off-by-one errors in token validation persist across codebases
-- Threat modeling reveals attack chains through expired tokens
-- Defense in depth requires precise expiration mathematics
-
-Example from a real threat model:
-
-```
-THREAT: Attacker exploits expired password reset token
-STRIDE: Elevation of Privilege
-ROOT CAUSE: System uses <= instead of < in expiration check
-IMPACT: Password reset tokens valid 1 second longer than policy
-MITIGATION: Fix comparison operator to use strict < boundary
-```
-
-This exercise simulates the kind of security analysis you'll do daily as an AppSec engineer: validating that authentication systems enforce expiration policies with mathematical precision.
+---
 
 ## Join the Challenge
 
@@ -382,3 +360,4 @@ Got questions? Found a bug? Want to share your solution? Open an issue or PR on 
 - NIST SP 800-63B: Digital Identity Guidelines (Section 4.1.1: Token Expiration)
 
 Stay secure. Build better. Start now. 🔐
+
