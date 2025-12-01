@@ -1,20 +1,32 @@
 # Password Generator Challenge
 
+**[⚡ Skip to Exercise](#before-you-download-anything)**
+
+---
+
 ## A Bad Random Generator Causes Security Breach
 
-Here's what happened: Kaspersky Password Manager, used by millions of people to generate "secure" passwords, had a fatal flaw. Between 2010 and 2019, every password it generated could be brute-forced in minutes.
+Kaspersky Password Manager. Millions of users. Nine years of generating "secure" passwords.
 
-The problem? The password generator used system time as its only source of randomness. That's it. Just the current time in seconds.
+Every single one of them crackable in minutes.
 
-What this meant in practice: Every instance of Kaspersky Password Manager anywhere in the world generated the exact same password at any given second. If you clicked "generate password" at 2:47:23 PM on March 15, 2018, you got the same password as someone in Tokyo clicking at that exact moment.
+Between 2010 and 2019, Kaspersky Password Manager had a problem. The password generator used system time as its only source of randomness. Not a cryptographically secure random number generator. Not a hardware entropy source. Just `DateTime.Now` - the current time in seconds.
 
-The math is brutal: Between 2010 and 2021, there are 315,619,200 seconds. That means Kaspersky could generate at most 315 million unique passwords for any character set. Brute-forcing all of them? A few minutes on modern hardware.
+Think about what that means.
 
-The real-world attack: Websites display account creation times. An attacker knowing when you created an account could brute-force your password by testing only ~100 possibilities - the passwords generated within that minute.
+Every instance of Kaspersky Password Manager running anywhere in the world generated the exact same password at any given second. You click "generate password" at 2:47:23 PM on March 15, 2018 in Los Angeles. Someone in Tokyo clicks at that exact moment. Same password.
 
-The vulnerability (CVE-2020-27020) was discovered by security researcher Jean-Baptiste Bédrune in 2019. Kaspersky quietly patched it between October 2019 and December 2019, but didn't publish a full advisory until April 2021.
+The math gets worse. Between 2010 and 2021, there are 315,619,200 seconds total. That means Kaspersky could generate at most 315 million unique passwords for any given character set. A modern GPU can brute-force that entire keyspace in minutes.
 
-Cryptographer Matthew Green's reaction: "I have to admire the combination of needless complexity combined with absolutely breath-taking incompetence."
+But attackers didn't even need to brute-force all 315 million. Websites display account creation timestamps. An attacker who knows you created your account on March 15, 2018 around 2:47 PM only needs to test ~100 passwords - the ones generated within that minute.
+
+Security researcher Jean-Baptiste Bédrune discovered this vulnerability in 2019 and published it as CVE-2020-27020. Kaspersky quietly patched it between October and December 2019. They didn't publish a full security advisory until April 2021 - almost two years after the initial discovery.
+
+Nine years of predictable passwords. Millions of users affected. One catastrophically bad implementation choice.
+
+Cryptographer Matthew Green summed it up: "I have to admire the combination of needless complexity combined with absolutely breath-taking incompetence."
+
+Your job as an AppSec engineer? Make sure this never happens in code you review.
 
 ## Why This Matters for AppSec Engineers
 
