@@ -49,22 +49,8 @@ def is_token_valid(issued_at: float, expiry_seconds: int, current_time: float) -
 		False
 	"""
 	# TODO: Implement your solution here
-	expiration_time = issued_at + expiry_seconds
-
-	if expiry_seconds <= 0:
-
-		return False
-
-	elif current_time < issued_at:
-
-		return False
-
-	if current_time >= expiration_time:
-
-		return False
-	else:
-		return True
-
+	
+	pass
 # ============================================================================
 # TEST SUITE - 30 COMPREHENSIVE TESTS
 # ============================================================================

@@ -1,12 +1,14 @@
 # Token Expiration Validator Challenge
 
-Leave a star on the [GitHub repo!](https://github.com/fosres/AppSec-Exercises)
+**⚡ Skip to Exercise:** [Download Files](#download-exercise-files) | [View Challenge](#what-youll-implement) | [Get Started](#getting-started)
 
-[Subscribe to email](https://buttondown.com/fosres) for more exercises!
+---
+
+
 
 ## The $3 Billion Session Fixation Attack
 
-Here's what happened: In 2019, Django's session management framework contained a subtle but catastrophic vulnerability (CVE-2019-11358). The framework failed to properly invalidate session tokens after authentication, allowing attackers to hijack user sessions indefinitely.
+Here's what happened: In 2019, [Django's session management framework contained a subtle but catastrophic vulnerability](https://docs.djangoproject.com/en/5.2/releases/security/) (CVE-2019-11358). The framework failed to properly invalidate session tokens after authentication, allowing attackers to hijack user sessions indefinitely.
 
 The problem? Django wasn't checking token expiration correctly. Old sessions remained valid long after they should have expired. If you logged in on Monday and your session token was stolen, an attacker could use it on Friday, next month, or even next year.
 
@@ -167,21 +169,25 @@ Key concepts you've demonstrated:
 
 ## Download Exercise Files
 
-👉 **[token_expiration_30_tests.py](https://github.com/fosres/AppSec-Exercises/blob/main/authentication/token_expiration/token_expiration_30_tests.py)** - LeetCode-style challenge with 30 comprehensive tests
+👉 **[token_expiration_30_tests.py](https://github.com/fosres/AppSec-Exercises/blob/main/session_security/jwt_token_validation/token_expiration_30_tests.py)** - LeetCode-style challenge with 30 comprehensive tests
 
-👉 **[token_expiration_solution.py](https://github.com/fosres/AppSec-Exercises/blob/main/authentication/token_expiration/token_expiration_solution.py)** - Reference implementation with production enhancements
+👉 **[token_expiration_90_tests.py](https://github.com/fosres/AppSec-Exercises/blob/main/session_security/jwt_token_validation/token_expiration_90_tests.py)** - Enhanced version with 60 additional randomized tests (90 total!)
+
+👉 **[my_solution.py](https://github.com/fosres/AppSec-Exercises/blob/main/session_security/jwt_token_validation/my_solution.py)** - My reference implementation
 
 Or clone the entire repository:
 
 ```bash
 git clone https://github.com/fosres/AppSec-Exercises.git
-cd AppSec-Exercises/authentication/token_expiration/
+cd AppSec-Exercises/session_security/jwt_token_validation/
 python token_expiration_30_tests.py
 ```
 
 ## My Solution
 
-See my solution [here](https://github.com/fosres/AppSec-Exercises/blob/main/authentication/token_expiration/token_expiration_solution.py).
+See my solution [here](https://github.com/fosres/AppSec-Exercises/blob/main/session_security/jwt_token_validation/my_solution.py).
+
+**Bonus**: Try the [90-test version](https://github.com/fosres/AppSec-Exercises/blob/main/session_security/jwt_token_validation/token_expiration_90_tests.py) with 60 additional randomized test cases for comprehensive validation!
 
 ## Getting Started
 
@@ -207,7 +213,7 @@ See [Download Exercise Files](#download-exercise-files) above, or:
 
 ```bash
 git clone https://github.com/fosres/AppSec-Exercises.git
-cd AppSec-Exercises/authentication/token_expiration/
+cd AppSec-Exercises/session_security/jwt_token_validation/
 ```
 
 ### Step 3: Implement Your Solution
@@ -233,7 +239,11 @@ return elapsed < expiry_seconds
 ### Step 4: Run the Test Suite
 
 ```bash
+# Standard 30 tests
 python token_expiration_30_tests.py
+
+# Or try the comprehensive 90-test version!
+python token_expiration_90_tests.py
 ```
 
 The test suite includes:
@@ -243,6 +253,8 @@ The test suite includes:
 - ✅ 5 time travel scenarios
 - ✅ 5 invalid configurations
 - ✅ 5 real-world scenarios (OAuth, JWT, MFA, etc.)
+
+**Bonus Challenge**: The 90-test version adds 60 randomized tests covering edge cases you wouldn't think to write manually!
 
 ## Why This Exercise Matters for Your AppSec Career
 
@@ -294,13 +306,23 @@ This exercise simulates the kind of security analysis you'll do daily as an AppS
 
 Ready to master token expiration validation?
 
-📥 [Get the exercise files above](#download-exercise-files) or visit the [GitHub repository](https://github.com/fosres/AppSec-Exercises/tree/main/authentication/token_expiration)
+📥 **[Get the exercise files above](#download-exercise-files)** or visit the [GitHub repository](https://github.com/fosres/AppSec-Exercises/tree/main/session_security/jwt_token_validation)
 
-When you pass the challenge:
+This is **Week 1** of a comprehensive 18-week AppSec curriculum. Each challenge builds real security tools while teaching production-ready coding practices. The repository includes:
 
-- ⭐ Star the repository on GitHub
-- 💬 Share your learnings (not your solution!)
-- 🐦 Tag me with your results: [@fosres](https://twitter.com/fosres)
+- ✅ **30+ LeetCode-style security exercises** covering authentication, cryptography, API security, and more
+- ✅ **Comprehensive test suites** with hundreds of edge cases (like the 90-test version of this challenge)
+- ✅ **Real CVE examples** showing how these bugs appear in production
+- ✅ **Reference implementations** with security best practices and production enhancements
+- ✅ **Interview prep** covering the exact questions AppSec teams ask
+
+When you complete this challenge:
+
+⭐ [**Star the repository**](https://github.com/fosres/AppSec-Exercises) to bookmark these exercises and support the project. Each star helps other aspiring AppSec engineers discover these resources. (Over 100+ stars already!)
+
+💬 **Share your learnings** (not your complete solution!) to help others understand boundary conditions and security principles
+
+🔗 **Contribute** by opening issues for bugs, suggesting new challenges, or improving documentation
 
 ## Community Guidelines
 
@@ -318,7 +340,7 @@ Your job as an AppSec engineer? Catch these mistakes before millions of users ar
 
 This exercise teaches you the fundamentals: how to validate token expiration with mathematical precision, how to handle boundary conditions correctly, and why "close enough" is never good enough in authentication security.
 
-Download the challenge. Implement the logic. Pass all 30 tests.
+Download the challenge. Implement the logic. Pass all 30 tests (or all 90 for the comprehensive version!).
 
 Because in application security, there's no room for "it's probably expired." Tokens either expire at the exact microsecond specified, or your authentication system has a vulnerability.
 
