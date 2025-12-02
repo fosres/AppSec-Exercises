@@ -1,14 +1,46 @@
-# Challenge: Can You Build a Production-Ready Rate Limiter?
+---
+series: AppSec Series
+---
+
+**You've written rate limiters before. But have you written one secure enough to protect millions of Zoom meetings?**
+
+⭐ **[Star this repo](https://github.com/fosres/AppSec-Exercises/) to commit to building production-grade security skills** ⭐
+
+[Subscribe for weekly security exercises](https://buttondown.com/fosres)
 
 **Time to complete:** 30-60 minutes  
 **Difficulty:** Intermediate  
 **Skills tested:** Application Security, Algorithm Design, Edge Case Handling
 
-## The Challenge
+[→ Skip to the exercise](#the-exercise)
 
-You're tasked with [implementing a rate limiter](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/rate_limiter_30_tests.py) - the same defense mechanism that protects Twitter, GitHub, and Stripe from API abuse. Sounds simple? Let's see if your implementation can pass **30 comprehensive tests** covering edge cases, boundary conditions, and security vulnerabilities.
+---
 
-[→ Skip to the challenge](#the-exercise)
+## The $100M Mistake That Could Have Been Prevented
+
+April 2, 2020. Peak pandemic. 300 million daily Zoom users. Therapy sessions. Legal consultations. Corporate strategy meetings. All behind 6-digit password protection.
+
+Security researcher Tom Anthony spent one afternoon with basic Python code and [cracked into any password-protected Zoom meeting in under 3 minutes](https://www.tomanthony.co.uk/blog/zoom-security-exploit-crack-private-meeting-passwords/). The vulnerability? **No rate limiting** on password attempts. Attackers could brute-force all 1 million possible combinations using a handful of cloud servers before anyone noticed.
+
+[Zoom immediately took down their web client](https://www.bleepingcomputer.com/news/security/zoom-bug-allowed-attackers-to-crack-private-meeting-passwords/) on April 2nd. But the damage was done—millions of private conversations were potentially compromised during the most critical moment in Zoom's history.
+
+**The fix?** A properly implemented rate limiter. The same security control you're about to build.
+
+---
+
+## Your Challenge: Don't Be The Next Zoom
+
+[**→ Get the challenge files**](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/rate_limiting/api_request_limiter/challenge/api_request_limiter.py) | [Skip to exercise details](#the-exercise)
+
+You'll implement a rate limiter that protects against:
+- **Brute force attacks** (what hit Zoom)
+- **Credential stuffing** (what hit Dropbox, LinkedIn, Adobe)
+- **API abuse** (what costs companies millions)
+- **DDoS attacks** (what takes down services)
+
+**30 comprehensive tests** will verify your implementation handles every edge case attackers exploit. Pass them all, and you've built production-ready security infrastructure.
+
+**Can't resist? Star the repo now so you remember to come back:** ⭐ [github.com/fosres/AppSec-Exercises](https://github.com/fosres/AppSec-Exercises/)
 
 ---
 
@@ -26,13 +58,14 @@ HTTP 429: Too Many Requests
 }
 ```
 
-That's rate limiting in action. Here's what's actually happening behind the scenes:
+That's rate limiting protecting the service from you. Or protecting you from attackers. Here's what's happening behind the scenes at companies you use every day:
 
 #### **Twitter/X API**
 - **Limit:** 900 requests per 15 minutes (standard users)
 - **Verified accounts:** 10,000 tweets/day
 - **Why:** Prevent spam, monetize premium tiers, maintain stability
 - **Impact if broken:** Platform instability, bot takeover, service degradation
+- **Your cost:** $5,000/month for higher limits
 
 #### **GitHub API**
 - **Unauthenticated:** 60 requests/hour
@@ -40,52 +73,62 @@ That's rate limiting in action. Here's what's actually happening behind the scen
 - **Enterprise:** 15,000 requests/hour
 - **Why:** Prevent abuse, ensure API availability for legitimate developers
 - **Impact if broken:** API unavailability, resource exhaustion attacks
+- **GitHub's cost:** Millions in infrastructure to handle abuse
 
 #### **Stripe Payment API**
 - **Default:** 25 requests/second per endpoint
 - **Payment Intents:** 1,000 updates per hour
 - **Why:** Protect payment infrastructure, prevent race conditions, reserve capacity for critical transactions
-- **Impact if broken:** Payment fraud, financial losses, compliance violations
+- **Impact if broken:** Payment fraud, financial losses, PCI compliance violations
+- **Stripe's cost:** Billions in fraud prevented annually
+
+**Rate limiting isn't optional.** It's the difference between a secure API and a security incident waiting to happen.
 
 ---
 
 ## The Security Implications
 
-Rate limiting isn't just about preventing overuse - it's a **critical security control**.
+Rate limiting isn't just about preventing overuse - it's a **critical security control** that stands between attackers and your users' data.
 
 ### 🔐 What Happens When Rate Limiting Fails?
 
-**1. Brute Force Attacks**
+**1. Brute Force Attacks (The Zoom Attack)**
 ```python
 # Without rate limiting, attackers can try 1000s of passwords per second
 for password in password_list:
-    response = login(username, password)
-    if response.status == 200:
-        print(f"Password found: {password}")
+	response = login(username, password)
+	if response.status == 200:
+		print(f"Password found: {password}")
+		steal_data()  # Meeting recordings, chat logs, etc.
 ```
 
-**2. Credential Stuffing**
+**2. Credential Stuffing (The Dropbox Attack)**
 ```python
 # Attackers test millions of leaked username/password pairs
+# Dropbox: 68 million accounts compromised in 2012
 for username, password in leaked_credentials:
-    if try_login(username, password):
-        compromise_account(username)
+	if try_login(username, password):
+		compromise_account(username)
+		steal_files()
 ```
 
-**3. API Abuse & Resource Exhaustion**
+**3. API Abuse & Resource Exhaustion (The AWS Bill You Can't Afford)**
 ```python
 # Single attacker can consume all your API capacity
+# Real cost: $10,000-$50,000 per day in cloud bills
 while True:
-    for endpoint in expensive_endpoints:
-        requests.get(endpoint)  # Costs you $$$ per call
+	for endpoint in expensive_endpoints:
+		requests.get(endpoint)  # Each call costs you $$$
 ```
 
-**4. Distributed Denial of Service (DDoS)**
+**4. Distributed Denial of Service (The GitHub Attack)**
 ```python
-# Coordinated attack from multiple IPs
-# Without per-user rate limiting, service goes down
+# In 2018, GitHub suffered the largest DDoS attack in history
+# 1.35 terabits per second. Without rate limiting, game over.
 botnet.attack(target_api)
 ```
+
+**Every one of these attacks is prevented by proper rate limiting.** Miss one edge case, and you're the next security headline.
 
 ---
 
@@ -99,19 +142,19 @@ You need to implement this function:
 from typing import List, Tuple
 
 def check_rate_limit(
-    request_times: List[float],  # Timestamps of previous requests
-    current_time: float,          # Current request timestamp
-    max_requests: int             # Max requests per 60 seconds
+	request_times: List[float],  # Timestamps of previous requests
+	current_time: float,          # Current request timestamp
+	max_requests: int             # Max requests per 60 seconds
 ) -> Tuple[bool, float]:          # (allowed?, retry_after_seconds)
-    """
-    Implement a 60-second sliding window rate limiter.
-    
-    Returns:
-        (True, 0.0)  if request allowed
-        (False, N)   if rate limited, retry after N seconds
-    """
-    # YOUR CODE HERE
-    pass
+	"""
+	Implement a 60-second sliding window rate limiter.
+	
+	Returns:
+		(True, 0.0)  if request allowed
+		(False, N)   if rate limited, retry after N seconds
+	"""
+	# YOUR CODE HERE
+	pass
 ```
 
 ### Real-World Example
@@ -125,6 +168,8 @@ max_requests = 5                                        # Limit: 5 per minute
 result = check_rate_limit(request_times, current_time, max_requests)
 # Expected: (False, 38.0)  ← Rate limited! Wait 38 seconds
 ```
+
+**Think it's easy? Keep reading.**
 
 ---
 
@@ -141,9 +186,11 @@ current_time = 120.0
 # [1.0, 2.0, 3.0] are >60 seconds old
 ```
 
+**Get this wrong:** You either block legitimate users or allow attackers through.
+
 ### Edge Case 2: The 60-Second Boundary Bug 🐛
 
-**Security vulnerability:** Many implementations get this wrong!
+**This is the vulnerability most developers miss.**
 
 ```python
 # VULNERABLE CODE (using >):
@@ -155,12 +202,15 @@ recent = [t for t in request_times if t >= window_start]
 
 **Why it matters:**  
 Using `>` instead of `>=` allows attackers to bypass the rate limit at the exact 60-second boundary. Over 1 year, this allows:
-- **GitHub API:** 8,760 extra unauthorized requests
+- **GitHub API:** 8,760 extra unauthorized requests per user
 - **Stripe API:** 86,400 extra unauthorized payment attempts per day
+- **Your startup:** The breach that kills your Series A
+
+**One character difference. One security vulnerability.**
 
 ### Edge Case 3: Variable Rate Limits
 
-Your code must work with **ANY** `max_requests` value:
+Your code must work with **ANY** `max_requests` value. **Never hardcode `max_requests=5`:**
 
 ```python
 # Strict API (1 request/minute)
@@ -173,13 +223,13 @@ check_rate_limit([100, 110, 120], 121.0, 5) → (True, 0.0)
 check_rate_limit([100, 110, 120], 121.0, 100) → (True, 0.0)
 ```
 
-**Never hardcode `max_requests=5` in your implementation!**
+**Hardcode the limit, fail the interview.**
 
 ---
 
-## The Testing Gauntlet
+## The Testing Gauntlet: 30 Comprehensive Tests
 
-Your implementation will face **30 comprehensive tests**:
+Your implementation will face **30 tests** designed to expose every common mistake:
 
 ### ✅ Basic Functionality (Tests 1-5)
 - Empty request history
@@ -189,7 +239,7 @@ Your implementation will face **30 comprehensive tests**:
 - All requests old (>60 seconds)
 
 ### 🎯 Boundary Conditions (Tests 6-10)
-- Exactly at 60-second boundary
+- Exactly at 60-second boundary (the vulnerability!)
 - Just inside/outside window
 - Mixed old and new requests
 - Edge case timing
@@ -218,13 +268,19 @@ Your implementation will face **30 comprehensive tests**:
 - High volume at limit
 - Boundary with old requests
 
+**Pass all 30 tests → Your code is production-ready**
+
+**Fail even one → You've left a vulnerability open**
+
+**Ready to test your skills?** ⭐ **[Star the repo](https://github.com/fosres/AppSec-Exercises/) and get started** ⭐
+
 ---
 
 ## The Exercise
 
 ### What You'll Get
 
-1. **LeetCode-style test file** ([`rate_limiter_30_tests.py`](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/rate_limiter_30_tests.py))
+1. **LeetCode-style test file** ([`api_request_limiter.py`](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/rate_limiting/api_request_limiter/challenge/rate_limiter_30_tests.py))
    - Implement your solution in a designated section
    - Run the file to see results instantly
    - Beautiful colored output showing pass/fail
@@ -244,7 +300,7 @@ Your implementation will face **30 comprehensive tests**:
 ### Sample Output
 
 ```bash
-$ python3 rate_limiter_30_tests.py
+$ python3 api_request_limiter.py
 
 ╔══════════════════════════════════════════════════════════════╗
 ║              RATE LIMITER CHALLENGE                          ║
@@ -261,13 +317,9 @@ $ python3 rate_limiter_30_tests.py
 
 ═══════════════════════════════════════════════════════════════
 SUMMARY
-═══════════════════════════════════════════════════════════════
-
 Tests Passed: 30/30
-
-╔══════════════════════════════════════════════════════════════╗
-║            🎉 PERFECT! ALL 30 TESTS PASSED! 🎉              ║
-╚══════════════════════════════════════════════════════════════╝
+Success Rate: 100%
+═══════════════════════════════════════════════════════════════
 ```
 
 ---
@@ -275,32 +327,38 @@ Tests Passed: 30/30
 ## Why This Exercise Builds Real AppSec Skills
 
 ### 1. **Security Boundary Conditions**
-Rate limiting is all about boundaries. Get them wrong, and you have a security vulnerability.
+Rate limiting is all about boundaries. Get them wrong, and you have a security vulnerability that attackers **will** find.
 - `>=` vs `>` (60-second boundary)
-- Off-by-one errors
-- Floating-point precision
+- Off-by-one errors (classic vulnerability)
+- Floating-point precision (subtle but critical)
 
 ### 2. **Defensive Programming**
-- Handle empty lists
-- Handle single elements
-- Handle extreme values (max=1, max=100)
+Production code handles the unexpected:
+- Empty lists (initialization state)
+- Single elements (edge cases)
+- Extreme values (max=1, max=100)
 - Never assume inputs are "reasonable"
 
 ### 3. **Algorithm Correctness**
-- Sliding window vs fixed window
-- Time complexity: O(n) filtering
-- Space complexity: O(1) calculation
+Understanding matters:
+- Sliding window vs fixed window (different security properties)
+- Time complexity: O(n) filtering (performance matters at scale)
+- Space complexity: O(1) calculation (memory matters at scale)
 
 ### 4. **Real-World API Design**
-- Return meaningful error codes
-- Provide `retry_after` guidance to clients
-- Make limits configurable (not hardcoded)
+Your users deserve clarity:
+- Return meaningful error codes (429 status)
+- Provide `retry_after` guidance to clients (UX + security)
+- Make limits configurable, not hardcoded (flexibility)
 
 ### 5. **Comprehensive Testing**
-- Edge cases (empty, boundary, extreme)
-- Fractional seconds precision
+Testing is security:
+- Edge cases (where vulnerabilities hide)
+- Fractional seconds precision (real-world timing)
 - Variable limits (1 to 100)
-- Complex mixed scenarios
+- Complex mixed scenarios (production reality)
+
+**This isn't a toy exercise. This is the code that protects production systems.**
 
 ---
 
@@ -309,19 +367,21 @@ Rate limiting is all about boundaries. Get them wrong, and you have a security v
 ### ❌ Mistake #1: Hardcoding the Limit
 ```python
 # BAD - Only works for max_requests=5
+# Fails 10+ tests immediately
 if len(recent_requests) < 5:
-    return (True, 0.0)
+	return (True, 0.0)
 ```
 
 ```python
 # GOOD - Works for any limit
 if len(recent_requests) < max_requests:
-    return (True, 0.0)
+	return (True, 0.0)
 ```
 
-### ❌ Mistake #2: Wrong Boundary Check
+### ❌ Mistake #2: Wrong Boundary Check (THE SECURITY VULNERABILITY)
 ```python
-# VULNERABLE - Bypass at 60-second boundary
+# VULNERABLE - Allows bypass at 60-second boundary
+# This is what attackers exploit
 recent = [t for t in request_times if t > window_start]
 ```
 
@@ -333,19 +393,21 @@ recent = [t for t in request_times if t >= window_start]
 ### ❌ Mistake #3: Returning Wrong Type
 ```python
 # WRONG - Returns only bool
+# Clients don't know when to retry
 def check_rate_limit(...):
-    return True  # Missing retry_after!
+	return True  # Missing retry_after!
 ```
 
 ```python
 # CORRECT - Returns tuple
 def check_rate_limit(...) -> Tuple[bool, float]:
-    return (True, 0.0)  # Both values
+	return (True, 0.0)  # Both values
 ```
 
 ### ❌ Mistake #4: Integer vs Float
 ```python
 # LESS PRECISE - Loses fractional seconds
+# Fails tests 21-25
 retry_after = int((oldest + 60.0) - current_time)
 return (False, retry_after)  # 38 instead of 38.5
 ```
@@ -356,46 +418,36 @@ retry_after = (oldest + 60.0) - current_time
 return (False, retry_after)  # 38.5
 ```
 
+**Each mistake fails multiple tests. Don't make them.**
+
 ---
 
 ## Take the Challenge
 
 ### Get the Exercise Files
 
-#### Option 1:
-
-Just visit (and Star!) my [GitHub repo](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/rate_limiter_30_tests.py)
-
-#### Option 2:
-
+#### Option 1: Clone the repo (recommended)
 
 ```bash
-# Clone or download the exercise files
+# Star the repo first so you don't forget!
+# Then clone it:
 
 git clone https://github.com/fosres/AppSec-Exercises.git
 
-cd AppSec-Exercises/api_security/api_request_limiter/challenge/
+cd AppSec-Exercises/api_security/rate_limiting/api_request_limiter/challenge/
 
-# You will see the [Python challenge
-# file](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/rate_limiter_30_tests.py):
-
-# Edit `rate_limiter_30_tests.py`
+# Implement your solution in api_request_limiter.py
 
 # Run the tests
 
-python3 rate_limiter_30_tests.py
+python3 api_request_limiter.py
 ```
-
-**Files included:**
-- `rate_limiter_30_tests.py` - Main test file (30 tests)
-- `solution_example.py` - Minimal example (for after completion)
-- `README.md` - Complete instructions
 
 ### Time Yourself
 
-- ⏱️ **30 minutes:** Good pace, you know your stuff
-- ⏱️ **60 minutes:** Normal, especially if you're learning
-- ⏱️ **90+ minutes:** Take your time, debug carefully
+- ⏱️ **30 minutes:** Excellent pace, you know your algorithms
+- ⏱️ **60 minutes:** Normal, especially if debugging edge cases
+- ⏱️ **90+ minutes:** Take your time, security is worth it
 
 ### Share Your Results
 
@@ -403,12 +455,16 @@ When you pass all 30 tests:
 ```bash
 # Share on Twitter/X
 Just passed 30/30 tests on the Rate Limiter AppSec Challenge! 
-🎯 30 comprehensive tests
-🔒 Production-ready implementation
-💪 Security-focused!
+🎯 Production-ready rate limiter
+🔒 All security edge cases handled
+💪 No vulnerabilities!
 
-#AppSec #Python #100DaysOfCode
+Check it out: https://github.com/fosres/AppSec-Exercises
+
+#AppSec #Security #Python #100DaysOfCode
 ```
+
+**Completed the challenge? You've earned your stripes. Star the repo to remember where you learned this:** ⭐
 
 ---
 
@@ -416,51 +472,57 @@ Just passed 30/30 tests on the Rate Limiter AppSec Challenge!
 
 By completing this challenge, you'll understand:
 
-✅ **Why rate limiting is critical** for API security  
-✅ **How to implement sliding window algorithms** correctly  
-✅ **Security boundary conditions** that attackers exploit  
-✅ **Comprehensive testing approaches** with edge cases  
-✅ **Production-grade code** vs quick prototypes  
+✅ **Why rate limiting is critical** for API security (and what happens when it fails)  
+✅ **How to implement sliding window algorithms** correctly (no off-by-one errors)  
+✅ **Security boundary conditions** that attackers exploit (`>=` vs `>`)  
+✅ **Comprehensive testing approaches** with edge cases (30 tests cover everything)  
+✅ **Production-grade code** vs quick prototypes (your code will be production-ready)  
+
+**This is how you build security skills that matter.**
 
 ---
 
 ## For Hiring Managers
 
 This exercise tests candidates on:
-- ✅ Algorithm correctness
-- ✅ Edge case handling
-- ✅ Security awareness
-- ✅ Code quality
-- ✅ Testing thoroughness
+- ✅ **Algorithm correctness** (can they implement a sliding window?)
+- ✅ **Edge case handling** (do they think like attackers?)
+- ✅ **Security awareness** (do they know the `>=` vs `>` vulnerability?)
+- ✅ **Code quality** (is it production-ready or a prototype?)
+- ✅ **Testing thoroughness** (do they understand comprehensive testing?)
 
 **If a candidate passes all 30 tests,** they demonstrate:
 - Understanding of real-world security controls
-- Ability to handle boundary conditions
-- Attention to detail in implementation
-- Experience with comprehensive testing
+- Ability to handle boundary conditions correctly
+- Attention to detail in implementation (security-critical)
+- Experience with comprehensive testing methodologies
+
+**Use this exercise in your interview process.** It separates candidates who can build secure systems from those who can't.
 
 ---
 
 ## Level Up: After You Pass
 
 ### 1. **Optimize Your Solution**
-Can you reduce your code from 70 lines to 10 lines?
+Can you reduce your code from 70 lines to 10 lines while keeping all tests passing?
+
 ```python
 # Minimal solution using list comprehension
 def check_rate_limit(request_times, current_time, max_requests):
-    window_start = current_time - 60.0
-    recent = [t for t in request_times if t >= window_start]
-    if len(recent) < max_requests:
-        return (True, 0.0)
-    retry_after = (recent[0] + 60.0) - current_time
-    return (False, max(0.0, retry_after))
+	window_start = current_time - 60.0
+	recent = [t for t in request_times if t >= window_start]
+	if len(recent) < max_requests:
+		return (True, 0.0)
+	retry_after = (recent[0] + 60.0) - current_time
+	return (False, max(0.0, retry_after))
 ```
 
 ### 2. **Add More Features**
+Real production systems need:
 - Multiple time windows (1 min, 1 hour, 1 day)
 - Per-user tracking with Redis
-- Distributed rate limiting across servers
-- Token bucket algorithm
+- Distributed rate limiting across servers (harder than it looks)
+- Token bucket algorithm (different properties)
 
 ### 3. **Build a Real API**
 ```python
@@ -473,71 +535,83 @@ user_requests: Dict[str, List[float]] = {}
 
 @app.get("/api/resource")
 async def protected_endpoint(user_id: str):
-    current_time = time.time()
-    requests = user_requests.get(user_id, [])
-    
-    allowed, retry_after = check_rate_limit(requests, current_time, 10)
-    
-    if not allowed:
-        raise HTTPException(
-            status_code=429,
-            headers={"Retry-After": str(int(retry_after))},
-            detail="Rate limit exceeded"
-        )
-    
-    # Record this request
-    user_requests[user_id] = requests + [current_time]
-    return {"message": "Success!"}
+	current_time = time.time()
+	requests = user_requests.get(user_id, [])
+	
+	allowed, retry_after = check_rate_limit(requests, current_time, 10)
+	
+	if not allowed:
+		raise HTTPException(
+			status_code=429,
+			headers={"Retry-After": str(int(retry_after))},
+			detail="Rate limit exceeded"
+		)
+	
+	# Record this request
+	user_requests[user_id] = requests + [current_time]
+	return {"message": "Success!"}
 ```
 
 ### 4. **Write About It**
-Share your experience:
+Share your experience on your blog:
 - What edge cases surprised you?
-- How did you debug failures?
+- How did you debug test failures?
 - What did you learn about security?
+- How would you handle distributed systems?
+
+**Completed everything? You're ready for production AppSec work.**
 
 ---
 
 ## Resources
 
 ### Recommended Reading
-- 📖 **"API Security in Action"** by Neil Madden (Chapter 3, pp. 67-69)
-- 📖 **"Hacking APIs"** by Corey Ball (Chapter 13, pp. 276-280)
-- 📖 **"Secure by Design"** by Johnsson, Deogun, and Sawano
+- 📖 **"API Security in Action"** by Neil Madden (Chapter 3, pp. 67-69) - Rate limiting implementation details
+- 📖 **"Hacking APIs"** by Corey Ball (Chapter 13, pp. 276-280) - How attackers bypass rate limiters
+- 📖 **"Secure by Design"** by Johnsson, Deogun, and Sawano - Security architecture principles
 
 ### Real-World Examples
-- [GitHub Rate Limiting](https://docs.github.com/en/rest/rate-limit)
-- [Twitter API Rate Limits](https://developer.twitter.com/en/docs/rate-limits)
-- [Stripe API Rate Limits](https://stripe.com/docs/rate-limits)
+- [GitHub Rate Limiting Documentation](https://docs.github.com/en/rest/rate-limit) - How GitHub implements it
+- [Twitter API Rate Limits](https://developer.twitter.com/en/docs/rate-limits) - Real-world limits
+- [Stripe API Rate Limits](https://stripe.com/docs/rate-limits) - Payment processing rate limits
 
 ---
 
 ## Ready to Start?
 
-Download the exercise and prove your AppSec skills:
+**Three simple steps:**
 
-👉 **[Get the Exercise Files](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/rate_limiter_30_tests.py)**
+1. ⭐ **[Star the repo](https://github.com/fosres/AppSec-Exercises/)** (takes 2 seconds, helps you remember)
+2. 🔒 **Pass all 30 tests** (prove your skills)
 
+**When you pass all 30 tests, you've built something production-ready.** Not a toy. Not a demo. Real security infrastructure that protects real systems.
 
-Good luck! And remember - if your solution passes all 30 tests, you've built something production-ready. 🚀
+**Your move.** 🚀
 
 ---
 
 ## Discussion
 
 - What was your biggest challenge in this exercise?
-- Did you discover any edge cases we didn't test?
+- Did you catch the `>=` vs `>` boundary bug before the tests caught you?
 - How would you extend this to handle distributed systems?
 - Share your solution approach in the comments!
 
 ---
 
-*This exercise is part of a [series](https://github.com/fosres/AppSec-Exercises) on practical AppSec skills. Follow for more hands-on security challenges!*
+## Solutions & Examples
 
-*If you like this exercise please leave a star on my [GitHub Repo!](https://github.com/fosres/AppSec-Exercises/tree/main)*
+**Want to see how others solved it?**
 
-*You can see [my solution here](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/my_personal_solution.py)*
+- 🔍 **[My personal solution](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/rate_limiting/api_request_limiter/challenge/my_personal_solution.py)** - How I approach security problems
+- 🤖 **[Claude Code's solution](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/rate_limiting/api_request_limiter/challenge/solution_example.py)** - AI-generated minimal solution
 
-*You can see [Claude Code's solution here](https://github.com/fosres/AppSec-Exercises/blob/main/api_security/api_request_limiter/challenge/solution_example.py)*
+**But don't peek until you've passed all 30 tests yourself.** You'll learn more from struggling.
+
+---
+
+*This exercise is part of a [growing series](https://github.com/fosres/AppSec-Exercises) on practical AppSec skills. Star the repo for more hands-on security challenges!*
+
+**Final reminder:** ⭐ **[Star this repo now](https://github.com/fosres/AppSec-Exercises/)** - you'll thank yourself later when you need it for interview prep.
 
 #AppSec #Security #Python #RateLimiting #Challenge #100DaysOfCode
