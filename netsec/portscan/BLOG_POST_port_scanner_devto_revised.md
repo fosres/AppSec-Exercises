@@ -1,11 +1,3 @@
----
-title: "Challenge: Build a Production TCP Port Scanner (AppSec Exercise)"
-published: false
-description: "Master socket programming and network reconnaissance - the foundation of security testing. 60 comprehensive tests covering input validation, service detection, and error handling."
-tags: appsec, security, python, networking
-cover_image: https://dev-to-uploads.s3.amazonaws.com/uploads/articles/[your-image-id].jpg
----
-
 # Challenge: Build a Production TCP Port Scanner
 
 **Time:** 60-90 minutes  
