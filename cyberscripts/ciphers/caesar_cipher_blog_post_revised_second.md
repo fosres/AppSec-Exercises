@@ -1,12 +1,3 @@
----
-title: "Week 2 Security Challenge: Caesar Cipher - Why Broken Crypto Appears in Interviews"
-published: false
-description: "Master string manipulation and learn cryptography fundamentals by implementing the Caesar cipher - a common security engineering interview question"
-tags: python, security, tutorial, interview
-series: "Security Engineering with Python"
-cover_image: 
----
-
 # Week 2 Security Challenge: Caesar Cipher
 
 > 💡 **Following along?** All exercises are open source! Star the [AppSec-Exercises repo](https://github.com/fosres/AppSec-Exercises) to track my 48-week journey from Intel Security to AppSec Engineer.
