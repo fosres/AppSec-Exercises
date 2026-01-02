@@ -1,4 +1,0 @@
-# Duplicates with /25 subnet different flag order
-iptables -A INPUT -s 10.50.0.0/25 -p tcp --dport 80 -j ACCEPT
-iptables -A INPUT -p tcp -s 10.50.0.0/25 --dport 80 -j ACCEPT
-iptables -A INPUT --dport 80 -p tcp -s 10.50.0.0/25 -j ACCEPT

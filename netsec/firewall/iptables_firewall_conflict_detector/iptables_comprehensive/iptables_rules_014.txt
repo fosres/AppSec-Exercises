@@ -1,3 +1,0 @@
-# /12 shadows single IP
-iptables -A INPUT -s 10.96.0.0/12 -p tcp --dport 80 -j ACCEPT
-iptables -A INPUT -s 10.100.50.100 -p tcp --dport 80 -j DROP

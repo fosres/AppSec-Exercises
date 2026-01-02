@@ -1,0 +1,64 @@
+# Kubernetes Production Cluster
+# Cluster: prod-k8s-us-west-2
+# Last updated: 2025-01-02
+
+# Default policies
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+
+# Loopback
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+
+# Established connections
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# API Server
+iptables -A INPUT -p tcp -s 10.0.0.0/12 --dport 6443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.100.5 --dport 6443 -m comment --comment 'Jump host' -j ACCEPT
+
+# Kubelet
+iptables -A INPUT -p tcp -s 10.0.1.0/26 --dport 10250 -m state --state NEW -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.2.0/26 --dport 10250 -m state --state NEW -j ACCEPT
+
+# NodePort range
+iptables -A INPUT -p tcp --dport 30000:32767 -m state --state NEW -j ACCEPT
+
+# Pod network
+iptables -A FORWARD -s 10.244.0.0/16 -d 10.244.0.0/16 -j ACCEPT
+
+# etcd cluster
+iptables -A INPUT -p tcp -s 10.0.0.10 --dport 2379 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.0.11 --dport 2379 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.0.12 --dport 2379 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.0.10 --dport 2380 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.0.11 --dport 2380 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.0.12 --dport 2380 -j ACCEPT
+
+# SSH access
+iptables -A INPUT -p tcp -s 192.168.100.5 --dport 22 -m state --state NEW -j ACCEPT
+
+# Prometheus
+iptables -A INPUT -p tcp -s 10.0.5.0/24 --dport 9090 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.5.0/24 --dport 9100 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.5.0/24 --dport 3000 -j ACCEPT
+
+# Fluentd
+iptables -A INPUT -p tcp -s 10.244.0.0/16 --dport 24224 -j ACCEPT
+
+# DNS
+iptables -A INPUT -p udp -s 10.244.0.0/16 --dport 53 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.244.0.0/16 --dport 53 -j ACCEPT
+
+# Health checks
+iptables -A INPUT -p tcp -s 10.1.0.0/25 --dport 10256 -j ACCEPT
+
+# ICMP
+iptables -A INPUT -p icmp --icmp-type echo-request -s 10.0.5.0/24 -j ACCEPT
+
+# Logging
+iptables -A INPUT -j LOG --log-prefix 'K8S-DROP: ' --log-level 4
+iptables -A INPUT -j DROP
+iptables -A FORWARD -j DROP

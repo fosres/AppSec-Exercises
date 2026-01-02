@@ -1,4 +1,0 @@
-# PCI-DSS compliant DMZ configuration
-iptables -A INPUT -s 10.1.0.0/25 -p tcp --dport 80 -j ACCEPT
-iptables -A INPUT -s 10.1.0.128/26 -p tcp --dport 443 -j ACCEPT
-iptables -A INPUT -s 10.1.1.0/27 -p tcp --dport 22 -j ACCEPT

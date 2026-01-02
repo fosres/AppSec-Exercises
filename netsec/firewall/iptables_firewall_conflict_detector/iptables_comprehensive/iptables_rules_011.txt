@@ -1,3 +1,0 @@
-# /12 shadows /16
-iptables -A INPUT -s 10.96.0.0/12 -p tcp --dport 443 -j ACCEPT
-iptables -A INPUT -s 10.100.0.0/16 -p tcp --dport 443 -j DROP

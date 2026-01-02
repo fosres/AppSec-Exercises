@@ -1,5 +1,0 @@
-# Microservices: shadowing multiple layers
-iptables -A INPUT -s 10.20.0.0/22 -p tcp --dport 8080 -j ACCEPT
-iptables -A INPUT -s 10.20.1.0/24 -p tcp --dport 8080 -j DROP
-iptables -A INPUT -s 10.20.1.64/27 -p tcp --dport 8080 -j DROP
-iptables -A INPUT -s 10.20.1.80 -p tcp --dport 8080 -j DROP

@@ -1,0 +1,85 @@
+# Production Environment
+# Deployment: prod-91
+# Last updated: 2025-01-02
+
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+
+iptables -A INPUT -i lo -j ACCEPT
+
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Core services
+iptables -A INPUT -p tcp -s 10.91.0.0/24 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.91.1.0/24 --dport 8001 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.91.2.0/24 --dport 8002 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.91.3.0/24 --dport 8003 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.91.4.0/24 --dport 8004 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.91.5.0/24 --dport 8005 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.91.6.0/24 --dport 8006 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.91.7.0/24 --dport 8007 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.91.8.0/24 --dport 8008 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.91.9.0/24 --dport 8009 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.91.10.0/24 --dport 8010 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.91.11.0/24 --dport 8011 -j ACCEPT
+
+# SSH
+iptables -A INPUT -s 172.16.0.0/20 -p tcp --dport 22 -j ACCEPT
+
+# Service tier
+iptables -A INPUT -p tcp -s 192.168.0.0/24 --dport 3000 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.1.0/24 --dport 3001 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.2.0/24 --dport 3002 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.3.0/24 --dport 3003 -j ACCEPT
+
+# SSH
+iptables -A INPUT -s 172.16.4.0/22 -p tcp --dport 22 -j DROP
+
+# Application tier
+iptables -A INPUT -p tcp -s 10.100.0.0/25 --dport 9000 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.100.1.0/25 --dport 9001 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.100.2.0/25 --dport 9002 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.100.3.0/25 --dport 9003 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.100.4.0/25 --dport 9004 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.100.5.0/25 --dport 9005 -j ACCEPT
+
+# HTTPS
+iptables -A INPUT -s 10.50.0.0/21 -p tcp --dport 443 -j ACCEPT
+
+# Cache
+iptables -A INPUT -p tcp -s 172.20.0.0/26 --dport 6379 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.1.0/26 --dport 6380 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.2.0/26 --dport 6381 -j ACCEPT
+
+# Services
+iptables -A INPUT -p tcp -s 10.50.0.0/21 --dport 443 -j ACCEPT
+
+# Monitoring
+iptables -A INPUT -p tcp -s 192.168.100.0/27 --dport 7000 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.101.0/27 --dport 7001 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.102.0/27 --dport 7002 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.103.0/27 --dport 7003 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.104.0/27 --dport 7004 -j ACCEPT
+
+# Web
+iptables -A INPUT -s 10.200.0.0/23 -p tcp --dport 80 -j ACCEPT
+
+# Load balancer
+iptables -A INPUT -p tcp -s 172.30.0.0/28 --dport 4000 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.30.1.0/28 --dport 4001 -j ACCEPT
+
+# Web
+iptables -A INPUT -s 10.200.0.0/23 -p tcp --dport 80 -j DROP
+
+# Infrastructure
+iptables -A INPUT -p tcp -s 10.250.0.0/26 --dport 5000 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.250.1.0/26 --dport 5001 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.250.2.0/26 --dport 5002 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.250.3.0/26 --dport 5003 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.250.4.0/26 --dport 5004 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.250.5.0/26 --dport 5005 -j ACCEPT
+
+# Logging
+iptables -A INPUT -j LOG --log-prefix 'DROP: '
+iptables -A INPUT -j DROP

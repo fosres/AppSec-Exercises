@@ -1,4 +1,0 @@
-# Database tier issues
-iptables -A INPUT -s 10.200.0.0/22 -p tcp --dport 5432 -j ACCEPT
-iptables -A INPUT -s 10.200.1.0/24 -p tcp --dport 5432 -j DROP
-iptables -A INPUT -s 10.200.0.0/22 -p tcp --dport 5432 -j ACCEPT

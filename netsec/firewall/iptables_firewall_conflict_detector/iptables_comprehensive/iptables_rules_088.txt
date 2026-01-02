@@ -1,5 +1,0 @@
-# DMZ with multiple issues
-iptables -A INPUT -s 10.1.0.0/23 -p tcp --dport 80 -j ACCEPT
-iptables -A INPUT -s 10.1.1.0/24 -p tcp --dport 80 -j DROP
-iptables -A INPUT -s 10.1.0.0/23 -p tcp --dport 443 -j ACCEPT
-iptables -A INPUT -s 10.1.0.0/23 -p tcp --dport 443 -j DROP

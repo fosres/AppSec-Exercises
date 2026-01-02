@@ -1,0 +1,51 @@
+# Production Environment
+# Region: us-east-55
+# Last updated: 2025-01-02
+
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+
+iptables -A INPUT -i lo -j ACCEPT
+
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Web tier
+iptables -A INPUT -p tcp -s 10.50.0.0/24 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.50.1.0/24 --dport 8010 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.50.2.0/24 --dport 8020 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.50.3.0/24 --dport 8030 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.50.4.0/24 --dport 8040 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.50.5.0/24 --dport 8050 -j ACCEPT
+
+# HTTPS
+iptables -A INPUT -s 172.16.100.0/22 -p tcp --dport 443 -j ACCEPT
+
+# Application tier
+iptables -A INPUT -p tcp -s 192.168.10.0/25 --dport 9000 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.11.0/25 --dport 9001 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.12.0/25 --dport 9002 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.13.0/25 --dport 9003 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.14.0/25 --dport 9004 -j ACCEPT
+
+# Services
+iptables -A INPUT -p tcp -s 172.16.100.0/22 --dport 443 -j ACCEPT
+
+# Database tier
+iptables -A INPUT -p tcp -s 10.100.0.0/26 --dport 5432 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.100.1.0/26 --dport 5433 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.100.2.0/26 --dport 5434 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.100.3.0/26 --dport 5435 -j ACCEPT
+
+# Backend
+iptables -A INPUT -s 172.16.100.0/22 -p tcp --dport 443 -m comment --comment 'Internal' -j ACCEPT
+
+# Monitoring
+iptables -A INPUT -p tcp -s 172.20.0.0/24 --dport 3000 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.1.0/24 --dport 3001 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.2.0/24 --dport 3002 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.20.3.0/24 --dport 3003 -j ACCEPT
+
+# Logging
+iptables -A INPUT -j LOG --log-prefix 'DROP: '
+iptables -A INPUT -j DROP

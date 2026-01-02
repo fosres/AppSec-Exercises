@@ -1,0 +1,48 @@
+# Production Environment
+# Environment: prod-07
+# Last updated: 2025-01-02
+
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+
+iptables -A INPUT -i lo -j ACCEPT
+
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Web tier
+iptables -A INPUT -p tcp -s 10.7.0.0/24 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.7.1.0/24 --dport 8100 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.7.2.0/24 --dport 8200 -j ACCEPT
+
+# Application tier
+iptables -A INPUT -p tcp -s 10.17.0.0/25 --dport 9000 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.17.1.0/25 --dport 9010 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.17.2.0/25 --dport 9020 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.17.3.0/25 --dport 9030 -j ACCEPT
+
+# Database tier
+iptables -A INPUT -p tcp -s 10.27.0.0/26 --dport 5432 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.27.1.0/26 --dport 5433 -j ACCEPT
+
+# Monitoring
+iptables -A INPUT -p tcp -s 172.16.7.0/24 --dport 3000 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.16.7.0/24 --dport 3001 -j ACCEPT
+iptables -A INPUT -p tcp -s 172.16.7.0/24 --dport 3002 -j ACCEPT
+
+# SSH
+iptables -A INPUT -p tcp -s 192.168.100.0/27 --dport 22 -j ACCEPT
+
+# Cache
+iptables -A INPUT -p tcp -s 10.37.0.0/28 --dport 6379 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.37.1.0/28 --dport 6379 -j ACCEPT
+
+# Message queue
+iptables -A INPUT -p tcp -s 10.47.0.0/24 --dport 5672 -j ACCEPT
+
+# Load balancer
+iptables -A INPUT -p tcp -s 10.1.7.0/25 --dport 80 -j ACCEPT
+
+# Logging
+iptables -A INPUT -j LOG --log-prefix 'DROP: '
+iptables -A INPUT -j DROP

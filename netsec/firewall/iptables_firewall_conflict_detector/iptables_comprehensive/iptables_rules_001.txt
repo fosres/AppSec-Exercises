@@ -1,5 +1,0 @@
-# Kubernetes cluster with realistic CIDR
-iptables -A INPUT -p tcp -s 10.0.0.0/12 --dport 6443 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A INPUT -p tcp --dport 10250 -s 10.0.1.0/26 -j ACCEPT
-iptables -A FORWARD -s 10.244.0.0/16 -d 10.244.0.0/16 -j ACCEPT
-iptables -A INPUT -p tcp --dport 22 -s 192.168.100.5 -m comment --comment 'SSH from jump host' -j ACCEPT

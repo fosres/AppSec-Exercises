@@ -1,4 +1,0 @@
-# API gateway complexity
-iptables -A INPUT -s 10.100.0.0/20 -p tcp --dport 8443 -j ACCEPT
-iptables -A INPUT -s 10.100.4.0/22 -p tcp --dport 8443 -j DROP
-iptables -A INPUT -s 10.100.0.0/20 -p tcp --dport 8443 -j DROP

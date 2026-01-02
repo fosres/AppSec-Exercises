@@ -1,3 +1,0 @@
-# /16 shadows /24
-iptables -A INPUT -s 192.168.0.0/16 -p tcp --dport 139 -j ACCEPT
-iptables -A INPUT -s 192.168.1.0/24 -p tcp --dport 139 -j DROP

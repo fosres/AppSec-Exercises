@@ -1,3 +1,0 @@
-# /24 shadows /28
-iptables -A INPUT -s 10.0.1.0/24 -p tcp --dport 3306 -j ACCEPT
-iptables -A INPUT -s 10.0.1.128/28 -p tcp --dport 3306 -j DROP

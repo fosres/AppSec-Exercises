@@ -1,5 +1,0 @@
-# Service mesh complications
-iptables -A INPUT -s 10.20.1.0/25 -p tcp --dport 8080 -j ACCEPT
-iptables -A INPUT -s 10.20.1.64/26 -p tcp --dport 8080 -j DROP
-iptables -A INPUT -s 10.20.1.96/27 -p tcp --dport 8080 -j DROP
-iptables -A INPUT -s 10.20.1.100 -p tcp --dport 8080 -j DROP

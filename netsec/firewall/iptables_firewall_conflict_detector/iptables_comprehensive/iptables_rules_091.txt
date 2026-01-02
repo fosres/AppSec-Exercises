@@ -1,4 +1,0 @@
-# Management network problems
-iptables -A INPUT -s 192.168.100.0/26 -p tcp --dport 22 -j ACCEPT
-iptables -A INPUT -s 192.168.100.32/27 -p tcp --dport 22 -j DROP
-iptables -A INPUT -s 192.168.100.0/26 -p tcp --dport 22 -j DROP

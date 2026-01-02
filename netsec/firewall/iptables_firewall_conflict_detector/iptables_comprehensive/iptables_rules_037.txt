@@ -1,3 +1,0 @@
-# /25 shadows /28
-iptables -A INPUT -s 172.16.5.0/25 -p tcp --dport 443 -j ACCEPT
-iptables -A INPUT -s 172.16.5.112/28 -p tcp --dport 443 -j DROP

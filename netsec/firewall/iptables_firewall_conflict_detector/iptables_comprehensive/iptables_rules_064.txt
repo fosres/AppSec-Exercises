@@ -1,3 +1,0 @@
-# Duplicates with /21 subnet
-iptables -A INPUT -s 10.50.0.0/21 -p tcp --dport 80 -j ACCEPT
-iptables -A INPUT -s 10.50.0.0/21 -p tcp --dport 80 -j ACCEPT

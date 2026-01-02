@@ -1,0 +1,68 @@
+# AWS VPC Production
+# VPC: vpc-prod-us-east-1
+# Last updated: 2025-01-02
+
+# Default policies
+iptables -P INPUT DROP
+iptables -P FORWARD ACCEPT
+iptables -P OUTPUT ACCEPT
+
+# Loopback
+iptables -A INPUT -i lo -j ACCEPT
+
+# Established connections
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Public web tier
+iptables -A INPUT -i eth0 -p tcp -s 0.0.0.0/0 --dport 80 -m state --state NEW -j ACCEPT
+iptables -A INPUT -i eth0 -p tcp -s 0.0.0.0/0 --dport 443 -m state --state NEW -j ACCEPT
+
+# Application tier
+iptables -A INPUT -p tcp -s 10.0.0.0/20 --dport 8080 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.0.0/20 --dport 8443 -j ACCEPT
+
+# PostgreSQL
+iptables -A INPUT -p tcp -s 10.0.16.0/22 --dport 5432 -j ACCEPT
+
+# Redis
+iptables -A INPUT -p tcp -s 10.0.16.0/22 --dport 6379 -j ACCEPT
+
+# SSH
+iptables -A INPUT -p tcp -s 10.0.100.0/27 --dport 22 -m state --state NEW -j ACCEPT
+
+# RDP
+iptables -A INPUT -p tcp -s 10.0.100.0/27 --dport 3389 -j ACCEPT
+
+# CloudWatch
+iptables -A INPUT -p tcp -s 10.0.50.0/26 --dport 25888 -j ACCEPT
+
+# Datadog
+iptables -A INPUT -p tcp -s 10.0.50.0/26 --dport 8125 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.50.0/26 --dport 8126 -j ACCEPT
+
+# SSM
+iptables -A INPUT -p tcp -s 10.0.100.0/27 --dport 443 -j ACCEPT
+
+# ECS
+iptables -A INPUT -p tcp -s 10.0.16.0/22 --dport 51678 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.16.0/22 --dport 51679 -j ACCEPT
+
+# ALB health
+iptables -A INPUT -p tcp -s 10.0.200.0/25 --dport 80 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.200.0/25 --dport 443 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.200.0/25 --dport 8080 -j ACCEPT
+
+# NTP
+iptables -A INPUT -p udp -s 10.0.0.0/16 --dport 123 -j ACCEPT
+
+# DNS
+iptables -A INPUT -p udp -s 10.0.0.0/16 --dport 53 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.0.0.0/16 --dport 53 -j ACCEPT
+
+# ICMP
+iptables -A INPUT -p icmp --icmp-type echo-request -s 10.0.100.0/27 -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
+
+# Logging
+iptables -A INPUT -j LOG --log-prefix 'VPC-DROP: ' --log-level 4
+iptables -A INPUT -j DROP

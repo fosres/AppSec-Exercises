@@ -1,3 +1,0 @@
-# Duplicates with state tracking
-iptables -A INPUT -s 10.0.1.0/20 -p tcp --dport 443 -j ACCEPT
-iptables -A INPUT -s 10.0.1.0/20 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT

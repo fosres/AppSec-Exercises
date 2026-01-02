@@ -1,3 +1,0 @@
-# Exact duplicates with single IPs
-iptables -A INPUT -s 192.168.1.10 -p tcp --dport 80 -j ACCEPT
-iptables -A INPUT -s 192.168.1.10 -p tcp --dport 80 -j ACCEPT

@@ -1,3 +1,0 @@
-# /22 shadows /28
-iptables -A INPUT -s 10.20.0.0/22 -p tcp --dport 8080 -j ACCEPT
-iptables -A INPUT -s 10.20.2.128/28 -p tcp --dport 8080 -j DROP

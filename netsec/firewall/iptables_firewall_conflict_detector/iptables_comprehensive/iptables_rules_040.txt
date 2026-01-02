@@ -1,3 +1,0 @@
-# /26 shadows /28
-iptables -A INPUT -s 192.168.5.0/26 -p tcp --dport 80 -j ACCEPT
-iptables -A INPUT -s 192.168.5.48/28 -p tcp --dport 80 -j DROP

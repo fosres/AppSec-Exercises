@@ -1,5 +1,0 @@
-# Multi-tenant issues
-iptables -A INPUT -s 10.50.0.0/21 -p tcp --dport 80 -j ACCEPT
-iptables -A INPUT -s 10.50.2.0/23 -p tcp --dport 80 -j DROP
-iptables -A INPUT -s 10.50.3.0/24 -p tcp --dport 80 -j DROP
-iptables -A INPUT -s 10.50.0.0/21 -p tcp --dport 80 -j ACCEPT

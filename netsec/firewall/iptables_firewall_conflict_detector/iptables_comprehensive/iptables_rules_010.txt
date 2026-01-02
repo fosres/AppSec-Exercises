@@ -1,4 +1,0 @@
-# Development environment with proper isolation
-iptables -A INPUT -s 192.168.10.0/24 -p tcp --dport 3000 -j ACCEPT
-iptables -A INPUT -s 192.168.11.0/25 -p tcp --dport 8000 -j ACCEPT
-iptables -A INPUT -s 192.168.12.0/26 -p tcp --dport 5000 -j ACCEPT

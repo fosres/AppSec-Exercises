@@ -1,0 +1,51 @@
+# Production Environment
+# Cluster: prod-75
+# Last updated: 2025-01-02
+
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+
+iptables -A INPUT -i lo -j ACCEPT
+
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Infrastructure
+iptables -A INPUT -p tcp -s 10.75.0.0/24 --dport 8000 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.75.1.0/24 --dport 8001 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.75.2.0/24 --dport 8002 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.75.3.0/24 --dport 8003 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.75.4.0/24 --dport 8004 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.75.5.0/24 --dport 8005 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.75.6.0/24 --dport 8006 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.75.7.0/24 --dport 8007 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.75.8.0/24 --dport 8008 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.75.9.0/24 --dport 8009 -j ACCEPT
+
+# HTTPS
+iptables -A INPUT -s 172.16.5.0/23 -p tcp --dport 443 -j ACCEPT
+
+# Application tier
+iptables -A INPUT -p tcp -s 192.168.50.0/25 --dport 9000 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.51.0/25 --dport 9001 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.52.0/25 --dport 9002 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.53.0/25 --dport 9003 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.54.0/25 --dport 9004 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.55.0/25 --dport 9005 -j ACCEPT
+
+# Services
+iptables -A INPUT -s 172.16.5.0/23 -p tcp --dport 443 -j DROP
+
+# Database tier
+iptables -A INPUT -p tcp -s 10.200.0.0/26 --dport 5000 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.200.1.0/26 --dport 5001 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.200.2.0/26 --dport 5002 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.200.3.0/26 --dport 5003 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.200.4.0/26 --dport 5004 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.200.5.0/26 --dport 5005 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.200.6.0/26 --dport 5006 -j ACCEPT
+iptables -A INPUT -p tcp -s 10.200.7.0/26 --dport 5007 -j ACCEPT
+
+# Logging
+iptables -A INPUT -j LOG --log-prefix 'DROP: '
+iptables -A INPUT -j DROP

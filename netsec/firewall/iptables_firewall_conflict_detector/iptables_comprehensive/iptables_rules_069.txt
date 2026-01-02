@@ -1,3 +1,0 @@
-# Conflict with /22 subnet
-iptables -A INPUT -s 10.0.4.0/22 -p tcp --dport 5432 -j DROP
-iptables -A INPUT -s 10.0.4.0/22 -p tcp --dport 5432 -j ACCEPT

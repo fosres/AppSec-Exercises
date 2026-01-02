@@ -1,5 +1,0 @@
-# SOC2 default-deny with logging
-iptables -A INPUT -p tcp --dport 22 -s 192.168.100.0/27 -j ACCEPT
-iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-iptables -A INPUT -j LOG --log-prefix 'SOC2-AUDIT: ' --log-level 4
-iptables -A INPUT -j DROP

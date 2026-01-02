@@ -1,3 +1,0 @@
-# Conflict with /25 subnet
-iptables -A INPUT -s 10.200.1.0/25 -p tcp --dport 8080 -j DROP
-iptables -A INPUT -s 10.200.1.0/25 -p tcp --dport 8080 -j ACCEPT

@@ -1,3 +1,0 @@
-# /29 shadows /30
-iptables -A INPUT -s 10.20.1.112/29 -p tcp --dport 6379 -j ACCEPT
-iptables -A INPUT -s 10.20.1.116/30 -p tcp --dport 6379 -j DROP
