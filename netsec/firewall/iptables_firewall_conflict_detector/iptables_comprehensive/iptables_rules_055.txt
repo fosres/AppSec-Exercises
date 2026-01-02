@@ -1,0 +1,4 @@
+# Three identical /26 rules
+iptables -A INPUT -s 10.244.1.0/26 -p tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -s 10.244.1.0/26 -p tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -s 10.244.1.0/26 -p tcp --dport 8080 -j ACCEPT

@@ -1,0 +1,4 @@
+# AWS VPC with properly segmented subnets
+iptables -A INPUT -i eth0 -p tcp -m multiport --dports 80,443 -s 10.0.0.0/20 -j ACCEPT
+iptables -A INPUT -s 10.0.16.0/22 -p tcp --dport 22 -m state --state NEW -j ACCEPT
+iptables -A INPUT -s 10.0.32.0/23 -p tcp --dport 5432 -j ACCEPT

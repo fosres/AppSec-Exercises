@@ -1,0 +1,5 @@
+# Microservices architecture with proper isolation
+iptables -A INPUT -s 10.20.1.0/26 -p tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -s 10.20.1.64/27 -p tcp --dport 8081 -j ACCEPT
+iptables -A INPUT -s 10.20.1.96/28 -p tcp --dport 5432 -j ACCEPT
+iptables -A INPUT -s 10.20.1.112/29 -p tcp --dport 6379 -j ACCEPT

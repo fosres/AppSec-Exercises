@@ -1,0 +1,5 @@
+# Storage network problems
+iptables -A INPUT -s 172.20.0.0/22 -p tcp --dport 2049 -j ACCEPT
+iptables -A INPUT -s 172.20.1.0/24 -p tcp --dport 2049 -j DROP
+iptables -A INPUT -s 172.20.0.0/22 -p tcp --dport 2049 -j ACCEPT
+iptables -A INPUT -s 172.20.2.0/23 -p tcp --dport 2049 -j DROP

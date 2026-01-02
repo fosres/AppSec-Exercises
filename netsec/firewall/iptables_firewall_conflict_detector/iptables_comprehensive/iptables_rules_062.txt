@@ -1,0 +1,6 @@
+# Five identical /24 rules
+iptables -A INPUT -s 192.168.10.0/24 -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -s 192.168.10.0/24 -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -s 192.168.10.0/24 -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -s 192.168.10.0/24 -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -s 192.168.10.0/24 -p tcp --dport 80 -j ACCEPT

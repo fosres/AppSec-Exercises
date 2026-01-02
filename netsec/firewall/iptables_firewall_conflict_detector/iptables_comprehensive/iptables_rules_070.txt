@@ -1,0 +1,3 @@
+# Conflict with /26 subnet
+iptables -A INPUT -s 10.244.1.0/26 -p tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -s 10.244.1.0/26 -p tcp --dport 8080 -j DROP

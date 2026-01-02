@@ -4,7 +4,7 @@ def vpn_log_analysis():
 	
 	if len(sys.argv) != 2:
 		print("Only 1 argument was supposed to be supplied")
-		print("Aborting")
+		exit("Aborting")
 
 	file = open(sys.argv[1],'r')
 

@@ -1,0 +1,3 @@
+# Duplicates with /29 subnet
+iptables -A INPUT -s 10.20.1.112/29 -p tcp --dport 6379 -j ACCEPT
+iptables -A INPUT -s 10.20.1.112/29 -p tcp --dport 6379 -j ACCEPT

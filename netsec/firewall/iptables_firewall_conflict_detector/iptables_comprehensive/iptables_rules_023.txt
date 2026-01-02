@@ -1,0 +1,3 @@
+# /21 shadows /23
+iptables -A INPUT -s 172.20.0.0/21 -p tcp --dport 445 -j ACCEPT
+iptables -A INPUT -s 172.20.2.0/23 -p tcp --dport 445 -j DROP

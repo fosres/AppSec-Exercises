@@ -1,0 +1,3 @@
+# /21 shadows /24
+iptables -A INPUT -s 10.50.0.0/21 -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -s 10.50.3.0/24 -p tcp --dport 80 -j DROP

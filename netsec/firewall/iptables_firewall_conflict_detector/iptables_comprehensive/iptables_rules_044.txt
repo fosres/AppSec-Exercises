@@ -1,0 +1,3 @@
+# /27 shadows single IP
+iptables -A INPUT -s 172.16.10.0/27 -p tcp --dport 443 -j ACCEPT
+iptables -A INPUT -s 172.16.10.20 -p tcp --dport 443 -j DROP

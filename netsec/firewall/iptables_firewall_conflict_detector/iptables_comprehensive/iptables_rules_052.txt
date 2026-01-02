@@ -1,0 +1,4 @@
+# Duplicates with /22 subnet
+iptables -A INPUT -p tcp -s 10.0.0.0/22 --dport 53 -j DROP
+iptables -A INPUT -s 10.0.0.0/22 -p tcp --dport 53 -j DROP
+iptables -A INPUT --dport 53 -s 10.0.0.0/22 -p tcp -j DROP

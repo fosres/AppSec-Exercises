@@ -1,0 +1,4 @@
+# Corporate network with non-overlapping ranges
+iptables -A INPUT -s 172.16.0.0/21 -p tcp --dport 445 -j ACCEPT
+iptables -A INPUT -s 172.16.8.0/22 -p tcp --dport 139 -j ACCEPT
+iptables -A INPUT -s 172.16.16.0/20 -p tcp --dport 135 -j ACCEPT

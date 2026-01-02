@@ -1,0 +1,3 @@
+# Duplicates with comments (comments don't matter)
+iptables -A INPUT -s 172.16.5.0/24 -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -s 172.16.5.0/24 -p tcp --dport 22 -m comment --comment 'SSH access' -j ACCEPT

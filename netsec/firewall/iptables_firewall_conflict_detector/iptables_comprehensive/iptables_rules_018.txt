@@ -1,0 +1,3 @@
+# /16 shadows single IP
+iptables -A INPUT -s 172.31.0.0/16 -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -s 172.31.50.200 -p tcp --dport 22 -j DROP

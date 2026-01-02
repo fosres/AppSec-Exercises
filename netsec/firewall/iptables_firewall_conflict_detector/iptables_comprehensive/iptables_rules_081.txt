@@ -1,0 +1,5 @@
+# Kubernetes: shadowing + duplicates
+iptables -A FORWARD -s 10.0.0.0/12 -d 10.0.0.0/12 -j ACCEPT
+iptables -A FORWARD -s 10.5.1.0/26 -d 10.6.2.0/26 -j DROP
+iptables -A INPUT -p tcp --dport 6443 -s 10.0.0.0/20 -j ACCEPT
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 6443 -m comment --comment 'API' -j ACCEPT

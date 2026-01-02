@@ -1,0 +1,4 @@
+# GDPR data processing tiers
+iptables -A INPUT -s 10.200.0.0/22 -p tcp --dport 5432 -m state --state NEW -j ACCEPT
+iptables -A INPUT -p tcp --dport 5432 -j LOG --log-prefix 'GDPR-DENY: '
+iptables -A INPUT -p tcp --dport 5432 -j DROP

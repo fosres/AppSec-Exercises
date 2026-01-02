@@ -1,0 +1,5 @@
+# Multiple conflicts with single IPs
+iptables -A INPUT -s 203.0.113.10 -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -s 203.0.113.10 -p tcp --dport 80 -j DROP
+iptables -A INPUT -s 203.0.113.20 -p tcp --dport 443 -j ACCEPT
+iptables -A INPUT -s 203.0.113.20 -p tcp --dport 443 -j DROP

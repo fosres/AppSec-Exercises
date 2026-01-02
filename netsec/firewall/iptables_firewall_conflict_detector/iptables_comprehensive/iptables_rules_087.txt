@@ -1,0 +1,5 @@
+# Complex AWS VPC shadowing chain
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 443 -j ACCEPT
+iptables -A INPUT -s 10.0.4.0/22 -p tcp --dport 443 -j DROP
+iptables -A INPUT -s 10.0.8.0/23 -p tcp --dport 443 -j DROP
+iptables -A INPUT -s 10.0.15.200 -p tcp --dport 443 -j DROP

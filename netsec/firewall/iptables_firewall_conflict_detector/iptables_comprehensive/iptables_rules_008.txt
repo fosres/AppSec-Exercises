@@ -1,0 +1,4 @@
+# Multi-tier web application
+iptables -A INPUT -s 10.50.0.0/24 -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -s 10.50.1.0/25 -p tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -s 10.50.2.0/26 -p tcp --dport 3306 -j ACCEPT

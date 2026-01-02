@@ -1,0 +1,7 @@
+# All three issues with realistic CIDR
+iptables -A INPUT -s 192.168.0.0/23 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -s 192.168.1.50 -p tcp --dport 80 -j DROP
+iptables -A INPUT -p tcp --dport 22 -s 10.0.0.0/28 -m state --state NEW -j ACCEPT
+iptables -A INPUT -s 10.0.0.0/28 -p tcp --dport 22 -m comment --comment 'SSH' -j ACCEPT
+iptables -A INPUT -p tcp --dport 443 -s 172.16.0.0/25 -j DROP
+iptables -A INPUT -s 172.16.0.0/25 -p tcp --dport 443 -m state --state NEW -j ACCEPT

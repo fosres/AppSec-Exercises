@@ -1,0 +1,3 @@
+# ACCEPT vs REJECT conflict with /20
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j REJECT --reject-with tcp-reset

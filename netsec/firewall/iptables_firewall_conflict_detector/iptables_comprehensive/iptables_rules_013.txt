@@ -1,0 +1,3 @@
+# /12 shadows /24
+iptables -A FORWARD -s 10.96.0.0/12 -d 10.96.0.0/12 -j ACCEPT
+iptables -A FORWARD -s 10.100.5.0/24 -d 10.100.10.0/24 -j DROP

@@ -1,0 +1,4 @@
+# Legacy + modern mixed
+iptables -A INPUT -s 172.16.0.0/16 -p tcp --dport 445 -j ACCEPT
+iptables -A INPUT -s 172.16.5.0/22 -p tcp --dport 445 -j DROP
+iptables -A INPUT -s 172.16.5.100 -p tcp --dport 445 -j DROP

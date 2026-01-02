@@ -1,0 +1,4 @@
+# Point-to-point cascade
+iptables -A INPUT -s 10.10.10.0/28 -p tcp --dport 179 -j ACCEPT
+iptables -A INPUT -s 10.10.10.0/30 -p tcp --dport 179 -j DROP
+iptables -A INPUT -s 10.10.10.1 -p tcp --dport 179 -j DROP
