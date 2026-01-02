@@ -174,6 +174,8 @@ The challenge document includes:
 
 **Read everything before writing a single command!**
 
+**Note:** A working solution exists [here](https://github.com/fosres/AppSec-Exercises/blob/main/netsec/firewall/iptables_lab_4.txt), but **try it yourself first!** You'll learn much more from struggling through it than copying.
+
 ### **Step 3: Write Your iptables Script**
 
 **Create a bash script with your firewall rules:**
@@ -377,6 +379,8 @@ The repo includes:
 
 ## Common Mistakes (Don't Peek Until You Try!)
 
+**⚠️ Seriously, attempt the challenge BEFORE reading these!**
+
 <details>
 <summary>Click to reveal common pitfalls...</summary>
 
@@ -416,7 +420,43 @@ The repo includes:
 -A FORWARD -d 192.168.20.30 -p tcp --dport 3306 -j ACCEPT
 ```
 
+**Still stuck?** Check out [a working solution](https://github.com/fosres/AppSec-Exercises/blob/main/netsec/firewall/iptables_lab_4.txt) to see one correct approach.
+
 </details>
+
+---
+
+## Want to See a Working Solution?
+
+**⚠️ WARNING: Try the challenge yourself FIRST before looking at solutions!**
+
+You'll learn 10x more by struggling through it than by copying someone else's work.
+
+**But if you're stuck, or want to compare your approach:**
+
+👉 **[View my solution (100/100 score)](https://github.com/fosres/AppSec-Exercises/blob/main/netsec/firewall/iptables_lab_4.txt)**
+
+**How to use this solution:**
+
+1. ✅ **Complete the challenge yourself first** (seriously!)
+2. ✅ **Get your ruleset graded by AI**
+3. ✅ **Compare your approach to mine**
+4. ✅ **Learn from the differences**
+
+**Remember:** There are multiple valid ways to solve this. My solution is ONE approach that scores 100/100, but yours might be different and equally valid!
+
+**Use it for:**
+- Checking your logic after you've attempted it
+- Understanding alternative approaches
+- Verifying your rule ordering
+- Learning advanced techniques
+
+**Don't use it for:**
+- ❌ Copying without understanding
+- ❌ Skipping the learning process
+- ❌ Submitting as your own work
+
+**The goal is mastery, not completion.** 🎯
 
 ---
 
@@ -444,17 +484,22 @@ The repo includes:
 
 **After completing the challenge:**
 
-1. **Share your solution** (optional)
+1. **Compare with my solution** (optional)
+   - See my 100/100 scoring ruleset
+   - Learn alternative approaches
+   - Understand different techniques
+
+2. **Share your solution** (optional)
    - Create a GitHub Gist
    - Write a blog post about your approach
    - Help others in the discussion
 
-2. **Give feedback**
+3. **Give feedback**
    - Was anything unclear?
    - Should requirements be more/less detailed?
    - What other challenges would you like?
 
-3. **Star the repo** ⭐
+4. **Star the repo** ⭐
    - Support the project
    - Get notified of new challenges
    - Help others discover it
@@ -476,6 +521,8 @@ The repo includes:
 **You MUST create an actual iptables ruleset file - no shortcuts!**
 
 **Start the challenge →** [Get the requirements](https://github.com/fosres/AppSec-Exercises)
+
+**Stuck or want to compare?** [View a working solution](https://github.com/fosres/AppSec-Exercises/blob/main/netsec/firewall/iptables_lab_4.txt) (try it yourself first!)
 
 ---
 
