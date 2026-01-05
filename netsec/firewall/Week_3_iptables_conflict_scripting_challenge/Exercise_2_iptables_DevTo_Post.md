@@ -24,7 +24,7 @@ This isn't your simplified tutorial iptables. This is **actual enterprise firewa
 ## 🎯 What You're Building
 
 **Input:** iptables configuration file (one rule per line)  
-**Output:** Detection report (dictionary with shadowed, duplicates, conflicts)
+**Output:** Detection report (dictionary with conflicts and duplicates)
 
 ```bash
 # Run your auditor
@@ -32,16 +32,16 @@ python3 iptables_auditor.py iptables_rules_052.txt
 
 # Output printed to console
 {
-  'shadowed': [{'rule_index': 1, 'rule': '...', 'shadowed_by': 0}],
-  'duplicates': [{'rule_indices': [2, 3], 'rule': '...'}],
-  'conflicts': [{'rule_indices': [4, 5], 'traffic': '...'}]
+  'conflicts': [{'rule_index': 1, 'rule': '...', 'conflicted_by': 0}],
+  'duplicates': [{'rule_indices': [2, 3], 'rule': '...'}]
 }
 ```
 
 **Detection types:**
-1. **Shadowing** → Earlier broad rule makes later specific rule unreachable
-2. **Duplicates** → Identical rules (even with different flag order)
-3. **Conflicts** → Same traffic, different actions (ACCEPT vs DROP)
+1. **Conflicts** → Earlier terminating rule makes later rule unreachable due to different terminating actions (e.g., ACCEPT vs DROP)
+2. **Duplicates** → Identical rules (same traffic, same terminating action)
+
+**Note:** See the **"Terminating vs Non-Terminating Actions"** section for critical details on why action types matter.
 
 ---
 
@@ -67,29 +67,22 @@ iptables -A FORWARD -s 10.244.0.0/16 -d 10.244.0.0/16 -j ACCEPT
 
 ### Output: Dictionary Printed to Console
 
-**Your script prints a Python dictionary to stdout** with three keys:
+**Your script prints a Python dictionary to stdout** with two keys:
 
 ```python
 {
-  'shadowed': [
+  'conflicts': [
     {
       'rule_index': 1,
       'rule': 'iptables -A INPUT -s 192.168.1.50 -p tcp --dport 80 -j DROP',
-      'shadowed_by': 0,
-      'reason': 'Specific DROP shadowed by broader ACCEPT rule'
+      'conflicted_by': 0,
+      'reason': 'Later rule unreachable - earlier ACCEPT makes this DROP ineffective'
     }
   ],
   'duplicates': [
     {
       'rule_indices': [2, 3],
       'rule': 'iptables -A INPUT -s 10.0.0.5 -p tcp --dport 443 -j ACCEPT'
-    }
-  ],
-  'conflicts': [
-    {
-      'rule_indices': [4, 5],
-      'traffic': '192.168.1.10:tcp:80',
-      'actions': ['ACCEPT', 'DROP']
     }
   ]
 }
@@ -99,11 +92,11 @@ iptables -A FORWARD -s 10.244.0.0/16 -d 10.244.0.0/16 -j ACCEPT
 
 **Input file (`iptables_rules_052.txt`):**
 ```bash
-# Allow all from DMZ - TOO BROAD
-iptables -A INPUT -s 10.0.1.0/24 -j ACCEPT
-# Try to block database access from DMZ - SHADOWED!
+# Allow database from broad DMZ range
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 3306 -j ACCEPT
+# Try to block from narrower range - CONFLICT (unreachable, different action)!
 iptables -A INPUT -s 10.0.1.50 -p tcp --dport 3306 -j DROP
-# Conflicting SSH rules
+# Conflicting SSH rules (same source)
 iptables -A INPUT -p tcp --dport 22 -s 192.168.100.10 -j ACCEPT
 iptables -A INPUT -s 192.168.100.10 -p tcp --dport 22 -j DROP
 ```
@@ -116,50 +109,43 @@ python3 iptables_auditor.py iptables_rules_052.txt
 **Expected output printed to console:**
 ```python
 {
-  'shadowed': [
+  'conflicts': [
     {
       'rule_index': 1,
       'rule': 'iptables -A INPUT -s 10.0.1.50 -p tcp --dport 3306 -j DROP',
-      'shadowed_by': 0,
-      'reason': 'Specific DROP shadowed by broader ACCEPT rule'
+      'conflicted_by': 0,
+      'reason': 'Later DROP unreachable - earlier ACCEPT from 10.0.0.0/20 (which contains 10.0.1.50) makes this rule ineffective'
+    },
+    {
+      'rule_index': 3,
+      'rule': 'iptables -A INPUT -s 192.168.100.10 -p tcp --dport 22 -j DROP',
+      'conflicted_by': 2,
+      'reason': 'Later DROP unreachable - earlier ACCEPT from same source makes this rule ineffective'
     }
   ],
-  'duplicates': [],
-  'conflicts': [
-    {
-      'rule_indices': [2, 3],
-      'traffic': '192.168.100.10:tcp:22',
-      'actions': ['ACCEPT', 'DROP']
-    }
-  ]
+  'duplicates': []
 }
 ```
 
 ### Output Field Descriptions
 
-**`shadowed` array:**
-- `rule_index`: Line number of the shadowed rule (0-indexed)
-- `rule`: Full iptables command that is shadowed
-- `shadowed_by`: Line number of the rule that shadows this one
+**`conflicts` array:**
+- `rule_index`: Line number of the conflicted rule (0-indexed)
+- `rule`: Full iptables command that is conflicted
+- `conflicted_by`: Line number of the earlier rule that conflicts with this one
 - `reason`: Human-readable explanation
 
 **`duplicates` array:**
 - `rule_indices`: List of all line numbers with identical rules
 - `rule`: The duplicated iptables command
 
-**`conflicts` array:**
-- `rule_indices`: List of line numbers with conflicting rules
-- `traffic`: String representation of the traffic pattern (source:protocol:port)
-- `actions`: List of different actions (e.g., ['ACCEPT', 'DROP'])
-
 ### Edge Cases
 
 **Empty file or all comments:**
 ```python
 {
-  'shadowed': [],
-  'duplicates': [],
-  'conflicts': []
+  'conflicts': [],
+  'duplicates': []
 }
 ```
 
@@ -169,9 +155,16 @@ Skip unparseable lines and process valid ones.
 **No issues found:**
 ```python
 {
-  'shadowed': [],
-  'duplicates': [],
-  'conflicts': []
+  'conflicts': [],
+  'duplicates': []
+}
+```
+
+---
+```python
+{
+  'conflicts': [],
+  'duplicates': []
 }
 ```
 
@@ -192,12 +185,20 @@ From each iptables rule, you MUST extract:
    - Missing `--dport` flag? Treat as "any port"
 
 3. **Protocol** (after `-p` flag)
-   - Examples: `tcp`, `udp`
-   - Always present in our test files
+   - **Common protocols:**
+     - `tcp` - Transmission Control Protocol (most common - web, SSH, databases)
+     - `udp` - User Datagram Protocol (DNS, streaming, VoIP)
+     - `icmp` - Internet Control Message Protocol (ping, traceroute) (`icmp` does **NOT** consider ports!)
+     - `all` - Matches all protocols
+   - **Protocol numbers:** Can also use numbers (e.g., `50` for ESP, `51` for AH)
+   - **In our test files:** You'll see `tcp`, `udp`, and `icmp`
+   - **For Week 3:** Focus on `tcp` and `udp` - these cover 95% of production rules
 
 4. **Action** (after `-j` flag)
-   - Examples: `ACCEPT`, `DROP`, `REJECT`
-   - Note: Treat `REJECT` like `DROP` (both deny traffic)
+   - Terminating: `ACCEPT`, `DROP`, `REJECT`, `RETURN` (stop processing)
+   - Non-terminating: `LOG`, `MARK`, `ULOG` (continue processing)
+   - **For this exercise:** Treat `REJECT` like `DROP` (both deny traffic)
+   - See **"Terminating vs Non-Terminating Actions"** section below for critical details
 
 ### ❌ Ignore These (Not Required for Week 3)
 
@@ -231,7 +232,7 @@ Week 3: Can treat as matching port 80 OR 443 conceptually, or extract the list (
 ```bash
 -j LOG --log-prefix 'AUDIT: '
 ```
-LOG rules don't conflict with ACCEPT/DROP - skip them in conflict detection.
+LOG rules are **non-terminating** - they execute and then processing continues to the next rule. See the **"Terminating vs Non-Terminating Actions"** section below for why this matters for conflict detection.
 
 **Different chains:**
 ```bash
@@ -240,6 +241,16 @@ LOG rules don't conflict with ACCEPT/DROP - skip them in conflict detection.
 -A FORWARD       # Routed traffic
 ```
 All treated the same for Week 3.
+
+**Policy rules (IGNORE these):**
+```bash
+# These set default actions, NOT individual rules
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+```
+**Week 3:** Skip policy rules entirely - only audit rules with `-A` (append).  
+**Why:** Policy rules set defaults (only 3 total), not specific traffic rules. They use `-P` not `-A`.
 
 ### 📝 Extraction Examples
 
@@ -281,20 +292,39 @@ iptables -A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT
 **Extract:** source=`None` (no -s flag), port=`80,443` (multiport list), protocol=`tcp`, action=`ACCEPT`  
 **Week 3 simplification:** Treat as matching both port 80 AND port 443
 
-**Example 6: LOG rule (special case)**
+**Example 6: Different protocols**
+```bash
+# TCP - Web traffic
+iptables -A INPUT -p tcp -s 10.0.0.0/24 --dport 443 -j ACCEPT
+
+# UDP - DNS traffic
+iptables -A INPUT -p udp -s 10.0.0.0/24 --dport 53 -j ACCEPT
+
+# ICMP - Ping traffic
+iptables -A INPUT -p icmp --icmp-type echo-request -s 10.0.0.0/24 -j ACCEPT
+```
+**Extract:**
+- Rule 1: protocol=`tcp`, port=`443`
+- Rule 2: protocol=`udp`, port=`53`
+- Rule 3: protocol=`icmp`, port=`N/A` (ICMP doesn't use ports)
+
+**Note:** For Week 3, focus on `tcp` and `udp`. ICMP rules may not have `--dport` flags.
+
+**Example 7: LOG rule (special case)**
 ```bash
 iptables -A INPUT -j LOG --log-prefix 'SOC2-AUDIT: '
 iptables -A INPUT -j DROP
 ```
-**Action:** Skip LOG rules in conflict detection (they don't conflict with ACCEPT/DROP)
+**Extract:** Action=`LOG` and Action=`DROP`  
+**Important:** LOG is **non-terminating** (continues to next rule), while DROP is **terminating** (stops processing). See **"Terminating vs Non-Terminating Actions"** section for full details on why this matters.
 
 ### 🎯 Focus on Detection, Not Perfect Parsing
 
-**Week 3 goal:** Extract the 4 core components to detect shadowing, duplicates, and conflicts.
+**Week 3 goal:** Extract the 4 core components to detect conflicts and duplicates.
 
 **Week 10+ goal:** Handle all iptables complexity (state tracking, connection tracking, rate limiting, etc.)
 
-For this exercise, **extracting source, port, protocol, and action is sufficient** to detect all three issue types across our 20 test files.
+For this exercise, **extracting source, port, protocol, and action is sufficient** to detect all three issue types across our 100 test files.
 
 ---
 
@@ -310,11 +340,11 @@ For this exercise, **extracting source, port, protocol, and action is sufficient
 # Earlier rule (too broad)
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-# Later rule (shadowed - never reached for established connections)
+# Later rule (conflicted - never reached for established connections)
 iptables -A INPUT -s 203.0.113.0/24 -p tcp --dport 80 -j DROP
 ```
 
-The attacker exploited an SSRF vulnerability because the DROP rule was **shadowed by the state tracking rule** for established connections. This exercise builds the tool that would have detected the misconfiguration.
+The attacker exploited an SSRF vulnerability because the DROP rule was **made ineffective by the earlier state tracking rule** for established connections. This exercise builds the tool that would have detected the misconfiguration.
 
 **Sources:** 
 - NIST SP 800-41r1: "Guidelines on Firewalls and Firewall Policy" - Section 2.2 emphasizes rule ordering and conflict detection (Pages 2-6 to 2-11)
@@ -346,6 +376,24 @@ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT
 # Interface-specific rules
 iptables -A INPUT -i eth0 -p tcp --dport 80 -j ACCEPT
 iptables -A OUTPUT -o eth1 -j ACCEPT
+```
+
+**Different protocols:**
+```bash
+# TCP - Connection-oriented (web, SSH, databases)
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+
+# UDP - Connectionless (DNS, DHCP, streaming)
+iptables -A INPUT -p udp --dport 53 -j ACCEPT
+
+# ICMP - Network diagnostics (ping, traceroute)
+iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+
+# All protocols
+iptables -A INPUT -s 10.0.0.0/8 -j ACCEPT
+
+# Protocol by number (50 = ESP for IPsec)
+iptables -A INPUT -p 50 -j ACCEPT
 ```
 
 **Multiple ports (multiport module):**
@@ -386,7 +434,7 @@ iptables -A FORWARD ...  # Routing through host
 
 ## 📋 Realistic Test Files
 
-I generated 20 test files from actual enterprise scenarios:
+I generated 100 test files from actual enterprise scenarios. **All test files use `-A` (append) rules only** - no `-P` (policy) rules. You're auditing real firewall rules, not default policies.
 
 ### Kubernetes Cluster (File 001)
 ```bash
@@ -400,9 +448,8 @@ iptables -A INPUT -p tcp --dport 22 -s 192.168.100.5 -m comment --comment 'SSH f
 **Expected output:** 
 ```python
 {
-  'shadowed': [],
-  'duplicates': [],
-  'conflicts': []
+  'conflicts': [],
+  'duplicates': []
 }
 ```
 No issues (valid K8s cluster firewall with /12, /26, /16, single host)
@@ -412,7 +459,7 @@ No issues (valid K8s cluster firewall with /12, /26, /16, single host)
 # Allow all from DMZ /20 (4096 hosts) - TOO BROAD
 iptables -A INPUT -s 10.0.0.0/20 -j ACCEPT
 
-# Try to block database access from /22 subset - SHADOWED!
+# Try to block database access from /22 subset - CONFLICT!
 iptables -A INPUT -s 10.0.4.0/22 -p tcp --dport 3306 -j DROP
 
 # Conflicting SSH rules with single host (no /32 notation)
@@ -422,32 +469,31 @@ iptables -A INPUT -s 192.168.100.10 -p tcp --dport 22 -j DROP
 **Expected output:**
 ```python
 {
-  'shadowed': [
+  'conflicts': [
     {
       'rule_index': 1,
       'rule': 'iptables -A INPUT -s 10.0.4.0/22 -p tcp --dport 3306 -j DROP',
-      'shadowed_by': 0,
-      'reason': 'Specific /22 DROP shadowed by broader /20 ACCEPT rule'
+      'conflicted_by': 0,
+      'reason': 'Later DROP unreachable - earlier ACCEPT from broader 10.0.0.0/20 makes this ineffective'
+    },
+    {
+      'rule_index': 3,
+      'rule': 'iptables -A INPUT -s 192.168.100.10 -p tcp --dport 22 -j DROP',
+      'conflicted_by': 2,
+      'reason': 'Later DROP unreachable - earlier ACCEPT from same source makes this ineffective'
     }
   ],
-  'duplicates': [],
-  'conflicts': [
-    {
-      'rule_indices': [2, 3],
-      'traffic': '192.168.100.10:tcp:22',
-      'actions': ['ACCEPT', 'DROP']
-    }
-  ]
+  'duplicates': []
 }
 ```
 **Issues detected:**
-- Shadowing: Rule 1 by Rule 0 (10.0.4.0/22 is inside 10.0.0.0/20)
-- Conflicts: Rules 2 and 3 (same host, different actions)
+- Conflict (broader→narrower): Rule 1 by Rule 0 (10.0.4.0/22 is inside 10.0.0.0/20, different actions)
+- Conflict (exact match): Rules 2 and 3 (same host, different actions)
 
 **CIDR Math:**
 - 10.0.0.0/20 covers: 10.0.0.0 - 10.0.15.255 (4,096 IPs)
 - 10.0.4.0/22 covers: 10.0.4.0 - 10.0.7.255 (1,024 IPs)
-- 10.0.4.0/22 is a subset of 10.0.0.0/20 → shadowed!
+- 10.0.4.0/22 is a subset of 10.0.0.0/20 → conflict!
 
 ### Small Subnet Shadowing (File 014)
 ```bash
@@ -457,53 +503,59 @@ iptables -A INPUT -s 192.168.1.128/28 -p tcp --dport 3306 -j ACCEPT
 # Try to block single host in that subnet - SHADOWED!
 iptables -A INPUT -s 192.168.1.135 -p tcp --dport 3306 -j DROP
 ```
+### Small Subnet Conflict (File 014)
+```bash
+# Small /28 subnet (16 hosts: 192.168.1.128 - 192.168.1.143)
+iptables -A INPUT -s 192.168.1.128/28 -p tcp --dport 3306 -j ACCEPT
+
+# Try to block single host in that subnet - CONFLICT!
+iptables -A INPUT -s 192.168.1.135 -p tcp --dport 3306 -j DROP
+```
 **Expected output:** 
 ```python
 {
-  'shadowed': [
+  'conflicts': [
     {
       'rule_index': 1,
       'rule': 'iptables -A INPUT -s 192.168.1.135 -p tcp --dport 3306 -j DROP',
-      'shadowed_by': 0,
-      'reason': 'Single host shadowed by /28 subnet rule'
+      'conflicted_by': 0,
+      'reason': 'Later DROP unreachable - earlier ACCEPT from broader /28 makes this ineffective'
     }
   ],
-  'duplicates': [],
-  'conflicts': []
+  'duplicates': []
 }
 ```
 
 **CIDR Math:**
 - 192.168.1.128/28 covers: 192.168.1.128 - 192.168.1.143 (16 hosts)
-- 192.168.1.135 is one host inside that range → shadowed!
+- 192.168.1.135 is one host inside that range → conflict!
 
-### Point-to-Point Link Shadowing (File 016)
+### Point-to-Point Link Conflict (File 016)
 ```bash
 # Point-to-point link /30 (4 hosts: .252, .253, .254, .255)
 iptables -A INPUT -s 10.10.10.252/30 -p tcp --dport 179 -j ACCEPT
 
-# Try to block one endpoint - SHADOWED!
+# Try to block one endpoint - CONFLICT!
 iptables -A INPUT -s 10.10.10.253 -p tcp --dport 179 -j DROP
 ```
 **Expected output:**
 ```python
 {
-  'shadowed': [
+  'conflicts': [
     {
       'rule_index': 1,
       'rule': 'iptables -A INPUT -s 10.10.10.253 -p tcp --dport 179 -j DROP',
-      'shadowed_by': 0,
-      'reason': 'Single endpoint shadowed by /30 point-to-point link'
+      'conflicted_by': 0,
+      'reason': 'Later DROP unreachable - earlier ACCEPT from broader /30 makes this ineffective'
     }
   ],
-  'duplicates': [],
-  'conflicts': []
+  'duplicates': []
 }
 ```
 
 **CIDR Math:**
 - 10.10.10.252/30 covers: 10.10.10.252 - 10.10.10.255 (4 IPs)
-- 10.10.10.253 is inside that range → shadowed!
+- 10.10.10.253 is inside that range → conflict!
 
 ### SOC2 Compliance with Logging (File 062)
 ```bash
@@ -519,8 +571,10 @@ iptables -A INPUT -j DROP
 **Expected output:**
 ```python
 {
-  'shadowed': [],
-  'duplicates': [],
+  'conflicts': [],
+  'duplicates': []
+}
+```
   'conflicts': []
 }
 ```
@@ -583,65 +637,301 @@ Skip these flags for now:
 
 ---
 
+## ⚡ CRITICAL: Terminating vs Non-Terminating Actions
+
+**Before you start coding, you MUST understand this concept.** It's essential for conflict detection.
+
+### Terminating Actions (Stop Processing)
+
+These actions **terminate packet processing** - if a packet matches a rule with these actions, **no further rules are evaluated for that packet:**
+
+| Action | Behavior | Impact on Detection |
+|--------|----------|---------------------|
+| **ACCEPT** | Accept packet, stop processing | Can conflict with later rules with different terminating actions |
+| **DROP** | Drop packet silently, stop processing | Can conflict with later rules with different terminating actions |
+| **REJECT** | Send ICMP response, stop processing | Can conflict with later rules (treat like DROP) |
+| **RETURN** | Return to calling chain, stops in current chain | Can conflict with later rules |
+
+**Example:**
+```bash
+# Rule 1: ACCEPT (terminates - stops processing)
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j ACCEPT
+
+# Rule 2: NEVER EVALUATED for 10.0.1.0/24 (conflict!)
+iptables -A INPUT -s 10.0.1.0/24 -p tcp --dport 22 -j DROP
+```
+
+**Why conflict?** Packets from 10.0.1.x match Rule 1 → ACCEPT (terminating) → processing stops → Rule 2 never evaluated (different terminating action = conflict).
+
+### Non-Terminating Actions (Continue Processing)
+
+These actions are **performed, then processing continues** to the next rule:
+
+| Action | Behavior | Impact on Detection |
+|--------|----------|---------------------|
+| **LOG** | Log packet, continue to next rule | Does NOT conflict (non-terminating) |
+| **MARK** | Mark packet, continue to next rule | Does NOT conflict (non-terminating) |
+| **ULOG** | User-space log, continue to next rule | Does NOT conflict (non-terminating) |
+
+**Example:**
+```bash
+# Rule 1: LOG (non-terminating - continues processing)
+iptables -A INPUT -p tcp --dport 22 -j LOG --log-prefix 'SSH: '
+
+# Rule 2: EVALUATED for ALL packets (not a conflict!)
+iptables -A INPUT -p tcp --dport 22 -s 10.0.0.0/20 -j ACCEPT
+```
+
+**Both rules execute!** LOG runs, then ACCEPT runs. This is NOT a duplicate or conflict.
+
+### Why This Matters for Detection
+
+#### **Conflict Detection**
+
+Only **terminating actions with different behaviors** create conflicts:
+
+```bash
+# ✅ CONFLICT: ACCEPT vs DROP (different terminating actions)
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -s 10.0.1.0/24 -p tcp --dport 22 -j DROP  # Conflict! (unreachable)
+
+# ❌ NOT A CONFLICT: LOG + ACCEPT (LOG is non-terminating, both execute)
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j LOG
+iptables -A INPUT -s 10.0.1.0/24 -p tcp --dport 22 -j ACCEPT  # Not a conflict!
+
+# ❌ NOT A CONFLICT: DROP vs REJECT (both deny - treat REJECT like DROP)
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j DROP
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j REJECT
+```
+
+**Rule:** ACCEPT vs DROP/REJECT = conflict. DROP vs REJECT = NOT a conflict (both deny).
+
+#### **3. Duplicate Detection**
+
+Only **same terminating actions** are duplicates:
+
+```bash
+# ✅ DUPLICATE: Both ACCEPT (same terminating action)
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j ACCEPT
+
+# ❌ NOT DUPLICATES: Multiple LOGs (both execute - common in production)
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j LOG --log-prefix 'SSH: '
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j LOG --log-prefix 'AUDIT: '
+```
+
+### Common Production Patterns (NOT Issues!)
+
+These patterns appear in your test files and are **NOT conflicts or duplicates:**
+
+**Pattern 1: LOG before DROP (SOC2/PCI-DSS compliance)**
+```bash
+# Audit logging before denial
+iptables -A INPUT -j LOG --log-prefix 'DROP: ' --log-level 4
+iptables -A INPUT -j DROP
+```
+**Why not a conflict?** LOG is non-terminating. Packet gets logged, THEN dropped. Both execute.
+
+**Pattern 2: LOG before ACCEPT**
+```bash
+# Audit successful access
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j LOG --log-prefix 'SSH: '
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j ACCEPT
+```
+**Why not a duplicate?** Different actions (LOG vs ACCEPT). Both execute.
+
+**Pattern 3: Multiple LOGs for same traffic**
+```bash
+# Multi-level logging (SOC2 requirement)
+iptables -A INPUT -s 192.168.1.0/24 -j LOG --log-prefix 'SUBNET-AUDIT: '
+iptables -A INPUT -s 192.168.1.0/24 -p tcp --dport 22 -j LOG --log-prefix 'SSH-AUDIT: '
+iptables -A INPUT -s 192.168.1.0/24 -p tcp --dport 22 -j ACCEPT
+```
+**Why not duplicates?** All LOGs execute, then ACCEPT executes. This is normal compliance logging.
+
+### Implementation Hints
+
+**Check if action is terminating:**
+```python
+TERMINATING_ACTIONS = {'ACCEPT', 'DROP', 'REJECT', 'RETURN'}
+NON_TERMINATING_ACTIONS = {'LOG', 'MARK', 'ULOG'}
+
+def is_terminating(action):
+    """Check if action terminates packet processing"""
+    return action in TERMINATING_ACTIONS
+
+# For conflicts: only terminating actions can create conflicts
+if is_terminating(earlier_rule.action) and is_terminating(later_rule.action):
+    # Check if this creates a conflict
+    pass
+
+# For conflicts: normalize REJECT to DROP (both deny)
+def normalize_action(action):
+    """Normalize actions for conflict detection"""
+    if action in {'DROP', 'REJECT'}:
+        return 'DENY'
+    return action
+
+# ACCEPT vs DROP/REJECT = conflict
+# DROP vs REJECT = not conflict (both DENY)
+```
+
+**Skip LOG rules appropriately:**
+```python
+# When building list of rules for conflict detection
+rules_for_conflict_detection = [
+    rule for rule in all_rules 
+    if rule.action in TERMINATING_ACTIONS
+]
+
+# LOG rules don't participate in conflict detection
+# They execute alongside terminating actions
+```
+
+### Quick Reference
+
+**For conflict detection:**
+- ✅ Earlier terminating rule makes later rule unreachable when actions differ
+- ✅ Only terminating actions (ACCEPT, DROP, REJECT) can create conflicts
+- ✅ Conflict occurs when: earlier source contains/equals later source AND different terminating actions
+- ✅ ACCEPT vs DROP/REJECT = conflict
+- ❌ DROP vs REJECT = NOT conflict (both deny - normalize to same action)
+- ❌ LOG rules cannot create conflicts (non-terminating - don't block later rules)
+
+**For duplicate detection:**
+- ✅ Only same terminating action = duplicate (ACCEPT+ACCEPT, DROP+DROP)
+- ❌ Different terminating actions = conflict, not duplicate
+- ❌ Multiple LOGs for same traffic = NOT duplicates (all execute)
+
+---
+
 ## 🔍 Detection Algorithms (Same Core Logic)
 
 Even with realistic complexity, **the core detection logic remains the same:**
 
+### ⚠️ CRITICAL: Rules Only Collide Within the SAME Chain
+
+**Before we dive into detection, understand this fundamental rule:**
+
+Rules in **different chains NEVER collide** because they handle different packet flows:
+
+```bash
+# These are NOT duplicates/conflicts - different chains!
+iptables -A INPUT -s 10.0.0.0/24 -p tcp --dport 22 -j ACCEPT
+iptables -A FORWARD -s 10.0.0.0/24 -p tcp --dport 22 -j ACCEPT
+```
+
+**Why they don't collide:**
+
+| Chain | Handles | Example |
+|-------|---------|---------|
+| **INPUT** | Packets destined **FOR this firewall** | SSH to the firewall itself |
+| **FORWARD** | Packets **ROUTED THROUGH this firewall** | Traffic from client → firewall → server |
+| **OUTPUT** | Packets originating **FROM this firewall** | Firewall's outbound connections |
+
+**A packet only goes through ONE chain** - never multiple! 
+
+**Implementation requirement:**
+- Include CHAIN in your rule signature: `(chain, source, port, protocol, action)`
+- Only compare rules within the SAME chain
+- INPUT rules only collide with INPUT rules
+- FORWARD rules only collide with FORWARD rules
+
+**Example:**
+```python
+# CORRECT signature (includes chain)
+signature = (rule.chain, rule.source, rule.port, rule.protocol, rule.action)
+
+# Compare only within same chain
+def find_duplicates(rules):
+    # Group by chain first
+    by_chain = {}
+    for rule in rules:
+        if rule.chain not in by_chain:
+            by_chain[rule.chain] = []
+        by_chain[rule.chain].append(rule)
+    
+    # Check for duplicates WITHIN each chain
+    duplicates = []
+    for chain, chain_rules in by_chain.items():
+        duplicates.extend(check_duplicates_in_chain(chain_rules))
+    
+    return duplicates
+```
+
 ### 1. Duplicate Detection
 
-**Logic:** Two rules are duplicates if they have identical source, port, protocol, and action.
+**Logic:** Two rules are duplicates if they have identical chain, source, port, protocol, and action.
 
 **Approach:**
-- Create a unique "signature" from each rule's components
+- Create a unique "signature" from each rule's components **(including chain!)**
 - Track how many times each signature appears
 - Report any signatures that appear 2+ times
 
-**Key insight:** Rules with different flag orders are still duplicates if they match the same traffic.
+**Key insight:** Rules with different flag orders are still duplicates if they match the same traffic **in the same chain**.
 
 **Example:**
 ```bash
-# These are duplicates despite different flag order
+# These are duplicates (same chain, same traffic)
 iptables -A INPUT -p tcp -s 10.0.0.5 --dport 53 -j DROP
 iptables -A INPUT -s 10.0.0.5 -p tcp --dport 53 -j DROP
 ```
 
-### 2. Conflict Detection
-
-**Logic:** Two rules conflict if they have the same traffic but different actions.
-
-**Approach:**
-- Group rules by traffic pattern (source, port, protocol) - ignore the action
-- For each group, collect all the actions
-- If a group has both ACCEPT and DROP/REJECT → that's a conflict
-
-**Key insight:** The first rule wins, but the second rule shows conflicting intent.
-
-**Example:**
+**NOT duplicates (different chains):**
 ```bash
-# Conflict: ACCEPT vs DROP for same traffic
-iptables -A INPUT -s 192.168.1.10 -p tcp --dport 80 -j ACCEPT
-iptables -A INPUT -p tcp -s 192.168.1.10 --dport 80 -j DROP
+# Different chains = different packet flows = NOT duplicates
+iptables -A INPUT -p tcp -s 10.0.0.5 --dport 53 -j DROP
+iptables -A FORWARD -s 10.0.0.5 -p tcp --dport 53 -j DROP
 ```
 
-### 3. Shadowing Detection (Hardest)
+### 2. Conflict Detection
 
-**Logic:** A rule is shadowed if an earlier rule matches broader or equal traffic.
+**Logic:** Earlier terminating rule makes later rule unreachable due to different terminating actions (e.g., ACCEPT vs DROP).
+
+**This happens in TWO scenarios:**
+
+**Scenario 1: Broader source contains narrower source**
+```bash
+# Earlier broad /20 ACCEPT makes later narrow /24 DROP unreachable
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -s 10.0.1.0/24 -p tcp --dport 22 -j DROP  ← CONFLICT!
+```
+
+**Scenario 2: Exact same source**
+```bash
+# Earlier ACCEPT makes later DROP unreachable  
+iptables -A INPUT -s 192.168.1.10 -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -s 192.168.1.10 -p tcp --dport 80 -j DROP  ← CONFLICT!
+```
 
 **Approach:**
-- For each rule (call it "current rule")
-- Compare it against all rules that appear BEFORE it
-- Check if the earlier rule has:
+- For each rule (call it "later rule")
+- Compare against all rules that appear BEFORE it **in the same chain**
+- Check if earlier rule has:
+  - Same chain (INPUT, FORWARD, or OUTPUT)
   - Same port AND same protocol
-  - Source IP that contains or equals the current rule's source
-- If yes → current rule is shadowed!
+  - Source IP that **contains or equals** the later rule's source
+  - **Different terminating action** (ACCEPT vs DROP/REJECT)
+- If yes → later rule is conflicted (unreachable)!
 
-**Example:**
+**Key insight:** The first terminating rule wins and makes the later rule with different action unreachable. Rules in different chains never conflict (different packet flows).
+
+**NOT a conflict (different chains):**
 ```bash
-# Rule 0: Broad /16 subnet
-iptables -A INPUT -s 192.168.0.0/16 -p tcp --dport 80 -j ACCEPT
+# Different chains = different packet flows = NOT a conflict
+iptables -A INPUT -s 192.168.1.10 -p tcp --dport 80 -j ACCEPT
+iptables -A FORWARD -s 192.168.1.10 -p tcp --dport 80 -j DROP
+```
 
-# Rule 1: Specific IP - SHADOWED (192.168.1.50 is in 192.168.0.0/16)
-iptables -A INPUT -s 192.168.1.50 -p tcp --dport 80 -j DROP
+**NOT a conflict (same actions):**
+```bash
+# Both DROP - not a conflict (it's a duplicate if same source, otherwise just redundant)
+iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j DROP
+iptables -A INPUT -s 10.0.1.0/24 -p tcp --dport 22 -j DROP
+```
+
+---
+iptables -A FORWARD -s 192.168.1.50 -p tcp --dport 80 -j DROP
 ```
 
 ---
@@ -674,34 +964,50 @@ iptables -A INPUT -s 192.168.1.50 -p tcp --dport 80 -j DROP
 
 **Note:** In real iptables rules, single host IPs never include `/32` notation - it's implicit! You write `192.168.1.10`, not `192.168.1.10/32`.
 
-### Why This Matters for Shadowing Detection
+### Why This Matters for Conflict Detection
 
-**Example 1: /20 shadows /24**
+**Example 1: /20 conflicts with /24 (different actions)**
 ```bash
 # Rule 0: Allow from AWS VPC /20 (4096 hosts: 10.0.0.0 - 10.0.15.255)
 iptables -A INPUT -s 10.0.0.0/20 -p tcp --dport 22 -j ACCEPT
 
-# Rule 1: Block from /24 subset (256 hosts: 10.0.1.0 - 10.0.1.255) - SHADOWED!
+# Rule 1: Block from /24 subset (256 hosts: 10.0.1.0 - 10.0.1.255) - CONFLICT!
 iptables -A INPUT -s 10.0.1.0/24 -p tcp --dport 22 -j DROP
 ```
 
-**Example 2: /28 shadows single host**
+**Analysis:**
+- 10.0.1.0/24 is INSIDE 10.0.0.0/20
+- Rule 0 has ACCEPT (terminating)
+- Rule 1 has DROP (different terminating action)
+- **Result: CONFLICT** - Rule 1 is unreachable
+
+**Example 2: /28 conflicts with single host (different actions)**
 ```bash
 # Rule 0: Allow from /28 subnet (16 hosts: 192.168.1.128 - 192.168.1.143)
 iptables -A INPUT -s 192.168.1.128/28 -p tcp --dport 3306 -j ACCEPT
 
-# Rule 1: Block specific host (implicit /32) - SHADOWED!
+# Rule 1: Block specific host (implicit /32) - CONFLICT!
 iptables -A INPUT -s 192.168.1.135 -p tcp --dport 3306 -j DROP
 ```
 
-**Example 3: /12 shadows /20** (Kubernetes)
+**Analysis:**
+- 192.168.1.135 is INSIDE 192.168.1.128/28
+- Rule 0 has ACCEPT, Rule 1 has DROP
+- **Result: CONFLICT** - Rule 1 is unreachable
+
+**Example 3: /12 conflicts with /20** (Kubernetes)
 ```bash
 # Rule 0: K8s service network /12 (1M+ IPs: 10.96.0.0 - 10.111.255.255)
 iptables -A FORWARD -s 10.96.0.0/12 -p tcp --dport 443 -j ACCEPT
 
-# Rule 1: Block /20 range - SHADOWED!
+# Rule 1: Block /20 range - CONFLICT!
 iptables -A FORWARD -s 10.100.0.0/20 -p tcp --dport 443 -j DROP
 ```
+
+**Analysis:**
+- 10.100.0.0/20 is INSIDE 10.96.0.0/12
+- Rule 0 has ACCEPT, Rule 1 has DROP
+- **Result: CONFLICT** - Rule 1 is unreachable
 
 **Feeling overwhelmed by CIDR complexity?** Don't worry - the [GitHub repository](https://github.com/YOUR_USERNAME/appsec-exercises) includes a solution template with starter code and hints to guide you through the implementation. **[⭐ Star it now](https://github.com/YOUR_USERNAME/appsec-exercises)** so you can access it when you're ready to start coding!
 
@@ -827,7 +1133,7 @@ Multiport rules cover multiple ports in one line:
 iptables -A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT
 ```
 
-This shadows both port 80 rules AND port 443 rules below it.
+This can conflict with both port 80 rules AND port 443 rules below it if actions differ.
 
 **Week 3 approach:** You can either extract the ports list or treat conceptually.
 
@@ -984,9 +1290,9 @@ iptables -A INPUT -p tcp --dport 5432 -j DROP
 | 009 | BGP point-to-point | /30 (3 links) | Non-overlapping P2P |
 | 010 | Dev environment | /24, /25, /26 | Proper isolation |
 
-### Shadowing Scenarios (011-050) - 40 files
+### Conflict Scenarios (011-050) - 40 files
 
-**Systematic CIDR containment testing:**
+**Systematic CIDR containment testing (broader contains narrower, different actions):**
 
 | Broader Mask | Contains | File Range | Count |
 |--------------|----------|------------|-------|
@@ -1004,7 +1310,7 @@ iptables -A INPUT -p tcp --dport 5432 -j DROP
 | /29 | /30, single IPs | 048-049 | 2 |
 | /30 | single IPs | 050 | 1 |
 
-**Coverage:** All realistic CIDR combinations from AWS VPC (/20), Kubernetes (/12), microservices (/26-/28), and point-to-point (/30).
+**Coverage:** All realistic CIDR combinations where earlier terminating rule makes later rule with different action unreachable. Tests AWS VPC (/20), Kubernetes (/12), microservices (/26-/28), and point-to-point (/30).
 
 ### Duplicates (051-065) - 15 files
 
@@ -1026,27 +1332,27 @@ iptables -A INPUT -p tcp --dport 5432 -j DROP
 | 064 | /21 subnet | 2 identical rules |
 | 065 | /29 subnet | 2 identical rules |
 
-### Conflicts (066-080) - 15 files
+### Exact Match Conflicts (066-080) - 15 files
 
-**ACCEPT vs DROP/REJECT for same traffic:**
+**ACCEPT vs DROP/REJECT for exact same source (not broader/narrower):**
 
 | File | CIDR Mask | Conflict Type |
 |------|-----------|---------------|
-| 066 | /20 | ACCEPT vs DROP |
-| 067 | Single IP | ACCEPT vs REJECT |
-| 068 | /24 | ACCEPT vs DROP |
-| 069 | /22 | DROP vs ACCEPT |
-| 070 | /26 | ACCEPT vs DROP |
-| 071 | /28 | DROP vs ACCEPT |
-| 072 | /27 | ACCEPT vs DROP |
-| 073 | /25 | DROP vs ACCEPT |
-| 074 | /23 | ACCEPT vs REJECT |
-| 075 | /30 | ACCEPT vs DROP |
+| 066 | /20 | ACCEPT vs DROP (same source) |
+| 067 | Single IP | ACCEPT vs REJECT (same source) |
+| 068 | /24 | ACCEPT vs DROP (same source) |
+| 069 | /22 | DROP vs ACCEPT (same source) |
+| 070 | /26 | ACCEPT vs DROP (same source) |
+| 071 | /28 | DROP vs ACCEPT (same source) |
+| 072 | /27 | ACCEPT vs DROP (same source) |
+| 073 | /25 | DROP vs ACCEPT (same source) |
+| 074 | /23 | ACCEPT vs REJECT (same source) |
+| 075 | /30 | ACCEPT vs DROP (same source) |
 | 076 | Multiple single IPs | 2 separate conflicts |
-| 077 | /21 | ACCEPT vs DROP |
-| 078 | /29 | DROP vs ACCEPT |
-| 079 | /20 | ACCEPT vs REJECT (tcp-reset) |
-| 080 | /12 K8s | ACCEPT vs DROP |
+| 077 | /21 | ACCEPT vs DROP (same source) |
+| 078 | /29 | DROP vs ACCEPT (same source) |
+| 079 | /20 | ACCEPT vs REJECT (tcp-reset, same source) |
+| 080 | /12 K8s | ACCEPT vs DROP (same source) |
 
 ### Mixed Issues (081-100) - 20 files
 
@@ -1054,26 +1360,26 @@ iptables -A INPUT -p tcp --dport 5432 -j DROP
 
 | File | Scenario | Issues |
 |------|----------|--------|
-| 081 | Kubernetes cluster | Shadowing + Duplicates |
-| 082 | AWS VPC | Shadowing + Conflicts |
-| 083 | Enterprise firewall | All three types |
-| 084 | Microservices cascade | Multi-level shadowing |
+| 081 | Kubernetes cluster | Conflicts + Duplicates |
+| 082 | AWS VPC | Conflicts (broader→narrower) |
+| 083 | Enterprise firewall | All types |
+| 084 | Microservices cascade | Multi-level conflicts |
 | 085 | Corporate network | Duplicates + Conflicts |
-| 086 | /12 shadows all | 3 rules shadowed |
-| 087 | AWS VPC chain | 3-level shadowing |
-| 088 | DMZ problems | Shadowing + Conflicts |
-| 089 | P2P cascade | 3-level shadowing |
-| 090 | Database tier | Shadowing + Duplicates |
-| 091 | Management network | Shadowing + Conflicts |
-| 092 | Dev environment | Duplicates + Conflicts + Shadowing |
-| 093 | Service mesh | 4-level shadowing cascade |
-| 094 | Legacy + modern | /16 shadows /22 and single IPs |
-| 095 | Multi-tenant | Shadowing + Duplicates |
-| 096 | Container network | Kubernetes pod shadowing |
-| 097 | API gateway | Shadowing + Conflicts |
+| 086 | /12 conflicts all | 3 rules conflicted |
+| 087 | AWS VPC chain | 3-level conflicts |
+| 088 | DMZ problems | Conflicts (broader→narrower + exact) |
+| 089 | P2P cascade | 3-level conflicts |
+| 090 | Database tier | Conflicts + Duplicates |
+| 091 | Management network | Conflicts (broader→narrower + exact) |
+| 092 | Dev environment | All types (Duplicates + Conflicts) |
+| 093 | Service mesh | 4-level conflict cascade |
+| 094 | Legacy + modern | /16 conflicts /22 and single IPs |
+| 095 | Multi-tenant | Conflicts + Duplicates |
+| 096 | Container network | Kubernetes pod conflicts |
+| 097 | API gateway | Conflicts (broader→narrower + exact) |
 | 098 | Load balancer | Multiple conflicts |
-| 099 | Storage network | Shadowing + Duplicates |
-| 100 | Production nightmare | All issues, /16 shadows everything |
+| 099 | Storage network | Conflicts + Duplicates |
+| 100 | Production nightmare | All issues, /16 conflicts everything |
 
 ---
 
@@ -1081,9 +1387,9 @@ iptables -A INPUT -p tcp --dport 5432 -j DROP
 
 **100 files provide:**
 - ✅ 10 valid configurations (baseline - should report no issues)
-- ✅ 40 shadowing scenarios (systematic CIDR containment testing)
+- ✅ 40 conflict scenarios (broader→narrower with different actions)
 - ✅ 15 duplicate scenarios (flag order, comments, state tracking)
-- ✅ 15 conflict scenarios (all CIDR masks + ACCEPT/DROP/REJECT)
+- ✅ 15 exact match conflict scenarios (same source, different actions)
 - ✅ 20 mixed scenarios (real-world complexity)
 
 **CIDR coverage:**
@@ -1112,7 +1418,7 @@ iptables -A INPUT -p tcp --dport 5432 -j DROP
 python3 iptables_auditor.py <filepath>
 ```
 
-**Output:** Dictionary with three keys: `shadowed`, `duplicates`, `conflicts` (printed to stdout)
+**Output:** Dictionary with two keys: `conflicts`, `duplicates` (printed to stdout)
 
 ---
 
@@ -1125,9 +1431,9 @@ python3 iptables_auditor.py <filepath>
 - ✅ Skip malformed rules without crashing
 
 **Detection:**
-- ✅ Detect all shadowing (20/20 test files)
+- ✅ Detect all conflicts (40 test files - broader→narrower and exact matches)
 - ✅ Detect all duplicates (different flag order = still duplicate)
-- ✅ Detect all conflicts (ACCEPT vs DROP/REJECT)
+- ✅ Handle terminating vs non-terminating actions correctly
 
 **Code Quality:**
 - ✅ Clean parsing logic using `.split()` and `.index()`
@@ -1147,7 +1453,7 @@ The GitHub repo contains everything you need to complete this exercise and futur
 
 **100 Comprehensive Test Files:**
 - `test_files/week3_exercise2/iptables_rules_001.txt` through `iptables_rules_100.txt`
-- Systematically organized: valid configs, shadowing, duplicates, conflicts, mixed issues
+- Systematically organized: valid configs, conflicts (broader→narrower), exact match conflicts, duplicates, mixed issues
 - Production-realistic CIDR masks (/12, /20, /22, /26, /28, /30, single IPs)
 
 **Solution Template:**
@@ -1191,7 +1497,7 @@ The repository will include:
 
 **Remember the format:**
 - **Input:** Command-line argument (filepath)
-- **Output:** Dictionary with three arrays printed to stdout
+- **Output:** Dictionary with two arrays printed to stdout
 - **Usage:** `python3 iptables_auditor.py <filepath>`
 
 ### Day-by-Day Plan
@@ -1207,24 +1513,24 @@ The repository will include:
 - Normalize rules to same format (handle different flag orders)
 - Track rule signatures using dictionaries
 - Build `duplicates` array in output format
-- Test on files 026, 027
+- Test on files 051, 052
 - Print output dictionary
 
-**Day 3 (1 hour):** Implement conflict detection
-- Group by traffic pattern (source, port, protocol)
-- Check for different actions in same group
+**Day 3 (2 hours):** Implement CIDR containment
+- Implement `ipaddress` module for CIDR math
+- Test containment logic (is /24 inside /20?)
+- Verify with simple examples
+- Test on files 019-022
+
+**Day 4 (2-3 hours):** Implement conflict detection
+- For each rule, check all earlier rules in same chain
+- Check if earlier source contains/equals later source
+- Check if actions differ (normalize DROP/REJECT)
 - Build `conflicts` array in output format
-- Test on files 041, 042
+- Test on files 011-015, 066-070
 - Print output dictionary
 
-**Day 4 (2-3 hours):** Implement shadowing detection
-- For each rule, check all earlier rules
-- Implement CIDR containment logic (/8, /16, /24)
-- Build `shadowed` array in output format
-- Test on files 011-015
-- Print output dictionary
-
-**Day 5 (1 hour):** Test all 20 files, debug edge cases
+**Day 5 (1 hour):** Test all 100 files, debug edge cases
 - Run against all test files
 - Verify output format matches specification
 - Handle empty files, malformed rules
@@ -1238,14 +1544,14 @@ The repository will include:
 
 ```python
 {
-  'shadowed': [
+  'conflicts': [
     {
-      'rule_index': <int>,           # 0-indexed line number of shadowed rule
+      'rule_index': <int>,           # 0-indexed line number of conflicted rule
       'rule': '<full iptables command>',
-      'shadowed_by': <int>,          # 0-indexed line number of shadowing rule
+      'conflicted_by': <int>,        # 0-indexed line number of earlier conflicting rule
       'reason': '<explanation string>'
     },
-    # ... more shadowed rules
+    # ... more conflicted rules
   ],
   'duplicates': [
     {
@@ -1310,9 +1616,9 @@ Everything you need is in the repo:
 
 ## 💬 Discussion Questions
 
-1. **State tracking complexity:** How would you handle `ESTABLISHED,RELATED` shadowing NEW connections?
+1. **State tracking complexity:** How would you handle `ESTABLISHED,RELATED` making NEW connections unreachable (conflicts)?
 
-2. **Multiport rules:** Should `-m multiport --dports 80,443` be treated as two separate rules for shadowing detection?
+2. **Multiport rules:** Should `-m multiport --dports 80,443` be treated as two separate rules for conflict detection?
 
 3. **Interface specifications:** Does `-i eth0` make a rule more or less specific than no interface specified?
 
@@ -1322,15 +1628,15 @@ Everything you need is in the repo:
 
 **Drop your thoughts in the comments!** 👇
 
-### 🌟 Join 500+ Security Engineers
+### 🌟 Build the Community
 
-**[Star the repository](https://github.com/YOUR_USERNAME/appsec-exercises)** to join the growing community of security engineers working through these exercises! Share your solutions, discuss approaches, and learn together.
+**[Star the repository](https://github.com/YOUR_USERNAME/appsec-exercises)** to bookmark these exercises and help others discover them! Share your solutions, discuss approaches, and learn together.
 
-**Recent activity:**
-- 🎯 50+ engineers completed Exercise 1 (VPN Log Analyzer)
-- 💬 25+ solution approaches shared in discussions
+**What's included:**
 - 🚀 New exercises added every week
 - 📚 Growing library of production-grade security tools
+- 💬 Discussions for sharing solution approaches
+- ✅ Comprehensive test suites for validation
 
 **Your star helps others discover these exercises** — it's how we build a stronger security engineering community! ⭐
 

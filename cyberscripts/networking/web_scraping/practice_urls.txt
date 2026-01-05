@@ -1,0 +1,263 @@
+# Web Reconnaissance Practice URLs
+# ================================
+# Week 4 Scripting Exercise - Target List
+#
+# IMPORTANT: These URLs are for PASSIVE RECONNAISSANCE ONLY
+# - Only analyze HTTP response headers and cookies
+# - Do NOT attempt to exploit or attack these sites
+# - Do NOT send malicious payloads
+# - Do NOT perform brute force or fuzzing
+#
+# Categories:
+# [VULN-LAB]  - Intentionally vulnerable, designed for testing
+# [PUBLIC]    - Public websites, passive recon only
+# [API]       - API endpoints for header analysis
+# [SECURITY]  - Security-focused sites with good configurations
+#
+# Usage:
+#   python3 web_recon.py <url>
+#   OR
+#   for url in $(cat practice_urls.txt | grep -v "^#"); do python3 web_recon.py "$url"; done
+#
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# INTENTIONALLY VULNERABLE LABS (Safe to test against)
+# These are designed for security practice
+# -----------------------------------------------------------------------------
+
+# OWASP Juice Shop - Modern intentionally vulnerable web app
+# Great for seeing various security header configurations
+https://juice-shop.herokuapp.com
+
+# PortSwigger Web Security Academy (requires account for labs)
+# Main site has interesting headers to analyze
+https://portswigger.net
+
+# HackTheBox main site (passive recon only)
+https://www.hackthebox.com
+
+# OWASP WebGoat landing page
+https://owasp.org/www-project-webgoat/
+
+# Damn Vulnerable Web Application info page
+https://dvwa.co.uk
+
+# -----------------------------------------------------------------------------
+# PUBLIC WEBSITES - Good Security Configuration Examples
+# These typically have strong security headers - learn from the best
+# -----------------------------------------------------------------------------
+
+# Google - Excellent security headers
+https://www.google.com
+
+# GitHub - Strong security posture, good HSTS
+https://github.com
+
+# Cloudflare - Security company, expect good headers
+https://www.cloudflare.com
+
+# Mozilla - Firefox maker, security-conscious
+https://www.mozilla.org
+
+# Anthropic - AI safety company
+https://www.anthropic.com
+
+# Troy Hunt's site - Security researcher, should be well-configured
+https://www.troyhunt.com
+
+# Have I Been Pwned - Security service
+https://haveibeenpwned.com
+
+# Let's Encrypt - Certificate authority
+https://letsencrypt.org
+
+# Electronic Frontier Foundation - Privacy advocates
+https://www.eff.org
+
+# Signal - Encrypted messaging, privacy-focused
+https://signal.org
+
+# -----------------------------------------------------------------------------
+# PUBLIC WEBSITES - Variable Security Configurations
+# Good for comparison - some may have gaps
+# -----------------------------------------------------------------------------
+
+# Wikipedia - Large public site
+https://www.wikipedia.org
+
+# Reddit - Social platform
+https://www.reddit.com
+
+# Stack Overflow - Developer Q&A
+https://stackoverflow.com
+
+# Medium - Blogging platform
+https://medium.com
+
+# Dev.to - Developer community (where you'll publish!)
+https://dev.to
+
+# Hacker News - Tech news
+https://news.ycombinator.com
+
+# Example.com - IANA example domain (minimal headers)
+https://example.com
+
+# HTTPBin - HTTP testing service (great for seeing raw responses)
+https://httpbin.org
+
+# -----------------------------------------------------------------------------
+# API ENDPOINTS - For CORS and API Header Analysis
+# These return JSON and have API-specific headers
+# -----------------------------------------------------------------------------
+
+# HTTPBin headers endpoint - Returns your request headers
+https://httpbin.org/headers
+
+# HTTPBin response headers - Customizable response
+https://httpbin.org/response-headers
+
+# JSONPlaceholder - Fake REST API for testing
+https://jsonplaceholder.typicode.com/posts
+
+# Cat Facts API - Simple public API
+https://catfact.ninja/fact
+
+# Dog CEO API - Random dog images
+https://dog.ceo/api/breeds/image/random
+
+# GitHub API (public endpoints)
+https://api.github.com
+
+# -----------------------------------------------------------------------------
+# SECURITY TESTING SERVICES - Sites that analyze YOUR security
+# Good to see how security scanners present information
+# -----------------------------------------------------------------------------
+
+# Security Headers scanner (check the site itself)
+https://securityheaders.com
+
+# Mozilla Observatory
+https://observatory.mozilla.org
+
+# SSL Labs (for TLS analysis concepts)
+https://www.ssllabs.com
+
+# Qualys SSL Test
+https://www.ssllabs.com/ssltest/
+
+# -----------------------------------------------------------------------------
+# GOVERNMENT / INSTITUTIONAL - Often have specific requirements
+# -----------------------------------------------------------------------------
+
+# USA.gov - US Government portal
+https://www.usa.gov
+
+# GOV.UK - UK Government
+https://www.gov.uk
+
+# CISA - Cybersecurity agency
+https://www.cisa.gov
+
+# NIST - Standards body
+https://www.nist.gov
+
+# -----------------------------------------------------------------------------
+# E-COMMERCE / FINANCIAL - Should have strong cookie security
+# Look for Secure, HttpOnly, SameSite on session cookies
+# -----------------------------------------------------------------------------
+
+# Stripe - Payment processor (excellent security)
+https://stripe.com
+
+# PayPal
+https://www.paypal.com
+
+# Shopify
+https://www.shopify.com
+
+# -----------------------------------------------------------------------------
+# TECH COMPANIES - Varied configurations
+# -----------------------------------------------------------------------------
+
+# Amazon
+https://www.amazon.com
+
+# Microsoft
+https://www.microsoft.com
+
+# Apple
+https://www.apple.com
+
+# Netflix
+https://www.netflix.com
+
+# Twitter/X
+https://twitter.com
+
+# LinkedIn
+https://www.linkedin.com
+
+
+https://example.com
+
+# -----------------------------------------------------------------------------
+# LOCAL TESTING (if you have these running)
+# Uncomment if you have local vulnerable labs set up
+# -----------------------------------------------------------------------------
+
+# http://localhost:8080
+# http://127.0.0.1:3000
+# http://localhost/dvwa
+# http://localhost/bwapp
+# http://localhost:4000/WebGoat
+
+# =============================================================================
+# NOTES FOR YOUR RECONNAISSANCE REPORT
+# =============================================================================
+#
+# When analyzing each site, document:
+#
+# 1. SERVER DISCLOSURE
+#    - Does Server header reveal version? (e.g., "nginx/1.18.0")
+#    - Is X-Powered-By present? (e.g., "PHP/7.4")
+#    - Any other technology fingerprints?
+#
+# 2. SECURITY HEADERS (Score out of 7)
+#    [ ] X-Frame-Options
+#    [ ] X-Content-Type-Options
+#    [ ] X-XSS-Protection
+#    [ ] Strict-Transport-Security
+#    [ ] Content-Security-Policy
+#    [ ] Referrer-Policy
+#    [ ] Permissions-Policy
+#
+# 3. COOKIE SECURITY
+#    - Session cookies have HttpOnly?
+#    - Session cookies have Secure?
+#    - SameSite attribute set?
+#
+# 4. CORS CONFIGURATION
+#    - Is Access-Control-Allow-Origin set?
+#    - If *, is Allow-Credentials also true? (VULNERABILITY!)
+#
+# 5. INTERESTING FINDINGS
+#    - Rate limiting headers?
+#    - Custom headers revealing architecture?
+#    - Cache configuration?
+#
+# =============================================================================
+# REMEMBER: PASSIVE RECONNAISSANCE ONLY
+# =============================================================================
+# This exercise is about READING responses, not attacking.
+# Never send:
+# - SQL injection payloads
+# - XSS attempts
+# - Authentication brute force
+# - Fuzzing requests
+# - Any malicious content
+#
+# You are simply making normal GET requests and analyzing the response.
+# This is equivalent to visiting the site in a browser and viewing headers.
+# =============================================================================

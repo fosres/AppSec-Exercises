@@ -1,0 +1,3 @@
+Okay. So here is what we are going to do. We are going to get rid of the "Shadowing" from the blog post and keep the word "Conflict". The definition of "Conflict" is "Earlier terminating rule makes later rule unreachable due to different terminating actions (e.g. ACCEPT vs DROP, etc...)"
+
+I hereby attach the current draft of the blog post. Please revise according to my instructions.
