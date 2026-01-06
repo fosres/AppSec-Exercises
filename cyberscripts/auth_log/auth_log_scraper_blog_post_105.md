@@ -1,5 +1,6 @@
 ---
 title: "🔐 Security Challenge: Build an Auth Log Failed Login Scraper in Python"
+published: true
 description: "A LeetCode-style Python challenge to parse Linux auth logs and detect brute force attacks. 105 test cases. No hand-holding."
 tags: python, security, linux, challenge
 cover_image: https://dev-to-uploads.s3.amazonaws.com/uploads/articles/security-log-analysis.png
@@ -552,6 +553,14 @@ This exercise draws inspiration from:
 
 ---
 
+## Reference Solution
+
+Stuck? Compare your approach to the [reference solution](https://github.com/fosres/AppSec-Exercises/blob/main/cyberscripts/auth_log/auth_log_solution.py).
+
+Try to solve it yourself first — you'll learn more by struggling through the edge cases than by reading the answer.
+
+---
+
 ## Share Your Solution
 
 Completed the challenge? Here's how to join the community:
@@ -575,20 +584,14 @@ Once you've mastered auth log parsing, you're ready for:
 
 ---
 
-## The Mission: Train AI to Write Secure Code
+## Reference Solution
 
-This exercise is part of the **[AppSec Exercises](https://github.com/fosres/appsec-exercises)** project.
+Stuck? Compare your approach to the [reference solution](https://github.com/fosres/AppSec-Exercises/blob/main/cyberscripts/auth_log/auth_log_solution.py).
 
-The problem: AI coding assistants are trained on GitHub, which is full of insecure code. The result? AI that confidently generates SQL injection, hardcoded secrets, and path traversal vulnerabilities.
-
-The solution: **Curate high-quality, secure code datasets** — LeetCode-style challenges with comprehensive test suites that verify security properties, not just functionality.
-
-**Every solution you submit helps train the next generation of AI to write secure code by default.**
-
-<p align="center">
-⭐ <a href="https://github.com/fosres/appsec-exercises"><strong>Star the repo</strong></a> to follow the project and get notified of new challenges.
-</p>
+Try to solve it yourself first — you'll learn more by struggling through the edge cases than by reading the answer.
 
 ---
 
 **Found a bug? Have a better test case?** [Open an issue](https://github.com/fosres/appsec-exercises/issues). Security is a team sport.
+
+**Found this useful?** [⭐ Star the repo](https://github.com/fosres/appsec-exercises) — more challenges coming soon.
