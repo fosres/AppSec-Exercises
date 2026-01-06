@@ -1,0 +1,71 @@
+Jan  5 00:22:56 server sshd[25400]: Connection closed by 192.168.1.185 port 48349 [preauth]
+Jan  5 00:38:15 server sshd[70660]: Accepted publickey for deploy from 192.168.1.10 port 29208 ssh2
+Jan  5 01:05:07 server sshd[72359]: Accepted password for www-data from 192.168.1.10 port 33246 ssh2
+Jan  5 01:07:32 server sshd[83178]: Accepted publickey for ec2-user from 172.16.0.100 port 48476 ssh2
+Jan  5 01:10:20 server sshd[98163]: Accepted password for jenkins from 10.0.0.51 port 56844 ssh2
+Jan  5 01:58:46 server sshd[49516]: Connection closed by 192.168.1.164 port 38325 [preauth]
+Jan  5 02:07:31 server sshd[77919]: Accepted publickey for www-data from 10.0.0.51 port 59550 ssh2
+Jan  5 02:16:43 server CRON[27707]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 02:33:32 server sshd[21147]: Connection closed by 192.168.1.231 port 48916 [preauth]
+Jan  5 02:35:16 server sshd[53436]: Accepted publickey for ec2-user from 172.16.0.100 port 51888 ssh2
+Jan  5 02:40:46 server sshd[74877]: Accepted password for ec2-user from 10.0.0.51 port 64452 ssh2
+Jan  5 02:47:18 server sshd[65598]: Connection closed by 192.168.1.142 port 22700 [preauth]
+Jan  5 03:08:20 server sshd[60969]: Accepted password for www-data from 10.0.0.50 port 64902 ssh2
+Jan  5 03:43:50 server sshd[90056]: pam_unix(sshd:session): session opened for user ubuntu(uid=4447) by (uid=0)
+Jan  5 03:58:31 server sshd[21398]: Connection closed by 192.168.1.2 port 38392 [preauth]
+Jan  5 04:36:13 server CRON[34654]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 05:04:23 server sshd[18474]: Connection closed by 192.168.1.215 port 55664 [preauth]
+Jan  5 05:36:08 server sshd[19982]: Accepted password for jenkins from 172.16.0.100 port 35747 ssh2
+Jan  5 05:59:03 server sshd[24544]: pam_unix(sshd:session): session opened for user deploy(uid=4870) by (uid=0)
+Jan  5 06:09:19 server CRON[73361]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 06:37:22 server CRON[56314]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 06:51:47 server sshd[96152]: Accepted password for ubuntu from 10.0.0.50 port 59727 ssh2
+Jan  5 07:02:07 server sshd[40674]: pam_unix(sshd:session): session opened for user ubuntu(uid=3817) by (uid=0)
+Jan  5 07:24:06 server CRON[96463]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 07:30:25 server sshd[40227]: Connection closed by 192.168.1.96 port 45887 [preauth]
+Jan  5 08:00:43 server sshd[19700]: Accepted publickey for www-data from 10.0.0.51 port 46825 ssh2
+Jan  5 08:09:55 server sshd[13838]: Accepted publickey for ubuntu from 192.168.1.10 port 46717 ssh2
+Jan  5 08:27:33 server sshd[95170]: Connection closed by 192.168.1.242 port 36992 [preauth]
+Jan  5 08:40:41 server sshd[16728]: Accepted publickey for jenkins from 192.168.1.10 port 29643 ssh2
+Jan  5 09:30:18 server sshd[28926]: Connection closed by 192.168.1.68 port 22146 [preauth]
+Jan  5 09:37:52 server CRON[46731]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 09:40:54 server sshd[41063]: Connection closed by 192.168.1.23 port 48641 [preauth]
+Jan  5 10:27:43 server sshd[52257]: pam_unix(sshd:session): session opened for user jenkins(uid=1294) by (uid=0)
+Jan  5 10:54:05 server sshd[11416]: Connection closed by 192.168.1.163 port 27026 [preauth]
+Jan  5 11:00:06 server sshd[65493]: Connection closed by 192.168.1.111 port 34946 [preauth]
+Jan  5 11:03:27 server sshd[50688]: Connection closed by 192.168.1.127 port 33172 [preauth]
+Jan  5 11:07:21 server sshd[90006]: Connection closed by 192.168.1.234 port 38368 [preauth]
+Jan  5 12:35:52 server sshd[69013]: Accepted publickey for www-data from 172.16.0.100 port 60320 ssh2
+Jan  5 13:42:00 server sshd[69084]: Accepted publickey for ubuntu from 192.168.1.10 port 41228 ssh2
+Jan  5 13:43:32 server sshd[96787]: Connection closed by 192.168.1.239 port 30940 [preauth]
+Jan  5 13:57:11 server sshd[36321]: Connection closed by 192.168.1.138 port 29123 [preauth]
+Jan  5 14:22:01 server sshd[75391]: Failed password for root from 192.168.1.1 port 39522 ssh2
+Jan  5 14:22:51 server sshd[66828]: Connection closed by 192.168.1.120 port 40797 [preauth]
+Jan  5 15:31:32 server sshd[89706]: Connection closed by 192.168.1.176 port 56891 [preauth]
+Jan  5 16:38:10 server sshd[57836]: Accepted password for jenkins from 10.0.0.51 port 46834 ssh2
+Jan  5 16:46:18 server CRON[52612]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 17:38:56 server CRON[17721]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 17:45:52 server sshd[24680]: Accepted publickey for deploy from 10.0.0.51 port 61262 ssh2
+Jan  5 17:54:49 server sshd[16448]: Connection closed by 192.168.1.220 port 41009 [preauth]
+Jan  5 18:30:17 server sshd[64463]: pam_unix(sshd:session): session opened for user deploy(uid=3640) by (uid=0)
+Jan  5 19:11:41 server sshd[86237]: pam_unix(sshd:session): session opened for user jenkins(uid=2565) by (uid=0)
+Jan  5 19:29:21 server sshd[47385]: Connection closed by 192.168.1.77 port 29023 [preauth]
+Jan  5 19:34:32 server sshd[32077]: Accepted publickey for ubuntu from 10.0.0.50 port 24407 ssh2
+Jan  5 19:54:31 server sshd[47628]: Connection closed by 192.168.1.15 port 22386 [preauth]
+Jan  5 20:32:52 server sshd[5643]: Connection closed by 192.168.1.229 port 52346 [preauth]
+Jan  5 21:34:28 server sshd[69506]: Accepted password for ubuntu from 172.16.0.100 port 45076 ssh2
+Jan  5 21:35:26 server sshd[48555]: Accepted publickey for deploy from 192.168.1.10 port 43857 ssh2
+Jan  5 21:38:02 server sshd[59805]: Connection closed by 192.168.1.156 port 33044 [preauth]
+Jan  5 21:38:26 server sshd[61003]: Connection closed by 192.168.1.181 port 33999 [preauth]
+Jan  5 21:58:54 server CRON[52417]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 21:59:56 server sshd[69618]: Connection closed by 192.168.1.196 port 36750 [preauth]
+Jan  5 22:07:25 server sshd[81777]: Connection closed by 192.168.1.4 port 34463 [preauth]
+Jan  5 22:11:00 server sshd[17127]: Accepted password for www-data from 172.16.0.100 port 24565 ssh2
+Jan  5 22:27:19 server sshd[43628]: Accepted publickey for www-data from 10.0.0.51 port 26161 ssh2
+Jan  5 22:36:55 server CRON[13984]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 22:47:03 server sshd[40203]: pam_unix(sshd:session): session opened for user ubuntu(uid=4338) by (uid=0)
+Jan  5 22:58:55 server sshd[92847]: pam_unix(sshd:session): session opened for user www-data(uid=1080) by (uid=0)
+Jan  5 23:00:45 server sshd[93090]: Connection closed by 192.168.1.109 port 57017 [preauth]
+Jan  5 23:15:05 server sshd[76407]: Connection closed by 192.168.1.43 port 25762 [preauth]
+Jan  5 23:22:15 server sshd[97859]: Connection closed by 192.168.1.255 port 56610 [preauth]
+Jan  5 23:40:36 server sshd[29503]: Connection closed by 192.168.1.101 port 41976 [preauth]

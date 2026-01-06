@@ -1,0 +1,61 @@
+Jan  5 00:01:17 server sshd[57650]: Accepted password for jenkins from 10.0.0.50 port 42006 ssh2
+Jan  5 00:07:51 server sshd[60287]: pam_unix(sshd:session): session opened for user ubuntu(uid=4513) by (uid=0)
+Jan  5 01:01:39 server sshd[84950]: Accepted publickey for www-data from 172.16.0.100 port 49705 ssh2
+Jan  5 01:17:07 server CRON[84857]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 01:20:43 server sshd[12622]: Accepted password for deploy from 10.0.0.51 port 64356 ssh2
+Jan  5 01:21:00 server CRON[3754]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 01:45:17 server sshd[11639]: Accepted publickey for ubuntu from 192.168.1.10 port 22066 ssh2
+Jan  5 01:55:41 server sshd[81486]: Accepted publickey for jenkins from 10.0.0.51 port 22183 ssh2
+Jan  5 02:55:09 server sshd[68255]: Accepted publickey for ubuntu from 10.0.0.51 port 54118 ssh2
+Jan  5 02:57:20 server sshd[78386]: Accepted password for ec2-user from 172.16.0.100 port 45260 ssh2
+Jan  5 03:40:08 server CRON[86438]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 03:41:15 server sshd[43736]: pam_unix(sshd:session): session opened for user jenkins(uid=1229) by (uid=0)
+Jan  5 03:50:01 server CRON[57958]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 04:46:42 server sshd[51050]: Accepted password for deploy from 10.0.0.50 port 51234 ssh2
+Jan  5 04:49:31 server sshd[60043]: Accepted password for jenkins from 10.0.0.50 port 36976 ssh2
+Jan  5 05:25:41 server sshd[50609]: pam_unix(sshd:session): session opened for user ec2-user(uid=3844) by (uid=0)
+Jan  5 05:31:33 server CRON[74800]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 05:42:16 server sshd[87026]: Accepted publickey for ubuntu from 172.16.0.100 port 23722 ssh2
+Jan  5 05:46:35 server sshd[38615]: pam_unix(sshd:session): session opened for user jenkins(uid=3766) by (uid=0)
+Jan  5 06:03:59 server sshd[47087]: Accepted publickey for www-data from 172.16.0.100 port 25680 ssh2
+Jan  5 06:46:08 server sshd[40434]: pam_unix(sshd:session): session opened for user www-data(uid=1342) by (uid=0)
+Jan  5 08:17:53 server sshd[11115]: pam_unix(sshd:session): session opened for user ec2-user(uid=3536) by (uid=0)
+Jan  5 09:16:41 server sshd[78819]: Accepted publickey for www-data from 192.168.1.10 port 58994 ssh2
+Jan  5 09:29:23 server sshd[98786]: Accepted password for jenkins from 172.16.0.100 port 52014 ssh2
+Jan  5 09:38:16 server CRON[9507]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 10:06:38 server sshd[65816]: Accepted publickey for ubuntu from 192.168.1.10 port 58682 ssh2
+Jan  5 10:57:13 server CRON[28288]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 11:40:03 server sshd[3673]: Accepted publickey for ubuntu from 10.0.0.50 port 24840 ssh2
+Jan  5 11:56:52 server sshd[1655]: Accepted publickey for www-data from 172.16.0.100 port 45005 ssh2
+Jan  5 12:42:17 server sshd[83967]: Accepted publickey for ec2-user from 172.16.0.100 port 39216 ssh2
+Jan  5 12:43:03 server sshd[81725]: Accepted password for www-data from 172.16.0.100 port 49537 ssh2
+Jan  5 12:49:11 server CRON[89647]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 12:56:04 server sshd[61921]: Accepted publickey for www-data from 172.16.0.100 port 46868 ssh2
+Jan  5 13:40:15 server sshd[16487]: Accepted password for jenkins from 10.0.0.50 port 64838 ssh2
+Jan  5 13:48:44 server sshd[93140]: Accepted password for ubuntu from 10.0.0.50 port 53800 ssh2
+Jan  5 13:51:25 server sshd[13090]: Accepted publickey for jenkins from 172.16.0.100 port 43816 ssh2
+Jan  5 13:55:46 server sshd[63509]: Accepted publickey for jenkins from 10.0.0.50 port 52578 ssh2
+Jan  5 14:00:00 server sshd[20937]: Failed publickey for invalid user 12345 from 1.1.1.1 port 61932 ssh2: ECDSA SHA256:4f6d0f58f84a4a7af5740335b8679922
+Jan  5 14:08:01 server CRON[14816]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 14:14:53 server sshd[39841]: Accepted password for deploy from 192.168.1.10 port 32807 ssh2
+Jan  5 14:20:28 server sshd[41695]: Accepted publickey for www-data from 10.0.0.51 port 64664 ssh2
+Jan  5 15:07:54 server sshd[16958]: pam_unix(sshd:session): session opened for user deploy(uid=2627) by (uid=0)
+Jan  5 16:04:57 server sshd[57216]: Accepted publickey for ec2-user from 192.168.1.10 port 63856 ssh2
+Jan  5 16:11:44 server sshd[75695]: Accepted publickey for ubuntu from 10.0.0.50 port 50853 ssh2
+Jan  5 16:58:32 server sshd[60673]: Accepted password for ubuntu from 192.168.1.10 port 44820 ssh2
+Jan  5 17:11:18 server CRON[85221]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 17:33:19 server CRON[71668]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 17:38:00 server sshd[20520]: pam_unix(sshd:session): session opened for user jenkins(uid=3370) by (uid=0)
+Jan  5 18:17:42 server sshd[49981]: Accepted publickey for ubuntu from 10.0.0.51 port 59359 ssh2
+Jan  5 18:18:26 server CRON[82517]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 18:56:05 server sshd[71111]: pam_unix(sshd:session): session opened for user deploy(uid=3443) by (uid=0)
+Jan  5 19:03:14 server sshd[44471]: Accepted publickey for jenkins from 172.16.0.100 port 59760 ssh2
+Jan  5 19:04:23 server sshd[50965]: Accepted password for deploy from 10.0.0.50 port 60024 ssh2
+Jan  5 19:25:33 server sshd[59588]: Accepted publickey for jenkins from 172.16.0.100 port 38622 ssh2
+Jan  5 19:30:20 server sshd[98892]: Accepted publickey for ubuntu from 10.0.0.50 port 44800 ssh2
+Jan  5 20:01:55 server sshd[44832]: pam_unix(sshd:session): session opened for user jenkins(uid=1902) by (uid=0)
+Jan  5 21:12:35 server CRON[94922]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 21:30:28 server sshd[14619]: Accepted password for www-data from 172.16.0.100 port 60956 ssh2
+Jan  5 21:40:26 server sshd[85811]: Accepted publickey for www-data from 192.168.1.10 port 51143 ssh2
+Jan  5 23:09:15 server CRON[39923]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 23:33:04 server CRON[21890]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)

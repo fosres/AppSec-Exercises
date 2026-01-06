@@ -1,6 +1,5 @@
 ---
 title: "Week 4 Scripting Exercise: Build a Web Reconnaissance Report Generator"
-published: false
 description: "Build a Python tool to scrape security-relevant information from websites - HTTP headers, cookies, server versions, security configurations. A practical exercise from Grace Nolan's Security Engineering Interview Notes."
 tags: appsec, security, python, scripting
 ---
@@ -470,6 +469,44 @@ When complete, your deliverables should include:
 
 ---
 
+## 🔍 Reference Solution
+
+Stuck? Want to compare your approach?
+
+**[View the reference solution on GitHub →](https://github.com/fosres/AppSec-Exercises/blob/main/cyberscripts/networking/web_scraping/web_recon.py)**
+
+> ⚠️ **Try it yourself first!** The learning happens in the struggle. Only check the solution after you've attempted the exercise or if you're completely stuck.
+
+The reference solution scores **91/100** and demonstrates:
+- File-based URL input with comment skipping
+- Complete security header analysis (7/7 headers)
+- Cookie parsing with HttpOnly, Secure, and SameSite extraction
+- CORS misconfiguration detection
+- Severity-categorized findings (CRITICAL/MEDIUM/INFO)
+- Security Header Score and Cookie Security Score calculations
+
+### Usage
+
+```bash
+# Scan multiple URLs from a file
+python3 web_recon.py practice_urls.txt
+
+# Scan a single URL directly
+python3 web_recon.py https://example.com
+```
+
+**File format (`practice_urls.txt`):**
+```
+# Lines starting with # are comments
+https://github.com
+https://example.com
+https://stripe.com
+```
+
+> **Note:** The reference solution accepts a file of URLs. You can implement yours to accept either a file or a single URL directly.
+
+---
+
 ## Resources
 
 ### Primary Sources
@@ -528,6 +565,7 @@ The curriculum includes:
 
 Built your recon tool? I'd love to see it!
 
+- **[Compare with the reference solution](https://github.com/fosres/AppSec-Exercises/blob/main/cyberscripts/networking/web_scraping/web_recon.py)** - See how your approach differs
 - Tweet your output with **#SecurityEngineering** and tag me
 - Open a PR to add your solution to the community solutions folder
 - Post interesting findings (from authorized testing only!) in the discussions

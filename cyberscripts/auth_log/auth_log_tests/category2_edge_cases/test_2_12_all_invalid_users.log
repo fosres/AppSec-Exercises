@@ -1,0 +1,58 @@
+Jan  5 00:09:54 server sshd[21736]: pam_unix(sshd:session): session opened for user deploy(uid=3335) by (uid=0)
+Jan  5 00:23:52 server sshd[41234]: Accepted password for ec2-user from 10.0.0.50 port 54904 ssh2
+Jan  5 00:35:50 server sshd[95728]: Accepted publickey for www-data from 10.0.0.51 port 59911 ssh2
+Jan  5 01:13:47 server CRON[22771]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 01:23:54 server sshd[82223]: pam_unix(sshd:session): session opened for user ec2-user(uid=4756) by (uid=0)
+Jan  5 01:36:50 server sshd[42232]: Accepted publickey for jenkins from 10.0.0.50 port 28108 ssh2
+Jan  5 01:47:08 server sshd[97086]: pam_unix(sshd:session): session opened for user deploy(uid=1107) by (uid=0)
+Jan  5 02:13:38 server sshd[73311]: Accepted password for deploy from 192.168.1.10 port 35220 ssh2
+Jan  5 02:15:04 server sshd[24910]: Accepted publickey for deploy from 172.16.0.100 port 52786 ssh2
+Jan  5 02:20:21 server sshd[93050]: Accepted password for www-data from 172.16.0.100 port 53209 ssh2
+Jan  5 02:56:40 server sshd[90320]: Accepted password for deploy from 10.0.0.51 port 64874 ssh2
+Jan  5 03:17:29 server sshd[20072]: pam_unix(sshd:session): session opened for user deploy(uid=3622) by (uid=0)
+Jan  5 04:49:45 server sshd[18196]: pam_unix(sshd:session): session opened for user ubuntu(uid=2388) by (uid=0)
+Jan  5 04:58:07 server sshd[19264]: Accepted password for deploy from 192.168.1.10 port 41313 ssh2
+Jan  5 05:59:18 server sshd[76564]: Accepted password for ubuntu from 10.0.0.50 port 45811 ssh2
+Jan  5 06:20:36 server sshd[48381]: Accepted publickey for deploy from 172.16.0.100 port 50187 ssh2
+Jan  5 07:23:00 server sshd[74187]: Accepted password for ubuntu from 10.0.0.50 port 53059 ssh2
+Jan  5 07:25:11 server sshd[63575]: pam_unix(sshd:session): session opened for user www-data(uid=2282) by (uid=0)
+Jan  5 09:00:22 server CRON[26543]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 09:10:12 server sshd[63324]: pam_unix(sshd:session): session opened for user ec2-user(uid=3193) by (uid=0)
+Jan  5 09:23:39 server sshd[32340]: pam_unix(sshd:session): session opened for user jenkins(uid=1855) by (uid=0)
+Jan  5 09:35:55 server sshd[60612]: Accepted publickey for deploy from 172.16.0.100 port 42559 ssh2
+Jan  5 09:45:14 server sshd[13050]: Accepted password for jenkins from 10.0.0.51 port 56177 ssh2
+Jan  5 09:55:45 server CRON[29063]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 10:01:15 server CRON[14954]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 10:28:50 server sshd[21432]: Accepted publickey for deploy from 192.168.1.10 port 25932 ssh2
+Jan  5 10:48:25 server sshd[44426]: Accepted publickey for ec2-user from 10.0.0.51 port 48691 ssh2
+Jan  5 11:05:04 server sshd[63031]: Accepted password for ubuntu from 172.16.0.100 port 38778 ssh2
+Jan  5 11:29:29 server sshd[12248]: Accepted publickey for www-data from 172.16.0.100 port 33814 ssh2
+Jan  5 12:08:47 server CRON[8339]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 12:54:04 server sshd[88706]: pam_unix(sshd:session): session opened for user ubuntu(uid=1382) by (uid=0)
+Jan  5 13:12:17 server sshd[48540]: Accepted publickey for deploy from 10.0.0.50 port 61530 ssh2
+Jan  5 14:09:53 server sshd[28621]: Accepted password for www-data from 172.16.0.100 port 36718 ssh2
+Jan  5 14:22:10 server sshd[92660]: Failed password for invalid user hack1 from 1.1.1.1 port 54711 ssh2
+Jan  5 14:22:20 server sshd[54790]: Failed publickey for invalid user hack2 from 1.1.1.2 port 45050 ssh2: ED25519 SHA256:588c1262986db649edfc1a967ce17904
+Jan  5 14:22:30 server sshd[30213]: Failed publickey for invalid user hack3 from 1.1.1.3 port 51794 ssh2: RSA SHA256:81df5c7eac6fc84a4eea0e00cd8b5296
+Jan  5 14:41:59 server CRON[64997]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 14:53:54 server CRON[13772]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 15:13:03 server sshd[36369]: pam_unix(sshd:session): session opened for user ubuntu(uid=2032) by (uid=0)
+Jan  5 15:37:55 server sshd[20862]: Accepted publickey for deploy from 192.168.1.10 port 52350 ssh2
+Jan  5 15:53:38 server sshd[48873]: Accepted publickey for ubuntu from 10.0.0.50 port 31258 ssh2
+Jan  5 15:55:20 server sshd[69248]: Accepted password for deploy from 172.16.0.100 port 22240 ssh2
+Jan  5 16:28:16 server sshd[92717]: Accepted password for deploy from 10.0.0.50 port 58752 ssh2
+Jan  5 19:09:20 server sshd[61117]: Accepted publickey for ec2-user from 10.0.0.50 port 31665 ssh2
+Jan  5 19:24:13 server sshd[90080]: Accepted password for ec2-user from 10.0.0.51 port 59803 ssh2
+Jan  5 19:38:04 server sshd[2958]: Accepted publickey for ubuntu from 172.16.0.100 port 31346 ssh2
+Jan  5 20:02:38 server sshd[52955]: Accepted publickey for ubuntu from 10.0.0.51 port 49762 ssh2
+Jan  5 20:11:05 server sshd[54093]: Accepted password for ubuntu from 10.0.0.50 port 27354 ssh2
+Jan  5 20:41:25 server sshd[49690]: Accepted publickey for jenkins from 10.0.0.51 port 64378 ssh2
+Jan  5 20:59:02 server sshd[75727]: Accepted publickey for ubuntu from 192.168.1.10 port 59014 ssh2
+Jan  5 21:08:28 server sshd[11943]: Accepted password for ec2-user from 192.168.1.10 port 49079 ssh2
+Jan  5 21:56:29 server CRON[66781]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 21:57:16 server sshd[57168]: Accepted publickey for ubuntu from 10.0.0.50 port 44414 ssh2
+Jan  5 22:27:23 server CRON[10669]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 22:50:10 server CRON[52005]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan  5 23:06:58 server sshd[53628]: Accepted password for jenkins from 172.16.0.100 port 43543 ssh2
+Jan  5 23:08:47 server sshd[54939]: pam_unix(sshd:session): session opened for user www-data(uid=3959) by (uid=0)
+Jan  5 23:32:06 server sshd[77962]: Accepted publickey for www-data from 10.0.0.51 port 47042 ssh2

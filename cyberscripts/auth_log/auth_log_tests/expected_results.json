@@ -1,0 +1,3435 @@
+{
+  "test_1_01_single_password_failure": {
+    "attempts_by_ip": {
+      "192.168.1.100": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.100"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "192.168.1.100"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_1_02_single_publickey_failure": {
+    "attempts_by_ip": {
+      "192.168.1.100": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.100"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "192.168.1.100"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_1_03_mixed_auth_same_ip": {
+    "attempts_by_ip": {
+      "192.168.1.100": 4
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "guest": 1,
+      "root": 1,
+      "test": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:45",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.100"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "guest",
+      "root",
+      "test"
+    ],
+    "total_failed": 4,
+    "unique_ips": [
+      "192.168.1.100"
+    ],
+    "unique_users": [
+      "admin",
+      "guest",
+      "root",
+      "test"
+    ]
+  },
+  "test_1_04_same_user_both_methods": {
+    "attempts_by_ip": {
+      "10.0.0.1": 1,
+      "172.16.0.1": 1,
+      "192.168.1.1": 1
+    },
+    "attempts_by_user": {
+      "root": 3
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:24:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "10.0.0.1",
+      "172.16.0.1",
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "10.0.0.1",
+      "172.16.0.1",
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_1_05_valid_invalid_users": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "2.2.2.2": 1,
+      "3.3.3.3": 1,
+      "4.4.4.4": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "attacker": 1,
+      "h4ck3r": 1,
+      "root": 1
+    },
+    "first_failure": "Jan 5 10:00:00",
+    "last_failure": "Jan 5 13:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3",
+      "4.4.4.4"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "attacker",
+      "h4ck3r",
+      "root"
+    ],
+    "total_failed": 4,
+    "unique_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3",
+      "4.4.4.4"
+    ],
+    "unique_users": [
+      "admin",
+      "attacker",
+      "h4ck3r",
+      "root"
+    ]
+  },
+  "test_1_06_time_boundaries": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "2.2.2.2": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 1
+    },
+    "first_failure": "Jan 5 00:00:01",
+    "last_failure": "Jan 5 23:59:59",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "2.2.2.2"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "1.1.1.1",
+      "2.2.2.2"
+    ],
+    "unique_users": [
+      "admin",
+      "root"
+    ]
+  },
+  "test_1_07_five_failures": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1,
+      "1.1.1.4": 1,
+      "1.1.1.5": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "oracle": 1,
+      "root": 1,
+      "test": 1,
+      "user": 1
+    },
+    "first_failure": "Jan 5 10:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3",
+      "1.1.1.4",
+      "1.1.1.5"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "oracle",
+      "root",
+      "test",
+      "user"
+    ],
+    "total_failed": 5,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3",
+      "1.1.1.4",
+      "1.1.1.5"
+    ],
+    "unique_users": [
+      "admin",
+      "oracle",
+      "root",
+      "test",
+      "user"
+    ]
+  },
+  "test_1_08_ips_need_sorting": {
+    "attempts_by_ip": {
+      "10.0.0.1": 1,
+      "172.16.0.1": 1,
+      "192.168.1.100": 1
+    },
+    "attempts_by_user": {
+      "root": 3
+    },
+    "first_failure": "Jan 5 14:22:10",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "10.0.0.1",
+      "172.16.0.1",
+      "192.168.1.100"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "10.0.0.1",
+      "172.16.0.1",
+      "192.168.1.100"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_1_09_users_need_sorting": {
+    "attempts_by_ip": {
+      "1.1.1.1": 3
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 1,
+      "zebra": 1
+    },
+    "first_failure": "Jan 5 14:22:10",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "root",
+      "zebra"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "admin",
+      "root",
+      "zebra"
+    ]
+  },
+  "test_1_10_count_by_ip": {
+    "attempts_by_ip": {
+      "10.0.0.1": 1,
+      "192.168.1.1": 2
+    },
+    "attempts_by_user": {
+      "root": 3
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:03",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "10.0.0.1",
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_1_11_count_by_user": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 2
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:03",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "unique_users": [
+      "admin",
+      "root"
+    ]
+  },
+  "test_1_12_different_hostnames": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 1,
+      "test": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:02:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "root",
+      "test"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "unique_users": [
+      "admin",
+      "root",
+      "test"
+    ]
+  },
+  "test_1_13_different_ports": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 1,
+      "test": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:02:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "root",
+      "test"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "unique_users": [
+      "admin",
+      "root",
+      "test"
+    ]
+  },
+  "test_1_14_multi_hour_attack": {
+    "attempts_by_ip": {
+      "192.168.1.1": 3
+    },
+    "attempts_by_user": {
+      "root": 3
+    },
+    "first_failure": "Jan 5 09:00:00",
+    "last_failure": "Jan 5 18:45:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_1_15_ten_failures_timeline": {
+    "attempts_by_ip": {
+      "192.168.1.1": 10
+    },
+    "attempts_by_user": {
+      "root": 10
+    },
+    "first_failure": "Jan 5 10:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [
+      "192.168.1.1"
+    ],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 10,
+    "unique_ips": [
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_2_01_empty_file": {
+    "attempts_by_ip": {},
+    "attempts_by_user": {},
+    "first_failure": null,
+    "last_failure": null,
+    "potential_brute_force": [],
+    "top_offender_ips": [],
+    "top_targeted_users": [],
+    "total_failed": 0,
+    "unique_ips": [],
+    "unique_users": []
+  },
+  "test_2_02_only_successful": {
+    "attempts_by_ip": {},
+    "attempts_by_user": {},
+    "first_failure": null,
+    "last_failure": null,
+    "potential_brute_force": [],
+    "top_offender_ips": [],
+    "top_targeted_users": [],
+    "total_failed": 0,
+    "unique_ips": [],
+    "unique_users": []
+  },
+  "test_2_03_only_non_ssh": {
+    "attempts_by_ip": {},
+    "attempts_by_user": {},
+    "first_failure": null,
+    "last_failure": null,
+    "potential_brute_force": [],
+    "top_offender_ips": [],
+    "top_targeted_users": [],
+    "total_failed": 0,
+    "unique_ips": [],
+    "unique_users": []
+  },
+  "test_2_04_single_char_user": {
+    "attempts_by_ip": {
+      "192.168.1.1": 1
+    },
+    "attempts_by_user": {
+      "a": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "a"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "a"
+    ]
+  },
+  "test_2_05_long_username": {
+    "attempts_by_ip": {
+      "192.168.1.1": 1
+    },
+    "attempts_by_user": {
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    ]
+  },
+  "test_2_06_blank_lines": {
+    "attempts_by_ip": {
+      "192.168.1.1": 1,
+      "192.168.1.2": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.1",
+      "192.168.1.2"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "192.168.1.1",
+      "192.168.1.2"
+    ],
+    "unique_users": [
+      "admin",
+      "root"
+    ]
+  },
+  "test_2_07_malformed_lines": {
+    "attempts_by_ip": {
+      "192.168.1.1": 1,
+      "192.168.1.2": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.1",
+      "192.168.1.2"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "192.168.1.1",
+      "192.168.1.2"
+    ],
+    "unique_users": [
+      "admin",
+      "root"
+    ]
+  },
+  "test_2_08_key_enumeration": {
+    "attempts_by_ip": {
+      "10.0.0.1": 10
+    },
+    "attempts_by_user": {
+      "git": 10
+    },
+    "first_failure": "Jan 5 14:30:00",
+    "last_failure": "Jan 5 14:39:00",
+    "potential_brute_force": [
+      "10.0.0.1"
+    ],
+    "top_offender_ips": [
+      "10.0.0.1"
+    ],
+    "top_targeted_users": [
+      "git"
+    ],
+    "total_failed": 10,
+    "unique_ips": [
+      "10.0.0.1"
+    ],
+    "unique_users": [
+      "git"
+    ]
+  },
+  "test_2_09_password_brute_force": {
+    "attempts_by_ip": {
+      "10.0.0.2": 10
+    },
+    "attempts_by_user": {
+      "root": 10
+    },
+    "first_failure": "Jan 5 14:30:00",
+    "last_failure": "Jan 5 14:39:00",
+    "potential_brute_force": [
+      "10.0.0.2"
+    ],
+    "top_offender_ips": [
+      "10.0.0.2"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 10,
+    "unique_ips": [
+      "10.0.0.2"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_2_10_connection_closed": {
+    "attempts_by_ip": {
+      "192.168.1.1": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_2_11_mixed_success_failure": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "172.16.0.1": 1,
+      "192.168.1.1": 1
+    },
+    "attempts_by_user": {
+      "oracle": 1,
+      "root": 1,
+      "test": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:45",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "172.16.0.1",
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "oracle",
+      "root",
+      "test"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "172.16.0.1",
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "oracle",
+      "root",
+      "test"
+    ]
+  },
+  "test_2_12_all_invalid_users": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1
+    },
+    "attempts_by_user": {
+      "hack1": 1,
+      "hack2": 1,
+      "hack3": 1
+    },
+    "first_failure": "Jan 5 14:22:10",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "top_targeted_users": [
+      "hack1",
+      "hack2",
+      "hack3"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "unique_users": [
+      "hack1",
+      "hack2",
+      "hack3"
+    ]
+  },
+  "test_2_13_all_valid_users": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "postgres": 1,
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:10",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "postgres",
+      "root"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "unique_users": [
+      "admin",
+      "postgres",
+      "root"
+    ]
+  },
+  "test_2_14_single_digit_day": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_2_15_large_file": {
+    "attempts_by_ip": {
+      "10.0.0.0": 1,
+      "10.0.0.1": 1,
+      "10.0.0.10": 1,
+      "10.0.0.11": 1,
+      "10.0.0.12": 1,
+      "10.0.0.13": 1,
+      "10.0.0.14": 1,
+      "10.0.0.15": 1,
+      "10.0.0.16": 1,
+      "10.0.0.17": 1,
+      "10.0.0.18": 1,
+      "10.0.0.19": 1,
+      "10.0.0.2": 1,
+      "10.0.0.20": 1,
+      "10.0.0.21": 1,
+      "10.0.0.22": 1,
+      "10.0.0.23": 1,
+      "10.0.0.24": 1,
+      "10.0.0.25": 1,
+      "10.0.0.26": 1,
+      "10.0.0.27": 1,
+      "10.0.0.28": 1,
+      "10.0.0.29": 1,
+      "10.0.0.3": 1,
+      "10.0.0.30": 1,
+      "10.0.0.31": 1,
+      "10.0.0.32": 1,
+      "10.0.0.33": 1,
+      "10.0.0.34": 1,
+      "10.0.0.35": 1,
+      "10.0.0.36": 1,
+      "10.0.0.37": 1,
+      "10.0.0.38": 1,
+      "10.0.0.39": 1,
+      "10.0.0.4": 1,
+      "10.0.0.40": 1,
+      "10.0.0.41": 1,
+      "10.0.0.42": 1,
+      "10.0.0.43": 1,
+      "10.0.0.44": 1,
+      "10.0.0.45": 1,
+      "10.0.0.46": 1,
+      "10.0.0.47": 1,
+      "10.0.0.48": 1,
+      "10.0.0.49": 1,
+      "10.0.0.5": 1,
+      "10.0.0.6": 1,
+      "10.0.0.7": 1,
+      "10.0.0.8": 1,
+      "10.0.0.9": 1
+    },
+    "attempts_by_user": {
+      "user0": 1,
+      "user1": 1,
+      "user10": 1,
+      "user11": 1,
+      "user12": 1,
+      "user13": 1,
+      "user14": 1,
+      "user15": 1,
+      "user16": 1,
+      "user17": 1,
+      "user18": 1,
+      "user19": 1,
+      "user2": 1,
+      "user20": 1,
+      "user21": 1,
+      "user22": 1,
+      "user23": 1,
+      "user24": 1,
+      "user25": 1,
+      "user26": 1,
+      "user27": 1,
+      "user28": 1,
+      "user29": 1,
+      "user3": 1,
+      "user30": 1,
+      "user31": 1,
+      "user32": 1,
+      "user33": 1,
+      "user34": 1,
+      "user35": 1,
+      "user36": 1,
+      "user37": 1,
+      "user38": 1,
+      "user39": 1,
+      "user4": 1,
+      "user40": 1,
+      "user41": 1,
+      "user42": 1,
+      "user43": 1,
+      "user44": 1,
+      "user45": 1,
+      "user46": 1,
+      "user47": 1,
+      "user48": 1,
+      "user49": 1,
+      "user5": 1,
+      "user6": 1,
+      "user7": 1,
+      "user8": 1,
+      "user9": 1
+    },
+    "first_failure": "Jan 5 10:00:00",
+    "last_failure": "Jan 5 14:05:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "10.0.0.0",
+      "10.0.0.1",
+      "10.0.0.10",
+      "10.0.0.11",
+      "10.0.0.12",
+      "10.0.0.13",
+      "10.0.0.14",
+      "10.0.0.15",
+      "10.0.0.16",
+      "10.0.0.17",
+      "10.0.0.18",
+      "10.0.0.19",
+      "10.0.0.2",
+      "10.0.0.20",
+      "10.0.0.21",
+      "10.0.0.22",
+      "10.0.0.23",
+      "10.0.0.24",
+      "10.0.0.25",
+      "10.0.0.26",
+      "10.0.0.27",
+      "10.0.0.28",
+      "10.0.0.29",
+      "10.0.0.3",
+      "10.0.0.30",
+      "10.0.0.31",
+      "10.0.0.32",
+      "10.0.0.33",
+      "10.0.0.34",
+      "10.0.0.35",
+      "10.0.0.36",
+      "10.0.0.37",
+      "10.0.0.38",
+      "10.0.0.39",
+      "10.0.0.4",
+      "10.0.0.40",
+      "10.0.0.41",
+      "10.0.0.42",
+      "10.0.0.43",
+      "10.0.0.44",
+      "10.0.0.45",
+      "10.0.0.46",
+      "10.0.0.47",
+      "10.0.0.48",
+      "10.0.0.49",
+      "10.0.0.5",
+      "10.0.0.6",
+      "10.0.0.7",
+      "10.0.0.8",
+      "10.0.0.9"
+    ],
+    "top_targeted_users": [
+      "user0",
+      "user1",
+      "user10",
+      "user11",
+      "user12",
+      "user13",
+      "user14",
+      "user15",
+      "user16",
+      "user17",
+      "user18",
+      "user19",
+      "user2",
+      "user20",
+      "user21",
+      "user22",
+      "user23",
+      "user24",
+      "user25",
+      "user26",
+      "user27",
+      "user28",
+      "user29",
+      "user3",
+      "user30",
+      "user31",
+      "user32",
+      "user33",
+      "user34",
+      "user35",
+      "user36",
+      "user37",
+      "user38",
+      "user39",
+      "user4",
+      "user40",
+      "user41",
+      "user42",
+      "user43",
+      "user44",
+      "user45",
+      "user46",
+      "user47",
+      "user48",
+      "user49",
+      "user5",
+      "user6",
+      "user7",
+      "user8",
+      "user9"
+    ],
+    "total_failed": 50,
+    "unique_ips": [
+      "10.0.0.0",
+      "10.0.0.1",
+      "10.0.0.10",
+      "10.0.0.11",
+      "10.0.0.12",
+      "10.0.0.13",
+      "10.0.0.14",
+      "10.0.0.15",
+      "10.0.0.16",
+      "10.0.0.17",
+      "10.0.0.18",
+      "10.0.0.19",
+      "10.0.0.2",
+      "10.0.0.20",
+      "10.0.0.21",
+      "10.0.0.22",
+      "10.0.0.23",
+      "10.0.0.24",
+      "10.0.0.25",
+      "10.0.0.26",
+      "10.0.0.27",
+      "10.0.0.28",
+      "10.0.0.29",
+      "10.0.0.3",
+      "10.0.0.30",
+      "10.0.0.31",
+      "10.0.0.32",
+      "10.0.0.33",
+      "10.0.0.34",
+      "10.0.0.35",
+      "10.0.0.36",
+      "10.0.0.37",
+      "10.0.0.38",
+      "10.0.0.39",
+      "10.0.0.4",
+      "10.0.0.40",
+      "10.0.0.41",
+      "10.0.0.42",
+      "10.0.0.43",
+      "10.0.0.44",
+      "10.0.0.45",
+      "10.0.0.46",
+      "10.0.0.47",
+      "10.0.0.48",
+      "10.0.0.49",
+      "10.0.0.5",
+      "10.0.0.6",
+      "10.0.0.7",
+      "10.0.0.8",
+      "10.0.0.9"
+    ],
+    "unique_users": [
+      "user0",
+      "user1",
+      "user10",
+      "user11",
+      "user12",
+      "user13",
+      "user14",
+      "user15",
+      "user16",
+      "user17",
+      "user18",
+      "user19",
+      "user2",
+      "user20",
+      "user21",
+      "user22",
+      "user23",
+      "user24",
+      "user25",
+      "user26",
+      "user27",
+      "user28",
+      "user29",
+      "user3",
+      "user30",
+      "user31",
+      "user32",
+      "user33",
+      "user34",
+      "user35",
+      "user36",
+      "user37",
+      "user38",
+      "user39",
+      "user4",
+      "user40",
+      "user41",
+      "user42",
+      "user43",
+      "user44",
+      "user45",
+      "user46",
+      "user47",
+      "user48",
+      "user49",
+      "user5",
+      "user6",
+      "user7",
+      "user8",
+      "user9"
+    ]
+  },
+  "test_3_01_public_ipv4": {
+    "attempts_by_ip": {
+      "8.8.8.8": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "8.8.8.8"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "8.8.8.8"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_3_02_private_10x": {
+    "attempts_by_ip": {
+      "10.0.0.1": 1,
+      "10.128.64.32": 1,
+      "10.255.255.255": 1
+    },
+    "attempts_by_user": {
+      "root": 3
+    },
+    "first_failure": "Jan 5 14:22:10",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "10.0.0.1",
+      "10.128.64.32",
+      "10.255.255.255"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "10.0.0.1",
+      "10.128.64.32",
+      "10.255.255.255"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_3_03_private_172x": {
+    "attempts_by_ip": {
+      "172.16.0.1": 1,
+      "172.20.10.5": 1,
+      "172.31.255.255": 1
+    },
+    "attempts_by_user": {
+      "root": 3
+    },
+    "first_failure": "Jan 5 14:22:10",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "172.16.0.1",
+      "172.20.10.5",
+      "172.31.255.255"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "172.16.0.1",
+      "172.20.10.5",
+      "172.31.255.255"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_3_04_private_192x": {
+    "attempts_by_ip": {
+      "192.168.0.1": 1,
+      "192.168.1.100": 1,
+      "192.168.255.255": 1
+    },
+    "attempts_by_user": {
+      "root": 3
+    },
+    "first_failure": "Jan 5 14:22:10",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.0.1",
+      "192.168.1.100",
+      "192.168.255.255"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "192.168.0.1",
+      "192.168.1.100",
+      "192.168.255.255"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_3_05_localhost": {
+    "attempts_by_ip": {
+      "127.0.0.1": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "127.0.0.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "127.0.0.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_3_06_ipv6_full": {
+    "attempts_by_ip": {
+      "2001:0db8:85a3:0000:0000:8a2e:0370:7334": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_3_07_ipv6_localhost": {
+    "attempts_by_ip": {
+      "::1": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "::1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "::1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_3_08_ipv6_compressed": {
+    "attempts_by_ip": {
+      "2001:db8:85a3::8a2e:370:7334": 1,
+      "2001:db8::1": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "2001:db8:85a3::8a2e:370:7334",
+      "2001:db8::1"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "2001:db8:85a3::8a2e:370:7334",
+      "2001:db8::1"
+    ],
+    "unique_users": [
+      "admin",
+      "root"
+    ]
+  },
+  "test_3_09_ipv6_link_local": {
+    "attempts_by_ip": {
+      "fe80::1": 1,
+      "fe80::abcd:1234:5678": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "fe80::1",
+      "fe80::abcd:1234:5678"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "fe80::1",
+      "fe80::abcd:1234:5678"
+    ],
+    "unique_users": [
+      "admin",
+      "root"
+    ]
+  },
+  "test_3_10_mixed_v4_v6": {
+    "attempts_by_ip": {
+      "10.0.0.1": 1,
+      "192.168.1.1": 1,
+      "2001:db8::1": 1,
+      "::1": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "oracle": 1,
+      "root": 1,
+      "test": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "10.0.0.1",
+      "192.168.1.1",
+      "2001:db8::1",
+      "::1"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "oracle",
+      "root",
+      "test"
+    ],
+    "total_failed": 4,
+    "unique_ips": [
+      "10.0.0.1",
+      "192.168.1.1",
+      "2001:db8::1",
+      "::1"
+    ],
+    "unique_users": [
+      "admin",
+      "oracle",
+      "root",
+      "test"
+    ]
+  },
+  "test_3_11_zero_ip": {
+    "attempts_by_ip": {
+      "0.0.0.0": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "0.0.0.0"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "0.0.0.0"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_3_12_max_ip": {
+    "attempts_by_ip": {
+      "255.255.255.255": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:22:01",
+    "last_failure": "Jan 5 14:22:01",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "255.255.255.255"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "255.255.255.255"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_3_13_twenty_ips": {
+    "attempts_by_ip": {
+      "192.168.1.0": 1,
+      "192.168.1.1": 1,
+      "192.168.1.10": 1,
+      "192.168.1.11": 1,
+      "192.168.1.12": 1,
+      "192.168.1.13": 1,
+      "192.168.1.14": 1,
+      "192.168.1.15": 1,
+      "192.168.1.16": 1,
+      "192.168.1.17": 1,
+      "192.168.1.18": 1,
+      "192.168.1.19": 1,
+      "192.168.1.2": 1,
+      "192.168.1.3": 1,
+      "192.168.1.4": 1,
+      "192.168.1.5": 1,
+      "192.168.1.6": 1,
+      "192.168.1.7": 1,
+      "192.168.1.8": 1,
+      "192.168.1.9": 1
+    },
+    "attempts_by_user": {
+      "root": 20
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:19:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.0",
+      "192.168.1.1",
+      "192.168.1.10",
+      "192.168.1.11",
+      "192.168.1.12",
+      "192.168.1.13",
+      "192.168.1.14",
+      "192.168.1.15",
+      "192.168.1.16",
+      "192.168.1.17",
+      "192.168.1.18",
+      "192.168.1.19",
+      "192.168.1.2",
+      "192.168.1.3",
+      "192.168.1.4",
+      "192.168.1.5",
+      "192.168.1.6",
+      "192.168.1.7",
+      "192.168.1.8",
+      "192.168.1.9"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 20,
+    "unique_ips": [
+      "192.168.1.0",
+      "192.168.1.1",
+      "192.168.1.10",
+      "192.168.1.11",
+      "192.168.1.12",
+      "192.168.1.13",
+      "192.168.1.14",
+      "192.168.1.15",
+      "192.168.1.16",
+      "192.168.1.17",
+      "192.168.1.18",
+      "192.168.1.19",
+      "192.168.1.2",
+      "192.168.1.3",
+      "192.168.1.4",
+      "192.168.1.5",
+      "192.168.1.6",
+      "192.168.1.7",
+      "192.168.1.8",
+      "192.168.1.9"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_3_14_same_ip_diff_users": {
+    "attempts_by_ip": {
+      "192.168.1.1": 5
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "guest": 1,
+      "oracle": 1,
+      "root": 1,
+      "test": 1
+    },
+    "first_failure": "Jan 5 14:22:00",
+    "last_failure": "Jan 5 14:22:40",
+    "potential_brute_force": [
+      "192.168.1.1"
+    ],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "guest",
+      "oracle",
+      "root",
+      "test"
+    ],
+    "total_failed": 5,
+    "unique_ips": [
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "admin",
+      "guest",
+      "oracle",
+      "root",
+      "test"
+    ]
+  },
+  "test_3_15_same_user_diff_ips": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "2.2.2.2": 1,
+      "3.3.3.3": 1,
+      "4.4.4.4": 1,
+      "5.5.5.5": 1
+    },
+    "attempts_by_user": {
+      "root": 5
+    },
+    "first_failure": "Jan 5 14:22:00",
+    "last_failure": "Jan 5 14:22:40",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3",
+      "4.4.4.4",
+      "5.5.5.5"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 5,
+    "unique_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3",
+      "4.4.4.4",
+      "5.5.5.5"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_01_exactly_4": {
+    "attempts_by_ip": {
+      "192.168.1.1": 4
+    },
+    "attempts_by_user": {
+      "user0": 1,
+      "user1": 1,
+      "user2": 1,
+      "user3": 1
+    },
+    "first_failure": "Jan 5 14:22:00",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "user0",
+      "user1",
+      "user2",
+      "user3"
+    ],
+    "total_failed": 4,
+    "unique_ips": [
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "user0",
+      "user1",
+      "user2",
+      "user3"
+    ]
+  },
+  "test_4_02_exactly_5": {
+    "attempts_by_ip": {
+      "192.168.1.1": 5
+    },
+    "attempts_by_user": {
+      "user0": 1,
+      "user1": 1,
+      "user2": 1,
+      "user3": 1,
+      "user4": 1
+    },
+    "first_failure": "Jan 5 14:22:00",
+    "last_failure": "Jan 5 14:22:40",
+    "potential_brute_force": [
+      "192.168.1.1"
+    ],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "user0",
+      "user1",
+      "user2",
+      "user3",
+      "user4"
+    ],
+    "total_failed": 5,
+    "unique_ips": [
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "user0",
+      "user1",
+      "user2",
+      "user3",
+      "user4"
+    ]
+  },
+  "test_4_03_exactly_6": {
+    "attempts_by_ip": {
+      "192.168.1.1": 6
+    },
+    "attempts_by_user": {
+      "user0": 1,
+      "user1": 1,
+      "user2": 1,
+      "user3": 1,
+      "user4": 1,
+      "user5": 1
+    },
+    "first_failure": "Jan 5 14:22:00",
+    "last_failure": "Jan 5 14:22:50",
+    "potential_brute_force": [
+      "192.168.1.1"
+    ],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "user0",
+      "user1",
+      "user2",
+      "user3",
+      "user4",
+      "user5"
+    ],
+    "total_failed": 6,
+    "unique_ips": [
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "user0",
+      "user1",
+      "user2",
+      "user3",
+      "user4",
+      "user5"
+    ]
+  },
+  "test_4_04_hundred_failures": {
+    "attempts_by_ip": {
+      "10.0.0.1": 100
+    },
+    "attempts_by_user": {
+      "root": 100
+    },
+    "first_failure": "Jan 5 10:00:00",
+    "last_failure": "Jan 5 13:58:00",
+    "potential_brute_force": [
+      "10.0.0.1"
+    ],
+    "top_offender_ips": [
+      "10.0.0.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 100,
+    "unique_ips": [
+      "10.0.0.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_05_multiple_brute": {
+    "attempts_by_ip": {
+      "10.0.0.1": 6,
+      "172.16.0.1": 6,
+      "192.168.1.1": 6
+    },
+    "attempts_by_user": {
+      "root": 18
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:25:00",
+    "potential_brute_force": [
+      "10.0.0.1",
+      "172.16.0.1",
+      "192.168.1.1"
+    ],
+    "top_offender_ips": [
+      "10.0.0.1",
+      "172.16.0.1",
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 18,
+    "unique_ips": [
+      "10.0.0.1",
+      "172.16.0.1",
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_06_brute_sorting": {
+    "attempts_by_ip": {
+      "10.0.0.1": 7,
+      "172.16.0.1": 7,
+      "192.168.1.1": 7
+    },
+    "attempts_by_user": {
+      "root": 21
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:20:00",
+    "potential_brute_force": [
+      "10.0.0.1",
+      "172.16.0.1",
+      "192.168.1.1"
+    ],
+    "top_offender_ips": [
+      "10.0.0.1",
+      "172.16.0.1",
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 21,
+    "unique_ips": [
+      "10.0.0.1",
+      "172.16.0.1",
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_07_no_brute": {
+    "attempts_by_ip": {
+      "1.1.1.1": 4,
+      "2.2.2.2": 4,
+      "3.3.3.3": 4
+    },
+    "attempts_by_user": {
+      "root": 12
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:11:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 12,
+    "unique_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_08_mix_brute_normal": {
+    "attempts_by_ip": {
+      "10.0.0.1": 3,
+      "192.168.1.1": 6
+    },
+    "attempts_by_user": {
+      "root": 9
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:12:00",
+    "potential_brute_force": [
+      "192.168.1.1"
+    ],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 9,
+    "unique_ips": [
+      "10.0.0.1",
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_09_all_brute": {
+    "attempts_by_ip": {
+      "1.1.1.1": 10,
+      "2.2.2.2": 10
+    },
+    "attempts_by_user": {
+      "root": 20
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:19:00",
+    "potential_brute_force": [
+      "1.1.1.1",
+      "2.2.2.2"
+    ],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "2.2.2.2"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 20,
+    "unique_ips": [
+      "1.1.1.1",
+      "2.2.2.2"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_10_ipv6_brute": {
+    "attempts_by_ip": {
+      "2001:db8::1": 8
+    },
+    "attempts_by_user": {
+      "root": 8
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:07:00",
+    "potential_brute_force": [
+      "2001:db8::1"
+    ],
+    "top_offender_ips": [
+      "2001:db8::1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 8,
+    "unique_ips": [
+      "2001:db8::1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_11_boundary": {
+    "attempts_by_ip": {
+      "1.1.1.1": 4,
+      "2.2.2.2": 5
+    },
+    "attempts_by_user": {
+      "root": 9
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:14:00",
+    "potential_brute_force": [
+      "2.2.2.2"
+    ],
+    "top_offender_ips": [
+      "2.2.2.2"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 9,
+    "unique_ips": [
+      "1.1.1.1",
+      "2.2.2.2"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_12_mixed_brute": {
+    "attempts_by_ip": {
+      "192.168.1.1": 6,
+      "::1": 6
+    },
+    "attempts_by_user": {
+      "root": 12
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:15:00",
+    "potential_brute_force": [
+      "192.168.1.1",
+      "::1"
+    ],
+    "top_offender_ips": [
+      "192.168.1.1",
+      "::1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 12,
+    "unique_ips": [
+      "192.168.1.1",
+      "::1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_13_large_scale": {
+    "attempts_by_ip": {
+      "192.168.1.0": 10,
+      "192.168.1.1": 10,
+      "192.168.1.2": 10,
+      "192.168.1.3": 10,
+      "192.168.1.4": 10,
+      "192.168.1.5": 10,
+      "192.168.1.6": 10,
+      "192.168.1.7": 10,
+      "192.168.1.8": 10,
+      "192.168.1.9": 10
+    },
+    "attempts_by_user": {
+      "root": 100
+    },
+    "first_failure": "Jan 5 10:00:00",
+    "last_failure": "Jan 5 19:09:00",
+    "potential_brute_force": [
+      "192.168.1.0",
+      "192.168.1.1",
+      "192.168.1.2",
+      "192.168.1.3",
+      "192.168.1.4",
+      "192.168.1.5",
+      "192.168.1.6",
+      "192.168.1.7",
+      "192.168.1.8",
+      "192.168.1.9"
+    ],
+    "top_offender_ips": [
+      "192.168.1.0",
+      "192.168.1.1",
+      "192.168.1.2",
+      "192.168.1.3",
+      "192.168.1.4",
+      "192.168.1.5",
+      "192.168.1.6",
+      "192.168.1.7",
+      "192.168.1.8",
+      "192.168.1.9"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 100,
+    "unique_ips": [
+      "192.168.1.0",
+      "192.168.1.1",
+      "192.168.1.2",
+      "192.168.1.3",
+      "192.168.1.4",
+      "192.168.1.5",
+      "192.168.1.6",
+      "192.168.1.7",
+      "192.168.1.8",
+      "192.168.1.9"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_14_single_brute": {
+    "attempts_by_ip": {
+      "8.8.8.8": 7
+    },
+    "attempts_by_user": {
+      "root": 7
+    },
+    "first_failure": "Jan 5 14:22:00",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [
+      "8.8.8.8"
+    ],
+    "top_offender_ips": [
+      "8.8.8.8"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 7,
+    "unique_ips": [
+      "8.8.8.8"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_4_15_diff_users_brute": {
+    "attempts_by_ip": {
+      "192.168.1.1": 7
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "mysql": 1,
+      "oracle": 1,
+      "postgres": 1,
+      "root": 1,
+      "test": 1,
+      "user": 1
+    },
+    "first_failure": "Jan 5 14:22:00",
+    "last_failure": "Jan 5 14:22:30",
+    "potential_brute_force": [
+      "192.168.1.1"
+    ],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "mysql",
+      "oracle",
+      "postgres",
+      "root",
+      "test",
+      "user"
+    ],
+    "total_failed": 7,
+    "unique_ips": [
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "admin",
+      "mysql",
+      "oracle",
+      "postgres",
+      "root",
+      "test",
+      "user"
+    ]
+  },
+  "test_5_01_single_timestamp": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:30:00",
+    "last_failure": "Jan 5 14:30:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_02_one_minute_apart": {
+    "attempts_by_ip": {
+      "1.1.1.1": 2
+    },
+    "attempts_by_user": {
+      "root": 2
+    },
+    "first_failure": "Jan 5 14:30:00",
+    "last_failure": "Jan 5 14:31:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_03_one_hour_apart": {
+    "attempts_by_ip": {
+      "1.1.1.1": 2
+    },
+    "attempts_by_user": {
+      "root": 2
+    },
+    "first_failure": "Jan 5 10:00:00",
+    "last_failure": "Jan 5 11:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_04_all_day": {
+    "attempts_by_ip": {
+      "1.1.1.1": 2
+    },
+    "attempts_by_user": {
+      "root": 2
+    },
+    "first_failure": "Jan 5 00:00:01",
+    "last_failure": "Jan 5 23:59:59",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_05_burst_attack": {
+    "attempts_by_ip": {
+      "1.1.1.1": 10
+    },
+    "attempts_by_user": {
+      "root": 10
+    },
+    "first_failure": "Jan 5 14:30:00",
+    "last_failure": "Jan 5 14:30:45",
+    "potential_brute_force": [
+      "1.1.1.1"
+    ],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 10,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_06_morning_attack": {
+    "attempts_by_ip": {
+      "1.1.1.1": 3
+    },
+    "attempts_by_user": {
+      "root": 3
+    },
+    "first_failure": "Jan 5 06:00:00",
+    "last_failure": "Jan 5 09:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_07_night_attack": {
+    "attempts_by_ip": {
+      "1.1.1.1": 2
+    },
+    "attempts_by_user": {
+      "root": 2
+    },
+    "first_failure": "Jan 5 22:00:00",
+    "last_failure": "Jan 5 23:30:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_08_lunch_attack": {
+    "attempts_by_ip": {
+      "1.1.1.1": 5
+    },
+    "attempts_by_user": {
+      "root": 5
+    },
+    "first_failure": "Jan 5 12:00:00",
+    "last_failure": "Jan 5 12:40:00",
+    "potential_brute_force": [
+      "1.1.1.1"
+    ],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 5,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_09_multiple_attackers": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "2.2.2.2": 1,
+      "3.3.3.3": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 1,
+      "test": 1
+    },
+    "first_failure": "Jan 5 08:00:00",
+    "last_failure": "Jan 5 18:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "root",
+      "test"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3"
+    ],
+    "unique_users": [
+      "admin",
+      "root",
+      "test"
+    ]
+  },
+  "test_5_10_seconds_matter": {
+    "attempts_by_ip": {
+      "1.1.1.1": 2
+    },
+    "attempts_by_user": {
+      "root": 2
+    },
+    "first_failure": "Jan 5 14:30:05",
+    "last_failure": "Jan 5 14:30:55",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_11_midnight": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 00:00:00",
+    "last_failure": "Jan 5 00:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_12_end_of_day": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "root": 1
+    },
+    "first_failure": "Jan 5 23:59:59",
+    "last_failure": "Jan 5 23:59:59",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_13_file_ordering": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 1,
+      "test": 1
+    },
+    "first_failure": "Jan 5 10:00:00",
+    "last_failure": "Jan 5 20:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "root",
+      "test"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "unique_users": [
+      "admin",
+      "root",
+      "test"
+    ]
+  },
+  "test_5_14_periodic": {
+    "attempts_by_ip": {
+      "1.1.1.1": 6
+    },
+    "attempts_by_user": {
+      "root": 6
+    },
+    "first_failure": "Jan 5 00:00:00",
+    "last_failure": "Jan 5 20:00:00",
+    "potential_brute_force": [
+      "1.1.1.1"
+    ],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 6,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_5_15_extended_attack": {
+    "attempts_by_ip": {
+      "1.1.1.1": 16
+    },
+    "attempts_by_user": {
+      "root": 16
+    },
+    "first_failure": "Jan 5 09:00:00",
+    "last_failure": "Jan 5 16:30:00",
+    "potential_brute_force": [
+      "1.1.1.1"
+    ],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 16,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_6_01_clear_ip_winner": {
+    "attempts_by_ip": {
+      "10.0.0.1": 1,
+      "192.168.1.1": 3
+    },
+    "attempts_by_user": {
+      "root": 4
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:10:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 4,
+    "unique_ips": [
+      "10.0.0.1",
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_6_02_clear_user_winner": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1,
+      "1.1.1.4": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 3
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:10:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3",
+      "1.1.1.4"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 4,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3",
+      "1.1.1.4"
+    ],
+    "unique_users": [
+      "admin",
+      "root"
+    ]
+  },
+  "test_6_03_ip_tie": {
+    "attempts_by_ip": {
+      "10.0.0.1": 1,
+      "192.168.1.1": 1
+    },
+    "attempts_by_user": {
+      "root": 2
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:01:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "10.0.0.1",
+      "192.168.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "10.0.0.1",
+      "192.168.1.1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_6_04_user_tie": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:01:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "root"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2"
+    ],
+    "unique_users": [
+      "admin",
+      "root"
+    ]
+  },
+  "test_6_05_single_entry": {
+    "attempts_by_ip": {
+      "8.8.8.8": 1
+    },
+    "attempts_by_user": {
+      "admin": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "8.8.8.8"
+    ],
+    "top_targeted_users": [
+      "admin"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "8.8.8.8"
+    ],
+    "unique_users": [
+      "admin"
+    ]
+  },
+  "test_6_06_three_way_tie": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "2.2.2.2": 1,
+      "3.3.3.3": 1
+    },
+    "attempts_by_user": {
+      "alice": 1,
+      "bob": 1,
+      "charlie": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:02:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3"
+    ],
+    "top_targeted_users": [
+      "alice",
+      "bob",
+      "charlie"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3"
+    ],
+    "unique_users": [
+      "alice",
+      "bob",
+      "charlie"
+    ]
+  },
+  "test_6_07_large_dataset": {
+    "attempts_by_ip": {
+      "1.1.1.1": 50,
+      "2.2.2.2": 30
+    },
+    "attempts_by_user": {
+      "admin": 30,
+      "root": 50
+    },
+    "first_failure": "Jan 5 10:00:00",
+    "last_failure": "Jan 5 16:29:00",
+    "potential_brute_force": [
+      "1.1.1.1",
+      "2.2.2.2"
+    ],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 80,
+    "unique_ips": [
+      "1.1.1.1",
+      "2.2.2.2"
+    ],
+    "unique_users": [
+      "admin",
+      "root"
+    ]
+  },
+  "test_6_08_numeric_tie": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1
+    },
+    "attempts_by_user": {
+      "123": 1,
+      "456": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:01:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2"
+    ],
+    "top_targeted_users": [
+      "123",
+      "456"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2"
+    ],
+    "unique_users": [
+      "123",
+      "456"
+    ]
+  },
+  "test_6_09_case_sensitive": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1
+    },
+    "attempts_by_user": {
+      "ADMIN": 1,
+      "Admin": 1,
+      "admin": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:02:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "top_targeted_users": [
+      "ADMIN",
+      "Admin",
+      "admin"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "unique_users": [
+      "ADMIN",
+      "Admin",
+      "admin"
+    ]
+  },
+  "test_6_10_alpha_winner": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "9.9.9.9": 1
+    },
+    "attempts_by_user": {
+      "apple": 1,
+      "zebra": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:01:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "9.9.9.9"
+    ],
+    "top_targeted_users": [
+      "apple",
+      "zebra"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "1.1.1.1",
+      "9.9.9.9"
+    ],
+    "unique_users": [
+      "apple",
+      "zebra"
+    ]
+  },
+  "test_6_11_top_changes": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "2.2.2.2": 3
+    },
+    "attempts_by_user": {
+      "admin": 3,
+      "root": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:03:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "2.2.2.2"
+    ],
+    "top_targeted_users": [
+      "admin"
+    ],
+    "total_failed": 4,
+    "unique_ips": [
+      "1.1.1.1",
+      "2.2.2.2"
+    ],
+    "unique_users": [
+      "admin",
+      "root"
+    ]
+  },
+  "test_6_12_ipv6_top": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "::1": 2
+    },
+    "attempts_by_user": {
+      "root": 3
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:02:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "::1"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "::1"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_6_13_underscore": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1
+    },
+    "attempts_by_user": {
+      "_system": 1,
+      "admin": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:01:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2"
+    ],
+    "top_targeted_users": [
+      "_system",
+      "admin"
+    ],
+    "total_failed": 2,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2"
+    ],
+    "unique_users": [
+      "_system",
+      "admin"
+    ]
+  },
+  "test_6_14_five_way_tie": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "2.2.2.2": 1,
+      "3.3.3.3": 1,
+      "4.4.4.4": 1,
+      "5.5.5.5": 1
+    },
+    "attempts_by_user": {
+      "root": 5
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:04:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3",
+      "4.4.4.4",
+      "5.5.5.5"
+    ],
+    "top_targeted_users": [
+      "root"
+    ],
+    "total_failed": 5,
+    "unique_ips": [
+      "1.1.1.1",
+      "2.2.2.2",
+      "3.3.3.3",
+      "4.4.4.4",
+      "5.5.5.5"
+    ],
+    "unique_users": [
+      "root"
+    ]
+  },
+  "test_6_15_special_chars": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1
+    },
+    "attempts_by_user": {
+      "test-user": 1,
+      "test.user": 1,
+      "test_user": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:02:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "top_targeted_users": [
+      "test-user",
+      "test.user",
+      "test_user"
+    ],
+    "total_failed": 3,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3"
+    ],
+    "unique_users": [
+      "test-user",
+      "test.user",
+      "test_user"
+    ]
+  },
+  "test_7_01_numbers": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "user123": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "user123"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "user123"
+    ]
+  },
+  "test_7_02_all_numeric": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "12345": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "12345"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "12345"
+    ]
+  },
+  "test_7_03_underscore": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "test_user": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "test_user"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "test_user"
+    ]
+  },
+  "test_7_04_hyphen": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "test-user": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "test-user"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "test-user"
+    ]
+  },
+  "test_7_05_dot": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "john.doe": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "john.doe"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "john.doe"
+    ]
+  },
+  "test_7_06_common_attacks": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1,
+      "1.1.1.4": 1,
+      "1.1.1.5": 1,
+      "1.1.1.6": 1,
+      "1.1.1.7": 1,
+      "1.1.1.8": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "guest": 1,
+      "mysql": 1,
+      "oracle": 1,
+      "postgres": 1,
+      "root": 1,
+      "test": 1,
+      "user": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:07:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3",
+      "1.1.1.4",
+      "1.1.1.5",
+      "1.1.1.6",
+      "1.1.1.7",
+      "1.1.1.8"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "guest",
+      "mysql",
+      "oracle",
+      "postgres",
+      "root",
+      "test",
+      "user"
+    ],
+    "total_failed": 8,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3",
+      "1.1.1.4",
+      "1.1.1.5",
+      "1.1.1.6",
+      "1.1.1.7",
+      "1.1.1.8"
+    ],
+    "unique_users": [
+      "admin",
+      "guest",
+      "mysql",
+      "oracle",
+      "postgres",
+      "root",
+      "test",
+      "user"
+    ]
+  },
+  "test_7_07_starts_number": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "1user": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "1user"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "1user"
+    ]
+  },
+  "test_7_08_mixed_case": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "JohnDoe": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "JohnDoe"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "JohnDoe"
+    ]
+  },
+  "test_7_09_single_underscore": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "_": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "_"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "_"
+    ]
+  },
+  "test_7_10_two_char": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "ab": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "ab"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "ab"
+    ]
+  },
+  "test_7_11_service_accounts": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1,
+      "1.1.1.4": 1
+    },
+    "attempts_by_user": {
+      "bin": 1,
+      "daemon": 1,
+      "nobody": 1,
+      "www-data": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:03:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3",
+      "1.1.1.4"
+    ],
+    "top_targeted_users": [
+      "bin",
+      "daemon",
+      "nobody",
+      "www-data"
+    ],
+    "total_failed": 4,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3",
+      "1.1.1.4"
+    ],
+    "unique_users": [
+      "bin",
+      "daemon",
+      "nobody",
+      "www-data"
+    ]
+  },
+  "test_7_12_email_like": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "user@domain": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "user@domain"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "user@domain"
+    ]
+  },
+  "test_7_13_plus_sign": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "user+tag": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "user+tag"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "user+tag"
+    ]
+  },
+  "test_7_14_similar_users": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1,
+      "1.1.1.2": 1,
+      "1.1.1.3": 1,
+      "1.1.1.4": 1
+    },
+    "attempts_by_user": {
+      "admin": 1,
+      "admin1": 1,
+      "admin2": 1,
+      "administrator": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:03:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3",
+      "1.1.1.4"
+    ],
+    "top_targeted_users": [
+      "admin",
+      "admin1",
+      "admin2",
+      "administrator"
+    ],
+    "total_failed": 4,
+    "unique_ips": [
+      "1.1.1.1",
+      "1.1.1.2",
+      "1.1.1.3",
+      "1.1.1.4"
+    ],
+    "unique_users": [
+      "admin",
+      "admin1",
+      "admin2",
+      "administrator"
+    ]
+  },
+  "test_7_15_backslash": {
+    "attempts_by_ip": {
+      "1.1.1.1": 1
+    },
+    "attempts_by_user": {
+      "domain\\\\user": 1
+    },
+    "first_failure": "Jan 5 14:00:00",
+    "last_failure": "Jan 5 14:00:00",
+    "potential_brute_force": [],
+    "top_offender_ips": [
+      "1.1.1.1"
+    ],
+    "top_targeted_users": [
+      "domain\\\\user"
+    ],
+    "total_failed": 1,
+    "unique_ips": [
+      "1.1.1.1"
+    ],
+    "unique_users": [
+      "domain\\\\user"
+    ]
+  }
+}
