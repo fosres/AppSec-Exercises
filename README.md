@@ -1,4 +1,4 @@
-# AppSec Engineering Challenge Exercises
+# Security Engineering Challenge Exercises
 
 A comprehensive collection of hands-on Application Security exercises designed to sharpen your skills for production environments and security-critical roles. These challenges are grounded in real-world CVEs, industry standards, and best practices from authoritative security references.
 
@@ -8,10 +8,10 @@ This repository provides practical, production-focused security exercises coveri
 
 ## Target Audience
 
-- Application Security Engineers preparing for production work
+- Security Engineers preparing for production work
 - Software Engineers looking to strengthen secure coding practices
 - Security professionals studying real-world vulnerability patterns
-- Developers preparing for AppSec-focused technical interviews
+- Developers preparing for Security Engineering focused technical interviews
 - Students learning offensive and defensive security techniques
 
 ## Exercise Categories
@@ -108,7 +108,7 @@ Safe memory allocation and deallocation practices:
 ## Repository Structure
 
 ```
-AppSec-Exercises/
+SecEng-Exercises/
 ├── README.md                      # This file
 ├── CLAUDE.md                      # Development guidance for AI assistants
 ├── integer_overflow/              # Size_t overflow detection
