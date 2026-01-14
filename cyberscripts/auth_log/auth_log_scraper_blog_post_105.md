@@ -559,6 +559,14 @@ Stuck? Compare your approach to the [reference solution](https://github.com/fosr
 
 Try to solve it yourself first — you'll learn more by struggling through the edge cases than by reading the answer.
 
+### Grader
+
+Use the [grader script](https://github.com/fosres/AppSec-Exercises/blob/main/cyberscripts/auth_log/grader.py) to test your solution:
+
+```bash
+python grader.py your_solution.py
+```
+
 ---
 
 ## Share Your Solution
@@ -581,14 +589,6 @@ Once you've mastered auth log parsing, you're ready for:
 | **JWT Validator** | ⭐⭐⭐ | Cryptography, authentication |
 | **SAST Rule Writer** | ⭐⭐⭐ | AST parsing, vulnerability patterns |
 | **API Fuzzer** | ⭐⭐⭐⭐ | HTTP, edge cases, error handling |
-
----
-
-## Reference Solution
-
-Stuck? Compare your approach to the [reference solution](https://github.com/fosres/AppSec-Exercises/blob/main/cyberscripts/auth_log/auth_log_solution.py).
-
-Try to solve it yourself first — you'll learn more by struggling through the edge cases than by reading the answer.
 
 ---
 

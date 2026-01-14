@@ -1,0 +1,162 @@
+# Lab 7: Username Edge Cases - Auth Log Test File
+# Category 7 from the Auth Log Scraper Challenge
+# Contains 15 test scenarios for unusual username formats
+# Source: Auth Log Scraper Challenge (105 tests total)
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Test 7.01-7.05: Basic Username Formats
+# ════════════════════════════════════════════════════════════════════════════════
+
+# 7.01: Simple valid username
+Jan  5 14:00:00 server sshd[1001]: Failed password for alice from 192.168.1.100 port 54321 ssh2
+
+# 7.02: Username with underscore
+Jan  5 14:00:15 server sshd[1002]: Failed password for invalid user test_user from 192.168.1.101 port 54322 ssh2
+
+# 7.03: Username with hyphen
+Jan  5 14:00:30 server sshd[1003]: Failed password for invalid user web-admin from 192.168.1.102 port 54323 ssh2
+
+# 7.04: Username with numbers
+Jan  5 14:00:45 server sshd[1004]: Failed password for invalid user user123 from 192.168.1.103 port 54324 ssh2
+
+# 7.05: Long username (32 characters)
+Jan  5 14:01:00 server sshd[1005]: Failed password for invalid user abcdefghijklmnopqrstuvwxyz123456 from 192.168.1.104 port 54325 ssh2
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Test 7.06: Common Attack Usernames
+# These are the most frequently targeted usernames in SSH brute force attacks
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:02:00 server sshd[2001]: Failed password for root from 10.0.0.1 port 55001 ssh2
+Jan  5 14:02:01 server sshd[2002]: Failed password for admin from 10.0.0.2 port 55002 ssh2
+Jan  5 14:02:02 server sshd[2003]: Failed password for invalid user test from 10.0.0.3 port 55003 ssh2
+Jan  5 14:02:03 server sshd[2004]: Failed password for invalid user guest from 10.0.0.4 port 55004 ssh2
+Jan  5 14:02:04 server sshd[2005]: Failed password for invalid user user from 10.0.0.5 port 55005 ssh2
+Jan  5 14:02:05 server sshd[2006]: Failed password for invalid user oracle from 10.0.0.6 port 55006 ssh2
+Jan  5 14:02:06 server sshd[2007]: Failed password for invalid user postgres from 10.0.0.7 port 55007 ssh2
+Jan  5 14:02:07 server sshd[2008]: Failed password for invalid user mysql from 10.0.0.8 port 55008 ssh2
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Test 7.07: Username Starts with Number
+# Valid in some systems, often used in credential stuffing
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:03:00 server sshd[3001]: Failed publickey for invalid user 1user from 1.1.1.1 port 56001 ssh2
+Jan  5 14:03:01 server sshd[3002]: Failed password for invalid user 123admin from 1.1.1.2 port 56002 ssh2
+Jan  5 14:03:02 server sshd[3003]: Failed password for invalid user 0day from 1.1.1.3 port 56003 ssh2
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Test 7.08: Mixed Case Username
+# Tests case sensitivity handling
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:04:00 server sshd[4001]: Failed password for invalid user JohnDoe from 2.2.2.1 port 57001 ssh2
+Jan  5 14:04:01 server sshd[4002]: Failed password for invalid user ADMINISTRATOR from 2.2.2.2 port 57002 ssh2
+Jan  5 14:04:02 server sshd[4003]: Failed password for invalid user RooT from 2.2.2.3 port 57003 ssh2
+Jan  5 14:04:03 server sshd[4004]: Failed password for invalid user AdMiN from 2.2.2.4 port 57004 ssh2
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Test 7.09: Single Underscore Username
+# Minimal valid username edge case
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:05:00 server sshd[5001]: Failed publickey for invalid user _ from 3.3.3.1 port 58001 ssh2
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Test 7.10: Two Character Username
+# Short username edge case
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:06:00 server sshd[6001]: Failed password for invalid user ab from 4.4.4.1 port 59001 ssh2
+Jan  5 14:06:01 server sshd[6002]: Failed password for invalid user pi from 4.4.4.2 port 59002 ssh2
+Jan  5 14:06:02 server sshd[6003]: Failed password for invalid user go from 4.4.4.3 port 59003 ssh2
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Test 7.11: Service Account Usernames
+# Attackers target common service accounts
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:07:00 server sshd[7001]: Failed password for invalid user www-data from 5.5.5.1 port 60001 ssh2
+Jan  5 14:07:01 server sshd[7002]: Failed password for invalid user nobody from 5.5.5.2 port 60002 ssh2
+Jan  5 14:07:02 server sshd[7003]: Failed password for invalid user daemon from 5.5.5.3 port 60003 ssh2
+Jan  5 14:07:03 server sshd[7004]: Failed password for invalid user bin from 5.5.5.4 port 60004 ssh2
+Jan  5 14:07:04 server sshd[7005]: Failed password for invalid user sys from 5.5.5.5 port 60005 ssh2
+Jan  5 14:07:05 server sshd[7006]: Failed password for invalid user mail from 5.5.5.6 port 60006 ssh2
+Jan  5 14:07:06 server sshd[7007]: Failed password for invalid user ftp from 5.5.5.7 port 60007 ssh2
+Jan  5 14:07:07 server sshd[7008]: Failed password for invalid user sshd from 5.5.5.8 port 60008 ssh2
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Test 7.12: Email-like Username
+# Some systems allow @ in usernames
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:08:00 server sshd[8001]: Failed publickey for invalid user user@domain from 6.6.6.1 port 61001 ssh2
+Jan  5 14:08:01 server sshd[8002]: Failed password for invalid user admin@company.com from 6.6.6.2 port 61002 ssh2
+Jan  5 14:08:02 server sshd[8003]: Failed password for invalid user test@localhost from 6.6.6.3 port 61003 ssh2
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Test 7.13: Username with Plus Sign
+# Used in some email-based authentication schemes
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:09:00 server sshd[9001]: Failed password for invalid user user+tag from 7.7.7.1 port 62001 ssh2
+Jan  5 14:09:01 server sshd[9002]: Failed password for invalid user admin+test from 7.7.7.2 port 62002 ssh2
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Test 7.14: Similar Usernames (admin variants)
+# Tests that parser distinguishes between similar usernames
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:10:00 server sshd[10001]: Failed password for admin from 8.8.8.1 port 63001 ssh2
+Jan  5 14:10:01 server sshd[10002]: Failed password for invalid user admin1 from 8.8.8.2 port 63002 ssh2
+Jan  5 14:10:02 server sshd[10003]: Failed password for invalid user admin2 from 8.8.8.3 port 63003 ssh2
+Jan  5 14:10:03 server sshd[10004]: Failed password for invalid user administrator from 8.8.8.4 port 63004 ssh2
+Jan  5 14:10:04 server sshd[10005]: Failed password for invalid user Admin from 8.8.8.5 port 63005 ssh2
+Jan  5 14:10:05 server sshd[10006]: Failed password for invalid user ADMIN from 8.8.8.6 port 63006 ssh2
+Jan  5 14:10:06 server sshd[10007]: Failed password for invalid user admin_backup from 8.8.8.7 port 63007 ssh2
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Test 7.15: Backslash in Username (Windows-style domain\user)
+# Common in Active Directory environments
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:11:00 server sshd[11001]: Failed password for invalid user domain\\user from 9.9.9.1 port 64001 ssh2
+Jan  5 14:11:01 server sshd[11002]: Failed password for invalid user CORP\\administrator from 9.9.9.2 port 64002 ssh2
+Jan  5 14:11:02 server sshd[11003]: Failed password for invalid user NT\\SYSTEM from 9.9.9.3 port 64003 ssh2
+
+# ════════════════════════════════════════════════════════════════════════════════
+# NOISE LINES - These should NOT be counted as failed auth attempts
+# Your parser must correctly ignore these
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:12:00 server sshd[12001]: Accepted password for alice from 192.168.1.50 port 65001 ssh2
+Jan  5 14:12:01 server sshd[12002]: Connection closed by 192.168.1.51 port 65002 [preauth]
+Jan  5 14:12:02 server sshd[12003]: Disconnecting: Too many authentication failures [preauth]
+Jan  5 14:12:03 server sshd[12004]: pam_unix(sshd:session): session opened for user bob
+Jan  5 14:12:04 server sshd[12005]: pam_unix(sshd:session): session closed for user bob
+Jan  5 14:12:05 server kernel: [UFW BLOCK] IN=eth0 OUT= MAC=00:00:00:00:00:00 SRC=192.168.1.52
+Jan  5 14:12:06 server systemd[1]: Started OpenBSD Secure Shell server.
+Jan  5 14:12:07 server sshd[12006]: Server listening on 0.0.0.0 port 22.
+Jan  5 14:12:08 server sshd[12007]: Received signal 15; terminating.
+Jan  5 14:12:09 server cron[12008]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
+Jan  5 14:12:10 server su[12009]: pam_unix(su:session): session opened for user root by admin(uid=1000)
+Jan  5 14:12:11 server sudo: admin : TTY=pts/0 ; PWD=/home/admin ; USER=root ; COMMAND=/bin/cat /etc/shadow
+Jan  5 14:12:12 server sshd[12010]: Received disconnect from 192.168.1.53 port 65003:11: disconnected by user
+Jan  5 14:12:13 server sshd[12011]: Invalid user format from 192.168.1.54 port 65004
+Jan  5 14:12:14 server sshd[12012]: Connection reset by 192.168.1.55 port 65005 [preauth]
+
+# ════════════════════════════════════════════════════════════════════════════════
+# MIXED SCENARIO - Brute force attack with username enumeration
+# Simulates a real-world attack pattern
+# ════════════════════════════════════════════════════════════════════════════════
+
+Jan  5 14:15:00 server sshd[15001]: Failed password for root from 203.0.113.50 port 40001 ssh2
+Jan  5 14:15:01 server sshd[15002]: Failed password for root from 203.0.113.50 port 40002 ssh2
+Jan  5 14:15:02 server sshd[15003]: Failed password for root from 203.0.113.50 port 40003 ssh2
+Jan  5 14:15:03 server sshd[15004]: Failed password for admin from 203.0.113.50 port 40004 ssh2
+Jan  5 14:15:04 server sshd[15005]: Failed password for admin from 203.0.113.50 port 40005 ssh2
+Jan  5 14:15:05 server sshd[15006]: Failed password for invalid user ubuntu from 203.0.113.50 port 40006 ssh2
+Jan  5 14:15:06 server sshd[15007]: Failed password for invalid user pi from 203.0.113.50 port 40007 ssh2
+Jan  5 14:15:07 server sshd[15008]: Failed password for invalid user ec2-user from 203.0.113.50 port 40008 ssh2
+Jan  5 14:15:08 server sshd[15009]: Failed password for invalid user centos from 203.0.113.50 port 40009 ssh2
+Jan  5 14:15:09 server sshd[15010]: Failed password for invalid user deploy from 203.0.113.50 port 40010 ssh2
