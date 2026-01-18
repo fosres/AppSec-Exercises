@@ -140,7 +140,15 @@ import subprocess
 
 def get_file(file):
 
-	# OS Command Injection Vulnerability below
+	'''
+	
+		OS Command Injection Vulnerability below:
+
+		One is supposed to use an array with a sequence
+
+		of program arguments instead of a single string.
+
+	'''
 	path = subprocess.check_output(f"find . -name '{file}'", shell=True)
 	with open(path, "rb") as f:
 		return f.read()
@@ -156,22 +164,40 @@ Identify ALL vulnerabilities in this code:
 
 The code snippet is vulnerable to OS Command Injection.
 
-- Explain why Python doesn't automatically prevent these issues
-- What is the blast radius of successful exploitation?
 
-**2b. Exploitation Payloads** (5 points)
+An attacker can use dangerous shell characters such as ';'
 
-Construct THREE different attack payloads that exploit this code:
-1. A payload that reads `/etc/passwd`
-2. A payload that creates a reverse shell
-3. A payload that exfiltrates data to an external server
+to append a dangerous command.
+
 
 **2c. Secure Rewrite** (5 points)
 
 Rewrite this function securely using:
-- No shell=True
-- Proper input validation
-- Path traversal prevention
+
+```python
+import subprocess
+import shlex
+
+def get_file(file):
+
+	'''
+	
+		OS Command Injection Vulnerability below:
+
+		One is supposed to use an array with a sequence
+
+		of program arguments instead of a single string.
+
+	'''
+
+	cmd = f"find . -name '{shlex.quote(file)}'"
+
+	cmd_list = shlex.split(cmd)
+
+	path = subprocess.check_output(cmd, shell=False)
+	with open(path, "rb") as f:
+		return f.read()
+```
 
 ### Expected Knowledge
 
