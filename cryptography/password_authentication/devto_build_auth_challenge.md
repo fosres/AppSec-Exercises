@@ -195,7 +195,7 @@ CREATE TABLE users (
 **What you need to know:**
 - ✅ **Students READ this data** - It's already in the database
 - ✅ **Students DON'T populate it** - All test users already have their files listed
-- ✅ **Authentication returns it** - Your `authenticate_user()` function should return this list on successful login
+- ✅ **Authentication returns it** - Your `authenticate_user()` function should return this string on successful login
 - ✅ **Real-world pattern** - Production auth systems return user permissions/files/roles after login
 
 **Why it's included:**
@@ -566,7 +566,8 @@ def register_user(username: str, password: str, allowed_files: str = "",
 	Args:
 		username: User's chosen username
 		password: User's plaintext password  
-		allowed_files: Comma-separated list of files user can access (optional)
+		allowed_files: Comma-separated string of files user can access
+		              (e.g., "file1.txt,file2.txt")
 		kdf: Password KDF ('scrypt', 'pbkdf2', 'argon2', 'bcrypt')
 		db_backend: Database to use ('sqlite', 'postgres', 'sqlalchemy')
 	
@@ -596,8 +597,8 @@ def authenticate_user(username: str, password: str,
 		db_backend: Database to use ('sqlite', 'postgres', 'sqlalchemy')
 	
 	Returns:
-		List of allowed files ONLY on successful authentication (pre-populated in database)
-		Example: ['documents/file1.txt', 'documents/file2.txt']
+		Comma-separated string of allowed files ONLY on successful authentication (pre-populated in database)
+		Example: "documents/file1.txt,documents/file2.txt"
 	
 	Raises:
 		Exception with generic error message on ANY failure
@@ -605,7 +606,7 @@ def authenticate_user(username: str, password: str,
 		CRITICAL SECURITY REQUIREMENT:
 		- User not found? → Raise exception with generic message
 		- Wrong password? → Raise exception with SAME generic message
-		- DO NOT return [] or None on failure
+		- DO NOT return empty string ("") or None on failure
 		- DO NOT leak whether user exists or not
 		- ALWAYS use the same error message for all auth failures
 	
@@ -616,7 +617,7 @@ def authenticate_user(username: str, password: str,
 		✅ Same error for non-existent user AND wrong password (prevent user enumeration)
 		✅ Close database connections properly (no leaks)
 		✅ Use constant-time password comparison (passlib does this automatically)
-		✅ RAISE exception on failure - DO NOT return empty list or None!
+		✅ RAISE exception on failure - DO NOT return empty string or None!
 	
 	Hash Format Detection:
 		- '$scrypt$...' → use scrypt.verify()
@@ -644,16 +645,16 @@ Your `authenticate_user()` function should:
 6. **Detect which KDF was used by checking the hash prefix** (e.g., `if hash.startswith('$scrypt$')`)
 7. Verify the password using the detected KDF's verify function
 8. **If password wrong → raise exception with SAME generic message** (DO NOT return anything!)
-9. **If password correct → return the `allowed_files` list** (split the comma-separated string)
+9. **If password correct → return the `allowed_files` string** (as stored in database)
 10. Always close database connections (use `try/finally` or context managers)
 
 **CRITICAL: Authentication result behavior:**
 ```python
-# SUCCESS - return allowed files
+# SUCCESS - return allowed files string
 if password_is_valid:
-    return allowed_files_str.split(',')
+    return allowed_files_str  # Return as comma-separated string
 
-# FAILURE - raise exception (DO NOT return [] or None!)
+# FAILURE - raise exception (DO NOT return "" or None!)
 if not password_is_valid:
     raise AuthenticationFailed("Invalid credentials")
 ```
@@ -670,7 +671,7 @@ Your `register_user()` function (OPTIONAL):
 - **Use `db_backend` parameter** - don't hardcode which database to use!
 - **`authenticate_user()` detects KDF from hash** - no need for kdf parameter!
 - **`register_user()` uses `kdf` parameter** - to choose which KDF when creating hashes
-- **CRITICAL: Return list on SUCCESS, raise exception on FAILURE** - Never return [] or None!
+- **CRITICAL: Return string on SUCCESS, raise exception on FAILURE** - Never return "" or None!
 - Database files (`users_sqlite.db`, `users_sqlalchemy.db`) are in your current directory
 - The databases already contain test users with `allowed_files` populated
 - Your main job is to **read and return** this data during authentication, not populate it!
@@ -925,6 +926,36 @@ Include:
 - [ ] All tests passing
 - [ ] KDF performance comparison
 - [ ] Documentation/comments explaining your approach
+
+---
+
+## Challenge Files
+
+All files are available in the [GitHub repository](https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/password_authentication):
+
+**Grader & Testing:**
+- [`grader.py`](https://raw.githubusercontent.com/fosres/SecEng-Exercises/main/cryptography/password_authentication/grader.py) - Comprehensive security grader (92 tests)
+
+**Reference Solution:**
+- [`passauth.py`](https://raw.githubusercontent.com/fosres/SecEng-Exercises/main/cryptography/password_authentication/passauth.py) - Complete implementation (all 32 functions)
+
+**Database Files:**
+- [`users_sqlite.db`](https://github.com/fosres/SecEng-Exercises/raw/main/cryptography/password_authentication/users_sqlite.db) - SQLite database with pre-populated test users
+- [`users_sqlalchemy.db`](https://github.com/fosres/SecEng-Exercises/raw/main/cryptography/password_authentication/users_sqlalchemy.db) - SQLAlchemy-compatible SQLite database
+- [`users_postgres.sql`](https://raw.githubusercontent.com/fosres/SecEng-Exercises/main/cryptography/password_authentication/users_postgres.sql) - PostgreSQL schema and data dump
+
+**Quick Start:**
+```bash
+# Clone the repository
+git clone https://github.com/fosres/SecEng-Exercises.git
+cd SecEng-Exercises/cryptography/password_authentication
+
+# Install dependencies
+pip install passlib argon2-cffi psycopg2-binary sqlalchemy
+
+# Run the grader
+python grader.py
+```
 
 ---
 
