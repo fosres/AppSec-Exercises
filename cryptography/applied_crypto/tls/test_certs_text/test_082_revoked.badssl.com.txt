@@ -1,0 +1,75 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            05:0d:9e:03:cf:79:93:ab:1f:b9:9c:65:2f:10:14:d4:f8:b4
+        Signature Algorithm: ecdsa-with-SHA384
+        Issuer: C = US, O = Let's Encrypt, CN = E7
+        Validity
+            Not Before: Jan  6 20:03:00 2026 GMT
+            Not After : Apr  6 20:02:59 2026 GMT
+        Subject: CN = revoked.badssl.com
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:00:8e:2a:93:57:79:17:ad:46:22:54:f2:af:b2:
+                    72:1e:1a:77:7e:54:6c:02:a0:12:07:69:b5:81:7c:
+                    d0:ac:28:14:31:fb:f2:f0:ad:88:12:11:de:d4:cc:
+                    b5:95:ec:87:ae:db:de:46:36:10:59:78:99:76:34:
+                    36:72:f1:30:42
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Digital Signature
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication, TLS Web Client Authentication
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                A6:C1:8A:BC:53:2A:D8:3E:26:AC:7A:13:BB:DC:86:30:A0:90:C6:5E
+            X509v3 Authority Key Identifier: 
+                AE:48:9E:DC:87:1D:44:A0:6F:DA:A2:E5:60:74:04:78:C2:9C:00:80
+            Authority Information Access: 
+                CA Issuers - URI:http://e7.i.lencr.org/
+            X509v3 Subject Alternative Name: 
+                DNS:revoked.badssl.com
+            X509v3 Certificate Policies: 
+                Policy: 2.23.140.1.2.1
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://e7.c.lencr.org/53.crl
+            CT Precertificate SCTs: 
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : CB:38:F7:15:89:7C:84:A1:44:5F:5B:C1:DD:FB:C9:6E:
+                                F2:9A:59:CD:47:0A:69:05:85:B0:CB:14:C3:14:58:E7
+                    Timestamp : Jan  6 21:01:30.111 2026 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:46:02:21:00:DF:FB:10:51:A9:C2:5B:3D:A0:4E:83:
+                                49:1B:51:AF:0C:91:CA:57:F5:CE:B6:46:4A:9A:4F:5D:
+                                8C:2B:D9:3C:37:02:21:00:94:C5:A6:9A:3F:F6:A7:F1:
+                                DA:F0:DC:29:DE:6D:C9:B7:B1:20:98:90:09:B8:45:7D:
+                                D9:48:48:19:81:C8:FC:98
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : 96:97:64:BF:55:58:97:AD:F7:43:87:68:37:08:42:77:
+                                E9:F0:3A:D5:F6:A4:F3:36:6E:46:A4:3F:0F:CA:A9:C6
+                    Timestamp : Jan  6 21:01:30.163 2026 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:46:02:21:00:84:06:04:1C:FA:CC:AA:4C:8D:D8:04:
+                                79:CC:A6:6D:37:14:BE:7B:5A:9A:3C:63:BC:81:7D:2D:
+                                6F:64:D9:14:7E:02:21:00:8D:2A:63:E1:85:8C:8E:4D:
+                                A3:1A:DA:DF:8C:63:77:9F:25:44:30:24:5E:69:5B:3D:
+                                D8:A1:B3:D8:34:56:86:FE
+    Signature Algorithm: ecdsa-with-SHA384
+    Signature Value:
+        30:65:02:30:64:18:86:e3:7c:35:23:d1:9c:32:b7:ab:c5:08:
+        1b:f8:c1:d8:31:1e:db:bd:9c:cf:67:03:eb:75:92:16:de:31:
+        82:1a:fd:3e:d6:f3:cb:fe:59:84:17:98:11:3e:4e:d5:02:31:
+        00:84:78:3e:f4:54:13:66:d4:fe:d4:d1:6f:34:24:dd:20:5d:
+        72:70:b5:bb:39:b5:ad:30:01:07:4f:0d:93:2d:27:b4:0a:d6:
+        96:3a:36:61:3d:76:f3:dc:72:27:da:f3:79

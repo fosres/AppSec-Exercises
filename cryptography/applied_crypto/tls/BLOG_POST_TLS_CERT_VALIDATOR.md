@@ -513,25 +513,204 @@ SANs: DNS:www.example.com, DNS:example.com
 **Plain English explanation:**
 The hostname in the browser address bar MUST match one of the SANs in the certificate.
 
-**⭐ CRITICAL: CHECK 7 USES WILDCARD PATTERN MATCHING ⭐**
+**⭐ CRITICAL: CHECK 7 USES DNS WILDCARD PATTERN MATCHING ⭐**
 
-This check performs **pattern matching** where `*` is a wildcard character!
+This check performs **DNS wildcard pattern matching** where `*` is a wildcard character. **DNS wildcards follow RFC 6125 rules, NOT shell/filesystem wildcard rules!**
 
-**Matching rules:**
-1. **Exact match:** `www.example.com` == `DNS:www.example.com` ✅
-2. **Wildcard match:** `api.example.com` matches `DNS:*.example.com` ✅
-3. **Case insensitive:** `WWW.EXAMPLE.COM` == `www.example.com` ✅
-4. **⚠️ TLD wildcards FORBIDDEN:** `*.com` is INVALID per RFC 6125 ❌
+**🔑 Understanding DNS Labels (The Foundation of Wildcard Matching)**
 
-**Wildcard matching examples:**
+Before understanding wildcard matching, you must understand **labels**:
+
+**What is a label?**
+- A label is one "part" of a domain name separated by dots
+- Think of labels as "levels" in the domain hierarchy
+
+**Example: Breaking down `www.example.com` into labels:**
+```
+www.example.com
+ │    │      │
+ │    │      └─── Label 3: "com" (TLD/root)
+ │    └────────── Label 2: "example" (base domain)
+ └─────────────── Label 1: "www" (subdomain - LEFTMOST)
+
+Total: 3 labels
+```
+
+**More examples:**
+```
+mail.example.com        → 3 labels: ["mail", "example", "com"]
+api.example.com         → 3 labels: ["api", "example", "com"]
+wrong.host.badssl.com   → 4 labels: ["wrong", "host", "badssl", "com"]
+sub.domain.example.com  → 4 labels: ["sub", "domain", "example", "com"]
+example.com             → 2 labels: ["example", "com"]
+```
+
+**🎯 The Core Rule of DNS Wildcard Matching:**
+
+**The wildcard `*` replaces EXACTLY ONE label - no more, no less!**
+
+This is fundamentally different from shell wildcards which can match multiple levels.
+
+**⭐ CRITICAL DNS Wildcard Rules (RFC 6125 Section 6.4.3):**
+
+1. **Wildcard replaces exactly ONE label**
+   - `*.example.com` = `[exactly-one-label].example.com`
+   - NOT: `*.example.com` = `[anything].example.com`
+
+2. **Wildcard only in leftmost position**
+   - ✅ Valid: `*.example.com`
+   - ❌ Invalid: `www.*.com`
+   - ❌ Invalid: `example.*.com`
+
+3. **Label count must match**
+   - Pattern and hostname must have same number of labels
+   - This is the key rule most implementations miss!
+
+4. **Case-insensitive comparison**
+   - `*.Example.COM` matches `www.example.com`
+
+5. **Exact non-wildcard labels must match exactly**
+   - In `*.example.com`, both "example" and "com" must match exactly
+
+**📊 DNS Wildcard Matching Examples (Understanding Label Counts):**
+
+**Example 1: Correct Match**
+```
+Pattern:  *.example.com
+Hostname: www.example.com
+
+Breaking into labels:
+Pattern:  ["*",     "example", "com"]  → 3 labels
+Hostname: ["www",   "example", "com"]  → 3 labels
+
+Label count: 3 = 3 ✅ MATCH!
+- Label 1: "*" matches "www" ✅
+- Label 2: "example" = "example" ✅
+- Label 3: "com" = "com" ✅
+Result: ✅ PASS
+```
+
+**Example 2: Correct Match (Different Subdomain)**
+```
+Pattern:  *.example.com
+Hostname: api.example.com
+
+Breaking into labels:
+Pattern:  ["*",    "example", "com"]  → 3 labels
+Hostname: ["api",  "example", "com"]  → 3 labels
+
+Label count: 3 = 3 ✅ MATCH!
+- Label 1: "*" matches "api" ✅
+- Label 2: "example" = "example" ✅
+- Label 3: "com" = "com" ✅
+Result: ✅ PASS
+```
+
+**Example 3: NO MATCH - Too Many Labels**
+```
+Pattern:  *.example.com
+Hostname: wrong.host.badssl.com
+
+Breaking into labels:
+Pattern:  ["*",      "example", "com"]        → 3 labels
+Hostname: ["wrong",  "host", "badssl", "com"] → 4 labels
+
+Label count: 3 ≠ 4 ❌ NO MATCH!
+Why: Wildcard replaces ONE label, but hostname has TWO extra labels
+The wildcard can't "absorb" multiple labels!
+Result: ❌ FAIL
+```
+
+**Example 4: NO MATCH - Too Few Labels**
+```
+Pattern:  *.example.com
+Hostname: example.com
+
+Breaking into labels:
+Pattern:  ["*",       "example", "com"]  → 3 labels
+Hostname: ["example", "com"]             → 2 labels
+
+Label count: 3 ≠ 2 ❌ NO MATCH!
+Why: Wildcard needs a label to replace, but hostname has no subdomain
+Result: ❌ FAIL
+```
+
+**Example 5: NO MATCH - Wrong Base Domain**
+```
+Pattern:  *.api.example.com
+Hostname: www.example.com
+
+Breaking into labels:
+Pattern:  ["*",   "api", "example", "com"]  → 4 labels
+Hostname: ["www", "example", "com"]         → 3 labels
+
+Label count: 4 ≠ 3 ❌ NO MATCH!
+Even if we ignore count: "api" ≠ nothing, "example" ≠ "example" position mismatch
+Result: ❌ FAIL
+```
+
+**🎓 Conceptual Approach to DNS Wildcard Matching:**
+
+**Step 1: Split into labels**
+- Split the pattern on dots: `*.example.com` → `["*", "example", "com"]`
+- Split the hostname on dots: `www.example.com` → `["www", "example", "com"]`
+
+**Step 2: Check label count**
+- Count labels in pattern: 3
+- Count labels in hostname: 3
+- If counts don't match → NO MATCH, stop here!
+- This step is CRITICAL and catches most invalid matches
+
+**Step 3: Compare each label position**
+- Go through each position (left to right)
+- If pattern label is `*` → any hostname label matches (continue)
+- If pattern label is not `*` → must match exactly (case-insensitive)
+- If any non-wildcard label doesn't match → NO MATCH
+
+**Step 4: If all positions match → MATCH!**
+
+**🚨 Common Implementation Mistakes to Avoid:**
+
+**❌ WRONG: Using shell/filesystem wildcards**
+```
+Shell wildcards (like fnmatch, glob, Path.match):
+- * matches EVERYTHING including dots
+- Would match "*.example.com" to "wrong.host.example.com" ❌
+- This is a SECURITY BUG!
+```
+
+**❌ WRONG: Using regex wildcards without constraints**
+```
+Regex .* matches EVERYTHING including dots
+- Would match "*.example.com" to "a.b.c.d.example.com" ❌
+- Must constrain * to match ONE label only
+```
+
+**❌ WRONG: Forgetting to check label count**
+```
+Without label count check:
+- Might incorrectly match multi-level subdomains
+- Major security vulnerability!
+```
+
+**✅ CORRECT: DNS wildcard matching (RFC 6125)**
+```
+RFC 6125 rules:
+- Wildcard replaces exactly ONE label
+- Must check label count FIRST
+- Compare each label position
+```
+
+**More wildcard matching examples:**
 ```
 SAN: DNS:*.example.com
 
-✅ Matches: www.example.com (one level)
-✅ Matches: api.example.com (one level)
-✅ Matches: mail.example.com (one level)
-❌ NO match: example.com (wildcard needs subdomain!)
-❌ NO match: foo.bar.example.com (wildcard only covers 1 level!)
+✅ Matches: www.example.com (one level - 3 labels match 3 labels)
+✅ Matches: api.example.com (one level - 3 labels match 3 labels)
+✅ Matches: mail.example.com (one level - 3 labels match 3 labels)
+❌ NO match: example.com (wildcard needs subdomain - 2 labels ≠ 3 labels)
+❌ NO match: foo.bar.example.com (wildcard only covers 1 level - 4 labels ≠ 3 labels)
+❌ NO match: wrong.host.badssl.com (different base domain - 4 labels ≠ 3 labels)
 ```
 
 **⚠️ CRITICAL: TLD Wildcards Are FORBIDDEN by RFC 6125 ⚠️**
@@ -560,6 +739,66 @@ If *.com was allowed:
 RFC 6125 prevents this by FORBIDDING wildcards on public suffixes.
 ```
 
+**⚠️ IMPORTANT: How TLD Wildcards Are Handled (NOT Automatic Fail!)**
+
+**TLD wildcard SANs should be SKIPPED/IGNORED, not cause automatic failure.**
+
+**Correct behavior:**
+```
+If certificate has: DNS:*.com, DNS:www.example.com, DNS:example.com
+And hostname is: www.example.com
+
+Validation process:
+1. Check DNS:*.com
+   → Is TLD wildcard? YES
+   → Action: SKIP this SAN (don't attempt to match)
+   → Continue to next SAN
+
+2. Check DNS:www.example.com
+   → Is TLD wildcard? NO
+   → Is valid? YES
+   → Does hostname match? YES (exact match)
+   → Result: ✅ PASS CHECK 7
+
+CHECK 7 PASSES because a valid SAN matched the hostname!
+```
+
+**Key principle:** Treat TLD wildcard SANs like malformed data - ignore them and continue checking other SANs.
+
+**When CHECK 7 fails:**
+- ❌ No SANs present
+- ❌ ONLY TLD wildcard SANs (no valid SANs to check)
+- ❌ Has valid SANs, but none match the hostname
+
+**When CHECK 7 passes:**
+- ✅ At least one valid (non-TLD-wildcard) SAN matches the hostname
+
+**Examples:**
+
+**Example 1: Only TLD wildcard (FAILS)**
+```
+SANs:     DNS:*.com
+Hostname: www.example.com
+Result:   ❌ FAIL CHECK 7
+Reason:   No valid SAN to match against (only TLD wildcard)
+```
+
+**Example 2: TLD wildcard + matching valid SAN (PASSES)**
+```
+SANs:     DNS:*.com, DNS:www.example.com
+Hostname: www.example.com
+Result:   ✅ PASS CHECK 7
+Reason:   Valid SAN (www.example.com) matches hostname
+```
+
+**Example 3: TLD wildcard + non-matching valid SAN (FAILS)**
+```
+SANs:     DNS:*.com, DNS:api.example.com
+Hostname: www.example.com
+Result:   ❌ FAIL CHECK 7
+Reason:   No valid SAN matches hostname (api ≠ www)
+```
+
 **🔗 How to Detect TLD Wildcards Programmatically:**
 
 To properly validate and reject TLD wildcards, you can retrieve the official list of valid TLDs from IANA:
@@ -583,69 +822,12 @@ CO
 ...
 ```
 
-**Implementation approach:**
-1. Download the IANA TLD list
-2. Parse into a set of valid TLDs (lowercase for comparison)
-3. When validating `*.something` wildcard:
-   - Extract base domain: `something`
-   - Check if `something` is in TLD list
-   - If yes → REJECT (TLD wildcard forbidden)
-   - If no → Proceed with other validation
-
-**Example validation logic:**
-```python
-def is_tld_wildcard(san_pattern):
-    """
-    Check if wildcard pattern is on a TLD (forbidden).
-    
-    Args:
-        san_pattern: SAN like "*.com" or "*.example.com"
-    
-    Returns:
-        True if TLD wildcard (should reject), False otherwise
-    """
-    if not san_pattern.startswith('*.'):
-        return False
-    
-    base_domain = san_pattern[2:].lower()  # Remove "*."
-    
-    # Load TLD list (cache this in production)
-    tlds = load_tld_list()  # From IANA URL
-    
-    # Check if base domain is a TLD
-    return base_domain in tlds
-
-# Examples:
-# is_tld_wildcard("*.com") → True (reject!)
-# is_tld_wildcard("*.org") → True (reject!)
-# is_tld_wildcard("*.example.com") → False (OK)
-```
-
 **Important notes:**
 - TLD list includes both generic TLDs (.com, .org) and country-code TLDs (.uk, .jp)
 - Some TLDs have second-level registrations (.co.uk, .com.au) - also forbidden
 - For production code, cache the TLD list and update periodically
 - IANA updates this list when new TLDs are added
-
-**Alternative: Simple heuristic (not complete but catches common cases):**
-```python
-def is_tld_wildcard_simple(san_pattern):
-    """
-    Simple check without downloading TLD list.
-    Catches most common cases but not complete.
-    """
-    if not san_pattern.startswith('*.'):
-        return False
-    
-    base_domain = san_pattern[2:]
-    
-    # If base domain has no dots, it's likely a TLD
-    # *.com → no dots → TLD wildcard
-    # *.example.com → has dot → not TLD wildcard
-    return '.' not in base_domain
-```
-
-**Recommended:** Use the IANA TLD list for complete, accurate validation.
+- Figure out how to use this list to detect TLD wildcards in your validator!
 
 **Common mistakes:**
 ```
@@ -694,7 +876,8 @@ Expected: ❌ FAIL (wrong base domain - www.example.com doesn't match *.api.exam
 ```
 SANs:     DNS:*.com
 Hostname: www.example.com
-Expected: ❌ FAIL (TLD wildcards FORBIDDEN by RFC 6125)
+Expected: ❌ FAIL (no valid SAN to match - only has TLD wildcard which is skipped)
+Note:     Fails because ONLY SAN is invalid TLD wildcard, not because TLD wildcard exists
 ```
 
 **Test 020: Subdomain Wildcard (MUST PASS)**

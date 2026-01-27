@@ -44,6 +44,42 @@ def list_of_tlds() -> list[str]:
 			raise Exception("Unexpected error in list_of_tlds()")
 	return tlds
 
+def dns_wildcard_match(hostname,san) -> bool:
+
+	hostname_list = hostname.split(".")
+
+	san_list = san.split(".")
+
+	if len(hostname_list) != len(san_list):
+
+		return False
+
+	i = 0
+
+	while i < len(hostname_list):
+
+		if	(
+				hostname_list[i] == "*"
+
+				or
+
+				san_list[i] == "*"
+			):
+
+			i += 1
+
+			continue
+
+		elif	(
+				hostname_list[i] != san_list[i]
+			):
+
+			return False
+		
+		i += 1
+
+	return True
+			
 def validate_tls_certificate(text_file,domain=""):
 	"""
 	Validate TLS certificate against 20-point checklist.
@@ -708,7 +744,7 @@ def validate_tls_certificate(text_file,domain=""):
 
 					continue
 				
-				if fnmatch.fnmatch(domain,san):
+				if dns_wildcard_match(domain,san):
 				
 					host_in_sans = 1
 

@@ -1,0 +1,73 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            07:1a:ad:bd:a4:47:dc:69:df:b8:a7:63:06:65:4c:15
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = US, O = DigiCert Inc, OU = www.digicert.com, CN = RapidSSL TLS RSA CA G1
+        Validity
+            Not Before: Nov 21 00:00:00 2024 GMT
+            Not After : Dec 22 23:59:59 2025 GMT
+        Subject: CN = no-sct.badssl.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:c2:04:ec:f8:8c:ee:04:c2:b3:d8:50:d5:70:58:
+                    cc:93:18:eb:5c:a8:68:49:b0:22:b5:f9:95:9e:b1:
+                    2b:2c:76:3e:6c:c0:4b:60:4c:4c:ea:b2:b4:c0:0f:
+                    80:b6:b0:f9:72:c9:86:02:f9:5c:41:5d:13:2b:7f:
+                    71:c4:4b:bc:e9:94:2e:50:37:a6:67:1c:61:8c:f6:
+                    41:42:c5:46:d3:16:87:27:9f:74:eb:0a:9d:11:52:
+                    26:21:73:6c:84:4c:79:55:e4:d1:6b:e8:06:3d:48:
+                    15:52:ad:b3:28:db:aa:ff:6e:ff:60:95:4a:77:6b:
+                    39:f1:24:d1:31:b6:dd:4d:c0:c4:fc:53:b9:6d:42:
+                    ad:b5:7c:fe:ae:f5:15:d2:33:48:e7:22:71:c7:c2:
+                    14:7a:6c:28:ea:37:4a:df:ea:6c:b5:72:b4:7e:5a:
+                    a2:16:dc:69:b1:57:44:db:0a:12:ab:de:c3:0f:47:
+                    74:5c:41:22:e1:9a:f9:1b:93:e6:ad:22:06:29:2e:
+                    b1:ba:49:1c:0c:27:9e:a3:fb:8b:f7:40:72:00:ac:
+                    92:08:d9:8c:57:84:53:81:05:cb:e6:fe:6b:54:98:
+                    40:27:85:c7:10:bb:73:70:ef:69:18:41:07:45:55:
+                    7c:f9:64:3f:3d:2c:c3:a9:7c:eb:93:1a:4c:86:d1:
+                    ca:85
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Authority Key Identifier: 
+                0C:DB:6C:82:49:0F:4A:67:0A:B8:14:EE:7A:C4:48:52:88:EB:56:38
+            X509v3 Subject Key Identifier: 
+                9D:EE:C1:7B:81:0B:3A:47:69:71:18:7D:11:37:93:BC:A5:1B:3F:FB
+            X509v3 Subject Alternative Name: 
+                DNS:no-sct.badssl.com, DNS:www.no-sct.badssl.com
+            X509v3 Certificate Policies: 
+                Policy: 2.23.140.1.2.1
+                  CPS: http://www.digicert.com/CPS
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication, TLS Web Client Authentication
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://cdp.rapidssl.com/RapidSSLTLSRSACAG1.crl
+            Authority Information Access: 
+                OCSP - URI:http://status.rapidssl.com
+                CA Issuers - URI:http://cacerts.rapidssl.com/RapidSSLTLSRSACAG1.crt
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        24:5f:ca:c3:ce:5c:8d:97:33:bb:05:a8:8b:fb:4f:1e:8b:b5:
+        3b:9b:bf:45:66:69:42:7a:78:0d:e8:ea:8c:6f:f5:af:39:d9:
+        91:32:34:55:17:31:33:42:ab:ff:6b:ed:17:e3:9f:4e:0e:8a:
+        f6:a5:ee:b3:ae:84:7c:2e:d0:a7:04:b3:95:2e:d1:c7:70:4a:
+        98:58:29:c6:20:d8:6b:94:fc:11:3f:bb:30:1b:09:54:24:02:
+        c8:a0:b6:7d:31:2f:27:7b:73:9c:4f:3d:c5:dd:48:a8:e1:96:
+        d4:6f:58:0c:16:d5:3e:c1:59:23:f1:38:98:0a:84:26:5a:8c:
+        75:4b:d5:6a:0c:91:ec:a7:48:3e:89:1d:85:35:b8:6d:91:4b:
+        cf:32:38:d1:6a:47:c4:e0:ab:4f:ab:74:e4:8b:ef:c0:18:3c:
+        c6:d2:7d:64:fe:da:1a:5d:e8:14:0d:a0:14:90:c4:a2:00:31:
+        94:9b:85:c9:11:6a:88:04:c9:b5:28:5c:fc:22:a2:b0:86:be:
+        c1:58:8c:cb:a0:37:00:8e:a4:d3:52:c1:ba:95:11:16:b9:38:
+        ca:df:c6:c3:49:27:01:fb:51:90:c2:a8:c6:1a:33:f4:cb:9d:
+        11:a4:c8:be:c7:f0:3e:34:60:f2:c3:43:3e:4d:97:13:6d:78:
+        5d:0b:03:6d
