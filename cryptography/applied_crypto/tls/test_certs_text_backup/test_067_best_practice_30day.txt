@@ -1,0 +1,81 @@
+# Test 67: BEST PRACTICE: 30-day validity
+# Expected: PASS - Excellent (better than 90 days)
+# Hostname: www.example.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            45:2e:74:fb:36:fe:d6:ef:f1:70:9f:35:0b:91:5d:60:6d:5b:1a:88
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = Test CA
+        Validity
+            Not Before: Jan 23 18:54:30 2026 GMT
+            Not After : Feb 23 18:54:30 2026 GMT
+        Subject: CN = www.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (3072 bit)
+                Modulus:
+                    00:c1:74:be:88:5e:5d:f6:ff:b7:32:06:02:c4:10:
+                    a3:09:49:f7:bb:f5:8c:ce:1a:d4:71:9c:21:3f:b2:
+                    61:85:2f:b5:f0:20:c1:84:2a:67:ca:a0:c3:68:1c:
+                    36:a1:27:82:5b:71:5d:20:c5:bf:11:eb:04:13:09:
+                    c8:25:85:3c:4a:36:ec:28:f6:37:ce:bb:db:99:67:
+                    93:3c:01:eb:ca:9f:86:ec:92:b8:39:57:67:0f:7c:
+                    e2:4e:45:c7:18:bc:60:7f:88:3e:4c:5e:a3:e7:8a:
+                    ed:a1:4b:34:91:13:59:4b:34:de:ba:15:74:da:6f:
+                    93:2d:ee:00:1c:09:67:86:e1:05:fe:b7:81:d7:fe:
+                    d5:de:7d:e4:0e:c8:12:05:0d:75:59:5c:c6:b4:58:
+                    4f:2f:c8:40:d2:67:50:94:c3:0f:81:10:9e:35:f7:
+                    a9:1b:ea:dd:44:6d:93:4c:75:a4:60:e3:cc:50:10:
+                    ef:de:c6:35:ff:2f:17:0c:46:03:bc:1b:2b:2c:d6:
+                    cf:5e:55:e0:17:c0:0e:4f:4e:4c:f7:66:81:0c:0f:
+                    55:f1:a5:2c:a0:3e:87:8b:8c:31:79:81:4e:4f:52:
+                    a4:22:25:58:dc:4d:96:ac:2b:fd:eb:7b:a3:d4:96:
+                    bd:81:34:ea:61:5d:a9:d8:f2:65:c0:42:18:04:98:
+                    82:41:e9:f7:a9:bc:d3:cf:9b:bf:10:17:b7:03:cb:
+                    b7:5b:3b:fb:c4:97:74:b5:14:d5:4d:a6:7a:8c:ff:
+                    bc:66:03:76:f7:09:9d:c5:35:86:32:8c:36:f9:5c:
+                    61:e8:42:24:6f:98:08:18:50:3c:33:7b:9d:b2:51:
+                    40:17:45:f6:32:75:32:da:b3:30:ed:53:80:0c:6d:
+                    9f:61:ad:ca:e5:c8:df:eb:7a:84:89:6b:80:c7:f6:
+                    88:81:47:a1:65:4f:57:fc:79:d8:71:34:31:59:62:
+                    8e:1a:a9:87:62:1f:6c:18:52:d1:b7:77:31:d9:03:
+                    3f:33:9d:d2:41:6f:db:a5:b6:6d
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:www.example.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                43:24:55:21:D0:5A:EA:17:9C:65:63:0A:FA:CB:25:03:B0:38:FC:4C
+            X509v3 Authority Key Identifier: 
+                BC:76:02:98:55:07:77:86:48:8C:02:E4:61:C5:B9:BF:71:E9:C7:9E
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl.example.com/ca.crl
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.example.com
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        1b:af:a6:7b:8c:6d:b0:73:b0:e2:50:33:16:60:4d:b0:aa:5d:
+        32:06:11:2d:c5:47:f1:ad:ad:a9:16:a4:14:46:8a:69:07:eb:
+        61:45:62:9d:d0:8a:cc:84:03:3b:bd:78:5e:57:1c:8a:42:9d:
+        ad:47:28:6f:94:14:25:65:f4:98:68:1b:81:53:2b:91:57:2a:
+        1f:69:c5:65:b5:ef:a3:08:17:22:3b:27:2a:06:c4:dc:6a:3b:
+        1e:58:ef:c5:a9:c6:2c:94:32:94:6c:ef:e8:23:50:13:3a:5a:
+        ab:68:55:74:33:35:2a:03:e2:67:85:84:98:39:24:b0:a1:99:
+        ad:9d:e8:b6:74:fc:2b:44:37:d3:49:c0:f9:49:52:ef:8f:ae:
+        84:e2:1d:13:54:a8:b6:22:21:6b:c4:63:61:51:05:04:84:e9:
+        09:1e:fd:93:20:aa:f3:9b:3b:c2:8f:b7:40:e0:80:a7:76:e4:
+        12:6b:dc:b8:f6:6b:ca:c5:c6:1e:82:7a:d7:40:b2:ae:f9:b5:
+        d9:90:d6:c3:11:1a:1b:37:45:56:f4:01:e5:4f:f1:e8:08:e7:
+        6b:03:56:5e:bb:18:f6:c0:0b:76:cf:7e:77:fe:ff:87:56:ca:
+        06:63:f9:b9:29:31:26:c6:5a:a6:34:9d:d0:22:77:db:a7:3b:
+        1e:01:14:79

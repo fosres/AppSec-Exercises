@@ -1,0 +1,68 @@
+# TEST 076: Version 1 Certificate (Ancient Standard)
+#
+# PURPOSE: Test CHECK 1 (Version must be 3)
+#
+# WHAT'S WRONG: This is a Version 1 certificate (0x0)
+#   - Version 1 dates back to 1988
+#   - Does NOT support extensions (no SANs, no Key Usage, etc.)
+#   - Considered obsolete
+#
+# Version history:
+#   Version 1 (0x0): 1988 - No extensions
+#   Version 2 (0x1): 1993 - Rarely used
+#   Version 3 (0x2): 1996 - Modern standard (supports extensions)
+#
+# Expected result: CHECK 1 should FAIL (not Version 3)
+#                  Multiple other checks will also fail (no extensions)
+#
+Certificate:
+    Data:
+        Version: 1 (0x0)
+        Serial Number:
+            5b:60:fc:bd:63:92:39:63:60:7c:67:68:32:a6:5b:9d:50:63:19:9c
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = US, ST = California, L = San Francisco, O = Test CA, CN = Test CA Root
+        Validity
+            Not Before: Jan 26 19:59:42 2026 GMT
+            Not After : Jan 26 19:59:42 2027 GMT
+        Subject: C = US, ST = California, O = Example Inc, CN = www.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:b6:fe:de:2d:0e:5d:ba:ae:59:2d:14:fd:ba:f1:
+                    11:f5:8c:3c:8e:b8:40:02:b0:41:f5:00:cd:77:74:
+                    8a:a8:74:32:14:cd:5c:07:a3:47:4a:a3:69:f5:72:
+                    ee:64:f5:7a:35:53:84:46:6c:0b:7c:dd:6c:70:a7:
+                    b4:e8:72:bf:2d:50:76:34:57:3b:c9:c2:7c:a4:3e:
+                    bd:aa:c7:e5:cb:9d:c1:1e:63:d5:90:51:b6:5e:a0:
+                    a8:f7:96:e2:74:83:a8:9d:1c:66:f7:0e:30:e0:0a:
+                    9b:6a:e8:f8:75:85:15:9e:f1:f0:36:20:0b:b4:6b:
+                    26:51:65:78:9c:f5:de:0c:79:80:bc:8b:4a:e6:40:
+                    64:91:81:12:e6:71:8e:bc:32:cb:aa:84:ba:bb:de:
+                    57:33:d5:d5:35:5e:9b:0d:e0:24:df:1c:48:17:a4:
+                    52:1b:12:c2:1c:de:1a:63:01:c1:8c:a0:73:2a:38:
+                    a2:01:5f:7a:cb:22:63:19:9b:aa:6c:2c:d5:75:29:
+                    f5:43:a7:19:e3:7b:6b:b4:9c:72:84:f0:dc:c0:99:
+                    93:99:32:e5:9d:e8:84:ec:2d:3f:a0:64:bb:c9:99:
+                    3e:23:98:0d:3c:f0:1c:af:74:0e:0d:40:8b:69:7b:
+                    78:86:67:40:87:40:b0:67:0d:bc:ee:0b:9f:02:7d:
+                    d6:69
+                Exponent: 65537 (0x10001)
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        75:99:11:fe:0c:c8:5f:02:14:e3:4d:e7:84:f3:a9:8a:24:fb:
+        e8:05:b4:3e:8e:37:ac:76:ad:a2:73:c6:62:bb:05:0d:09:b2:
+        c5:6b:c0:b1:49:50:8a:da:aa:d2:94:5b:79:9f:9e:a6:dc:20:
+        96:04:75:a1:cd:86:5b:f3:a6:6e:3c:e2:25:73:41:fa:0f:c0:
+        36:e6:88:ba:87:3f:4a:00:ac:98:c5:9e:84:eb:0e:71:26:b7:
+        14:55:d1:a5:33:63:39:9a:9a:77:9a:fe:7b:75:96:67:99:89:
+        9b:83:26:53:67:d0:74:a7:90:05:55:7c:fc:6d:c5:59:22:3f:
+        d6:67:f1:dc:7f:ab:a2:f8:52:d4:26:88:4d:61:ad:4d:24:75:
+        e3:8e:54:5b:f9:e4:17:58:3b:bf:1e:f6:95:d1:84:57:d2:94:
+        89:11:b4:84:88:f5:f1:e1:13:20:d8:93:96:8f:73:2e:88:ac:
+        90:ed:6c:ed:c7:9c:f9:c3:b9:46:dd:a2:30:ef:1f:a1:02:fd:
+        28:78:72:f4:eb:9a:63:89:0a:66:77:5c:33:52:92:92:03:f6:
+        10:ae:b6:e7:5e:b6:27:a5:34:16:b5:a3:5d:bc:c2:2d:16:3b:
+        d0:6c:46:4b:51:11:74:9c:a5:0b:94:b9:a1:ba:90:20:9b:fc:
+        80:ed:39:33

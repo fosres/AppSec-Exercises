@@ -1,0 +1,43 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            04:50:8c:6e:7e:70:c2:ee:26:7e:9f:ea:43:92:6c:97:d4:8e:d5:68
+        Signature Algorithm: md5WithRSAEncryption
+        Issuer: C = US, ST = California, O = ACME, OU = Engineering, CN = files.acme.com
+        Validity
+            Not Before: Feb  1 08:00:31 2023 GMT
+            Not After : Feb  1 08:00:31 2024 GMT
+        Subject: C = US, ST = California, O = ACME, OU = Engineering, CN = files.acme.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:b4:e6:ed:6b:d8:9e:87:43:6e:7a:6f:2a:78:0d:
+                    49:d2:63:65:c0:09:53:c3:34:18:bb:cf:54:22:65:
+                    81:96:6c:c1:6f:5f:13:29:9c:2e:32:6d:15:3f:16:
+                    6d:30:24:03:31:a5:24:ed:d5:be:45:e6:34:29:af:
+                    90:b0:4d:03:61:16:16:12:e7:04:1b:e5:00:9c:68:
+                    00:5f:93:7b:a8:b1:3a:29:ae:de:ef:e3:18:0b:56:
+                    57:ba:7b:47:8c:81:e7:a3:7d:a7:ae:d9:0e:5c:72:
+                    1f:3d:97:a8:63:23:51:12:c4:50:8e:8e:32:12:26:
+                    f1:f6:94:30:0f:87:27:0c:8b
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Key Identifier:
+                39:F0:B1:8B:62:A5:4E:C9:0E:B0:59:58:82:DB:2B:FC:62:7A:01:94
+            X509v3 Authority Key Identifier:
+                39:F0:B1:8B:62:A5:4E:C9:0E:B0:59:58:82:DB:2B:FC:62:7A:01:94
+            X509v3 Basic Constraints: critical
+                CA:TRUE
+    Signature Algorithm: md5WithRSAEncryption
+    Signature Value:
+        98:fd:2d:f4:86:83:93:6d:33:61:d5:9b:c0:0e:7f:e4:c0:7d:
+        59:c1:61:01:fc:37:f2:0b:e8:cb:a9:18:4c:cb:54:fc:11:be:
+        b1:55:ec:35:c9:f8:f5:50:e5:05:38:f2:00:56:89:1f:b7:a2:
+        cd:8a:66:84:f3:df:c9:a2:bc:57:b0:f2:88:39:8b:f8:50:bd:
+        69:e3:61:86:ea:05:b7:b7:f2:2b:5b:63:ee:d0:94:af:84:25:
+        81:59:39:b6:61:22:00:97:b9:ab:de:12:cf:af:4c:e2:29:6e:
+        b8:3f:6f:ec:4f:54:45:75:01:45:e6:88:41:13:1d:bc:a4:19:
+        e3:1d
+

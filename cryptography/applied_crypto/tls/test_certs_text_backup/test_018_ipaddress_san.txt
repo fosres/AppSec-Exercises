@@ -1,0 +1,73 @@
+# Test 18: IP address in SAN
+# Expected: PASS for IP validation
+# Hostname: www.example.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            50:6d:b0:9b:61:3a:6f:86:21:f6:05:85:d8:0b:e5:e9:cf:58:46:ed
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = Test CA
+        Validity
+            Not Before: Jan 23 18:36:44 2026 GMT
+            Not After : Apr 24 18:36:44 2026 GMT
+        Subject: CN = www.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:ed:f7:0f:97:88:3f:57:1c:69:1d:c4:90:a3:4f:
+                    8b:4a:dd:30:3b:be:d2:cb:ba:c2:4f:86:ff:14:94:
+                    b0:3e:e4:6f:9a:b8:aa:a5:d7:93:2c:83:90:34:22:
+                    65:68:32:2d:0c:57:3e:7d:27:5a:ea:05:30:94:fb:
+                    bc:09:c0:50:7e:5a:fa:d9:6d:3b:a2:94:28:30:5d:
+                    af:97:5c:95:f4:94:7c:05:e2:a2:d2:2b:9f:d7:07:
+                    28:6a:59:e5:91:04:52:69:b8:f6:66:c4:14:15:aa:
+                    99:21:9a:0c:8c:a2:bd:6e:f9:95:01:79:b4:1e:55:
+                    9f:c5:90:25:5a:d7:46:f6:74:c2:9b:6e:81:1c:6d:
+                    a3:9b:dd:6d:44:04:28:41:af:2e:b9:ad:6b:09:d4:
+                    3e:5f:3c:22:aa:48:61:39:ad:b2:60:ba:5d:8b:fb:
+                    5d:17:c1:8a:57:7d:6a:bd:cf:8b:fa:79:11:50:6e:
+                    4e:28:01:97:f1:ef:24:53:c5:ba:54:84:6f:7a:5e:
+                    1a:b5:82:da:c6:3e:4a:09:69:db:38:c9:58:a7:07:
+                    3c:7b:9b:a2:4e:8a:28:33:1e:81:18:17:af:c9:ca:
+                    77:9b:e1:a5:1c:73:b2:a4:62:ed:4a:cb:f1:1f:94:
+                    0a:c3:8e:bf:c5:95:da:bc:6e:9c:07:14:9f:52:60:
+                    cd:85
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:www.example.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                E1:74:96:AF:F0:A8:6A:C8:4E:BA:B0:63:80:85:0D:48:DF:D7:44:0A
+            X509v3 Authority Key Identifier: 
+                F7:2B:CD:C9:9C:3F:AC:5A:84:D6:D7:F5:CA:13:BF:8F:B8:37:7B:80
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl.example.com/ca.crl
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.example.com
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        19:e1:91:16:5b:5b:00:a3:20:9b:c0:0d:06:4e:80:41:e4:de:
+        aa:16:87:28:8a:94:c0:3f:54:8b:53:cb:b7:7b:ef:fe:69:d7:
+        eb:36:1b:8b:9c:b9:a3:9e:a3:db:fc:60:98:eb:e2:a4:00:fc:
+        85:f9:66:0b:83:58:85:a4:99:f6:75:48:a5:61:ff:09:cf:ef:
+        f0:eb:fb:6c:4e:c1:fb:ac:f8:f4:65:88:c8:20:2a:30:78:d1:
+        c5:88:a4:70:57:ab:1c:94:7a:17:38:29:5a:00:e1:8e:3d:04:
+        1f:05:45:57:09:f4:1c:6b:c3:3b:2f:95:08:ce:81:bb:fe:d2:
+        bd:89:58:41:46:f3:e1:05:75:ee:75:0b:8b:ed:1d:15:10:3a:
+        f9:b9:1c:53:f4:c7:91:50:8f:b5:60:5c:fb:dd:ac:f5:45:ca:
+        93:15:32:c3:f2:f6:4a:97:30:ad:5a:c1:05:42:6d:da:65:76:
+        df:8c:ba:cb:0c:41:ff:8d:56:cd:32:96:df:f0:bf:49:61:76:
+        fa:76:67:c9:60:e8:00:1a:a2:fd:2c:84:eb:c6:30:ef:15:d0:
+        0d:1b:1d:d7:23:f4:fe:03:d1:59:87:49:7c:17:f1:79:d0:b8:
+        f5:17:ba:76:c8:da:73:b1:d3:96:ef:f1:07:1d:28:8e:33:6b:
+        6f:16:77:05

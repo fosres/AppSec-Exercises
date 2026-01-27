@@ -1,0 +1,73 @@
+# Test 58: Missing Digital Signature flag
+# Expected: FAIL - Check 9 (Digital Signature required)
+# Hostname: www.example.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            3b:5d:f0:5c:7d:ce:4a:bf:60:0c:0c:1f:73:04:a1:a6:e8:08:58:84
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = Test CA
+        Validity
+            Not Before: Jan 23 18:53:33 2026 GMT
+            Not After : Apr 24 18:53:33 2026 GMT
+        Subject: CN = www.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:a5:36:ff:d3:1d:f8:3d:cf:f9:b1:c7:52:73:6e:
+                    6b:e0:7d:ed:07:70:e3:d3:0d:0e:71:d9:e6:f7:cb:
+                    9f:aa:65:4b:f5:e9:92:ae:d3:d7:d2:f0:2d:77:ab:
+                    56:25:a9:20:c2:53:97:b1:21:07:da:aa:13:5f:8e:
+                    fa:83:11:c7:88:cd:b6:cb:3c:e0:56:0f:ea:4d:cc:
+                    1c:8d:27:b2:93:0e:f5:99:13:42:55:f5:00:5b:b2:
+                    87:2b:0c:7c:9e:8f:ea:e7:18:c8:20:ac:9a:3a:08:
+                    63:7d:ee:9a:dc:87:e9:9c:28:e7:c2:f5:da:01:55:
+                    23:05:c5:d9:4d:9c:25:c6:7c:b5:77:9c:cb:89:d6:
+                    23:49:3e:11:d8:dd:09:c9:6c:4d:78:30:cc:13:42:
+                    4f:92:69:53:1d:1d:45:16:35:5a:4c:47:7d:60:7b:
+                    8a:86:06:e8:1e:3b:4f:3a:95:f5:58:06:1c:36:cb:
+                    ce:6e:ec:a6:79:c0:d3:d5:44:30:e6:16:ef:bc:d6:
+                    81:54:6a:fe:8e:47:28:06:a6:fb:8c:f4:07:07:11:
+                    e7:3c:eb:8d:1f:1e:b1:d3:34:52:d3:61:f1:e7:11:
+                    62:b9:fb:d4:fb:e9:00:8c:30:61:03:88:57:b9:c0:
+                    cb:e0:ec:e2:f0:a6:46:0f:39:81:62:cd:93:65:c9:
+                    c8:b3
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:www.example.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                CB:02:4B:43:BD:E7:0B:6C:15:38:42:15:3E:D4:A5:E4:6A:35:43:70
+            X509v3 Authority Key Identifier: 
+                3E:94:62:76:97:09:18:0E:BC:4D:BA:43:FD:63:73:4E:4A:16:03:6F
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl.example.com/ca.crl
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.example.com
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        bf:b3:e9:3d:a0:0a:b7:b3:de:c0:9a:80:c4:87:a4:a4:4d:42:
+        16:73:18:db:b3:da:64:de:92:b7:c4:47:7f:82:e6:89:f4:2e:
+        4a:4f:3e:e7:b6:2e:cc:50:cd:de:e7:0b:23:45:f5:45:05:44:
+        7e:f2:bd:63:22:72:e3:80:c5:da:82:3d:de:2c:56:a6:d2:fc:
+        ca:ed:b3:ec:8f:b3:ea:be:0b:cf:e1:35:5a:a7:47:e8:61:01:
+        59:41:c8:da:18:d4:27:79:fc:a7:3d:b6:97:c7:9a:3b:eb:4a:
+        d3:31:90:43:aa:06:72:a8:dd:cc:83:d3:cc:2b:61:83:9a:c5:
+        6a:13:a3:7d:9e:25:e7:99:f9:6c:06:cc:1d:68:25:76:07:fe:
+        c1:6a:31:90:ff:0a:79:c7:39:91:ed:21:df:f5:0b:1a:8d:d8:
+        f9:56:44:a8:e5:b5:8e:fa:51:21:52:0c:f4:dd:d8:ce:44:c6:
+        54:95:53:32:e5:fb:bc:5f:d6:fa:0a:22:b6:0c:d7:23:c8:ee:
+        31:dc:34:a6:ba:ba:d4:6e:d7:19:cf:da:52:cc:2d:0f:9c:4b:
+        fd:6a:75:a4:92:05:bd:13:e1:a6:69:6b:76:e4:d6:38:94:f9:
+        c0:26:89:66:93:d9:c3:8b:f3:36:b3:38:50:74:30:3d:a3:28:
+        83:c1:d2:35

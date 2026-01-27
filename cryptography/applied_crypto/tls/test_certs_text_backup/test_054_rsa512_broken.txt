@@ -1,0 +1,42 @@
+# Test 54: RSA-512 (extremely weak - trivially crackable)
+# Expected: FAIL - Check 4 (512-bit crackable in hours/days)
+# Hostname: www.example.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            75:58:13:56:09:e2:7b:ee:5c:64:ec:a7:50:36:53:2c:b1:4e:5b:a5
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = US, CN = www.example.com
+        Validity
+            Not Before: Jan 24 18:52:43 2026 GMT
+            Not After : Apr 24 18:52:43 2026 GMT
+        Subject: C = US, CN = www.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (512 bit)
+                Modulus:
+                    00:ad:80:cc:44:68:24:60:3f:1a:cb:b5:9c:fd:ef:
+                    30:e1:7b:26:b4:29:3e:db:10:80:02:4a:22:08:26:
+                    df:22:64:be:ab:e7:c3:1a:2a:72:f7:0a:29:fe:bc:
+                    2f:13:e1:3b:3d:f6:d1:10:6c:d9:0e:a5:ed:c5:b4:
+                    1b:50:7a:a7:35
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:www.example.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                78:6B:72:D8:52:AB:D2:F9:CD:BC:EC:A6:B4:27:3F:39:11:0E:15:F1
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        99:32:5a:e0:83:7a:32:cc:d9:9e:32:ac:70:e9:d2:da:c7:22:
+        3c:4c:42:c8:a3:82:f5:e3:67:f0:c1:9d:d4:9d:e3:cf:7d:cc:
+        04:2a:30:6c:1f:d0:36:ab:d1:5b:b8:61:2a:0b:ed:2f:fe:84:
+        0d:78:54:c8:ac:ca:7f:10:2e:34

@@ -1,0 +1,73 @@
+# Test 35: CRL over HTTPS (circular dependency)
+# Expected: FAIL - Check 11
+# Hostname: www.example.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            45:36:7f:e1:e4:ff:ee:90:a9:4a:77:c3:65:f5:29:40:b6:b2:2a:72
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = Test CA
+        Validity
+            Not Before: Jan 23 18:37:47 2026 GMT
+            Not After : Apr 24 18:37:47 2026 GMT
+        Subject: CN = www.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:cc:bf:b2:47:1e:bc:2c:27:d8:e1:6a:be:b7:ef:
+                    73:9d:6e:fa:91:32:7e:9a:9f:9f:99:30:a5:32:28:
+                    2b:75:8d:4a:96:df:34:3c:64:81:8b:e4:7e:8d:e4:
+                    c9:08:1c:6f:05:d1:9d:0c:02:e0:4c:05:53:58:2e:
+                    d1:53:57:74:24:4d:39:63:24:b9:83:48:a4:af:04:
+                    1b:a1:c8:62:59:fd:b3:42:26:32:3b:bc:09:31:2e:
+                    37:b6:ca:9a:9c:1d:de:3d:e2:6d:64:44:22:17:e9:
+                    b7:45:78:31:2d:69:1e:c8:3a:6b:86:45:f1:6c:d0:
+                    9e:b5:45:0f:8c:d9:fe:a0:b0:89:aa:d8:4d:d1:44:
+                    ba:99:ad:6f:84:2d:0e:52:37:12:f1:77:91:b8:3f:
+                    7a:e6:83:a5:0c:86:65:1a:5c:f9:25:74:60:42:1f:
+                    fe:06:3d:27:36:68:ef:cd:06:14:9e:71:8a:ae:bf:
+                    21:d7:9b:63:5a:3b:f2:43:da:62:ba:54:37:f2:0b:
+                    6b:a8:7c:8f:fa:1b:61:62:cd:0e:25:71:68:2f:f3:
+                    74:e4:67:4e:28:33:23:e0:08:ba:91:77:d0:b5:49:
+                    1f:91:92:98:c5:c8:91:91:de:2c:b4:0d:28:f5:2e:
+                    64:b1:71:57:27:0f:c5:a9:8c:a2:8e:12:cf:99:8d:
+                    3b:2d
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:www.example.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                21:33:76:59:47:F3:2D:D8:47:24:C3:C6:AE:42:11:A0:98:35:D3:C2
+            X509v3 Authority Key Identifier: 
+                87:C9:12:1E:C9:D6:0F:52:3B:6B:79:80:46:27:05:3C:90:4C:0D:4B
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:https://crl.example.com/ca.crl
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.example.com
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        53:9b:88:23:ff:20:02:a2:d9:dd:d6:bb:5f:60:d8:fd:70:ae:
+        74:1c:86:94:06:49:db:0d:36:d3:b6:49:86:f4:26:03:b2:86:
+        82:e7:37:f0:d1:8c:a6:c0:27:58:eb:60:f5:8d:cc:b2:91:3a:
+        76:f3:8a:6c:e6:34:4f:04:b3:8f:02:64:31:be:38:4c:df:e2:
+        ae:ee:d3:b0:bc:7a:30:a5:a3:64:f3:19:7b:b3:06:53:06:7b:
+        a7:8b:9b:29:4e:05:49:1b:38:0b:5e:f3:08:8f:e6:5e:d5:2e:
+        25:44:78:76:e8:3c:bd:5d:b5:64:00:14:c2:8d:53:df:91:aa:
+        e4:a7:eb:95:1e:53:fe:4e:4b:c6:00:de:9f:1a:cd:15:be:3e:
+        7d:6f:a7:27:e6:97:c9:1f:25:a6:67:3d:62:60:7c:7b:d2:62:
+        7f:bd:35:a7:c7:ff:71:b8:eb:15:9d:4c:19:6c:62:93:c7:01:
+        63:1e:02:1b:fc:69:78:3b:21:1c:e1:f4:b9:39:c1:4d:10:4a:
+        60:0b:0f:f9:a3:72:27:80:0d:b2:5f:66:da:6b:e4:43:7e:4b:
+        ae:60:80:34:94:34:36:75:b7:84:91:de:ec:4e:f0:ff:98:ea:
+        44:aa:ca:1b:9d:33:bd:27:b2:a4:9d:bc:e1:2e:e1:3b:bb:bd:
+        eb:79:40:42

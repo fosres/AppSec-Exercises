@@ -1,0 +1,60 @@
+# Test 2: ECDSA P-256 certificate - valid
+# Expected: PASS (20/20 or close)
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            52:f4:f2:ca:ce:17:c0:65:81:ed:bc:a5:c0:35:ea:da:e4:d4:17:19
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = US, O = Test CA Inc, CN = Test CA
+        Validity
+            Not Before: Jan 23 18:33:03 2026 GMT
+            Not After : Apr 24 18:33:03 2026 GMT
+        Subject: C = US, O = ECDSA Corp, CN = ecdsa.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:2e:05:3b:85:c5:b4:58:8f:44:57:a2:a0:71:7e:
+                    04:a5:37:85:b9:fe:63:29:08:b1:9d:fa:2a:fd:10:
+                    5b:0e:bd:37:c5:2a:de:94:c7:c5:fe:25:a7:18:44:
+                    a6:b2:01:c6:ef:25:e8:ff:40:81:84:b4:7d:57:7d:
+                    4a:46:f8:7f:24
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:ecdsa.example.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Agreement
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                09:E5:D5:14:AF:0B:15:96:5F:17:07:C4:02:4F:94:D7:72:4A:A2:5B
+            X509v3 Authority Key Identifier: 
+                F4:F1:AC:76:18:D1:86:2E:95:4F:1A:9A:B8:CB:58:D3:59:6F:A5:2B
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl.example.com/ca.crl
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.example.com
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        0f:7f:35:38:8d:1d:e4:c5:87:e4:23:50:f9:25:0e:d6:28:d4:
+        64:12:43:82:58:62:69:87:a6:92:a2:ae:60:a4:d8:03:76:6a:
+        67:76:94:e0:c2:18:00:05:e5:fe:5b:21:89:b9:ca:0c:9e:0e:
+        d6:42:0a:6d:25:f8:1f:df:51:b0:1d:47:fc:a3:8d:e5:44:68:
+        29:d2:85:fb:e7:06:c6:f6:2b:00:79:70:6d:75:8d:77:2f:09:
+        df:e0:1f:81:c3:bf:54:c4:80:be:61:2d:8c:4b:ff:29:0c:c8:
+        fe:11:0d:0b:b3:9c:76:aa:0b:4a:0d:b5:eb:13:22:d8:33:db:
+        89:75:ee:31:0a:0a:34:fe:03:40:f5:44:4b:4e:24:11:46:e0:
+        f4:2a:b2:fe:13:86:54:15:b5:08:e5:f6:04:49:5b:de:ac:26:
+        8f:3a:91:9c:f1:c3:40:d6:4c:c8:e0:42:2d:33:a1:91:c7:19:
+        d1:51:f1:85:a0:10:56:3b:db:2a:3b:c8:56:ad:92:3a:57:a2:
+        67:d2:65:a5:ee:25:bf:f7:37:f3:50:3d:cf:0d:97:77:b2:7f:
+        b7:2e:b1:62:69:a2:64:b1:4c:41:9c:b6:ff:2f:98:4d:0e:c2:
+        99:6a:cc:d5:1f:9a:6f:4d:3a:a1:50:46:5f:87:42:29:52:86:
+        04:d5:82:2c

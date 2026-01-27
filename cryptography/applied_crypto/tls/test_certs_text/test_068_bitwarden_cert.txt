@@ -1,0 +1,102 @@
+# Test 68: Bitwarden's actual TLS Certificate
+
+# Expected Pass
+
+# Hostname: bitwarden.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            05:20:72:7d:30:54:33:34:eb:f7:d8:6a:44:69:1d:5b:90:a3
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = US, O = Let's Encrypt, CN = R12
+        Validity
+            Not Before: Jan 10 06:58:00 2026 GMT
+            Not After : Apr 10 06:57:59 2026 GMT
+        Subject: CN = bitwarden.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:c3:27:be:94:40:7c:3a:78:5b:54:e9:55:2a:34:
+                    8b:2c:be:6b:43:88:cf:55:42:4d:94:39:c2:72:65:
+                    dc:f5:cd:eb:11:aa:69:eb:ba:1f:72:f2:36:04:2a:
+                    16:ec:37:19:4f:20:8b:22:cd:b1:03:67:32:c9:14:
+                    ca:85:3e:92:b5:dc:1a:d2:d5:eb:ed:b6:0e:dd:ac:
+                    fb:c8:ef:a3:7c:64:72:e2:df:0d:27:01:df:52:e8:
+                    9d:6a:1f:35:9e:25:dc:1a:e1:11:0a:02:ea:9a:4f:
+                    d3:27:2d:91:f0:ef:e2:95:ae:9d:63:94:a5:96:4a:
+                    f4:3c:8f:74:f9:82:6e:5c:d7:ce:8e:e4:8b:8f:2e:
+                    b4:4d:76:c8:0c:15:ce:1d:e4:97:4d:c4:44:b3:c9:
+                    f8:84:dc:f5:54:95:04:e1:be:a1:8b:d1:eb:97:de:
+                    1a:a0:36:b0:ce:60:f2:f4:2e:dc:61:d7:42:01:7b:
+                    a5:1a:74:d0:02:0a:99:41:a2:a3:1a:2f:68:d7:c9:
+                    5a:9e:75:43:ab:8f:7c:18:08:68:98:99:b8:59:b8:
+                    92:cb:1c:d2:a2:ad:e8:ca:aa:27:a1:34:82:d1:3e:
+                    c4:c8:46:3b:5a:44:db:6f:f4:8e:23:a0:9c:40:44:
+                    3a:4a:ca:66:d9:35:1e:cc:87:60:cc:f7:8f:94:95:
+                    08:fb
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication, TLS Web Client Authentication
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                A1:25:CA:9D:33:FD:06:F6:7E:DF:B7:ED:F1:A6:EC:BC:8F:E2:F5:3C
+            X509v3 Authority Key Identifier: 
+                00:B5:29:F2:2D:8E:6F:31:E8:9B:4C:AD:78:3E:FA:DC:E9:0C:D1:D2
+            Authority Information Access: 
+                CA Issuers - URI:http://r12.i.lencr.org/
+            X509v3 Subject Alternative Name: 
+                DNS:bitwarden.com
+            X509v3 Certificate Policies: 
+                Policy: 2.23.140.1.2.1
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://r12.c.lencr.org/36.crl
+            CT Precertificate SCTs: 
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : 96:97:64:BF:55:58:97:AD:F7:43:87:68:37:08:42:77:
+                                E9:F0:3A:D5:F6:A4:F3:36:6E:46:A4:3F:0F:CA:A9:C6
+                    Timestamp : Jan 10 07:56:30.150 2026 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:44:02:20:68:14:4B:22:B2:FC:2B:CC:C5:BB:62:61:
+                                41:F3:73:FE:88:66:C2:C2:17:82:17:18:3A:FF:C9:6C:
+                                05:FB:DB:60:02:20:3F:CA:33:B1:58:83:49:4F:6A:D2:
+                                23:F4:BA:A9:5F:55:A5:92:49:EF:85:E9:9A:52:EE:42:
+                                57:AB:63:85:BD:DB
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : E3:23:8D:F2:8D:A2:88:E0:AA:E0:AC:F0:FA:90:C9:85:
+                                F0:B6:BF:F5:D2:A5:27:B0:01:FC:1C:44:58:C4:B6:E8
+                    Timestamp : Jan 10 07:56:30.523 2026 GMT
+                    Extensions: 00:00:05:00:2E:EB:C7:36
+                    Signature : ecdsa-with-SHA256
+                                30:46:02:21:00:F8:FB:47:BD:D2:84:78:52:6B:F2:58:
+                                1D:F1:79:E4:2A:04:01:07:D7:15:68:81:32:C3:60:1F:
+                                CB:54:0F:C7:46:02:21:00:EA:39:49:FE:73:6A:E9:C8:
+                                61:3C:59:40:70:FE:AF:A2:14:5E:48:CE:6B:62:C8:97:
+                                E3:96:36:46:A1:82:67:77
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        b5:0b:74:6c:6e:d2:fc:10:45:78:7f:e1:ac:c7:94:8b:6a:c3:
+        a6:cc:bd:8a:f9:12:fc:f0:6e:c4:93:e8:ce:b4:a7:b5:47:0a:
+        f2:2f:68:7f:0d:db:f8:80:03:ea:23:72:54:29:5e:31:a3:93:
+        42:21:d3:df:41:00:10:3e:c6:e3:ef:bf:ad:43:d4:4e:b1:0f:
+        4d:07:03:cf:cc:e0:d6:49:a1:43:90:6e:b5:8f:54:e2:57:7a:
+        7f:49:d8:3c:60:47:3c:10:a1:14:24:6d:2b:bd:f3:1b:8e:e1:
+        42:cf:cd:df:07:b9:da:e4:38:5f:5d:09:85:2e:b8:bc:38:01:
+        2f:dc:34:f8:46:f3:bb:e8:cc:5e:40:58:6b:03:0a:be:dc:9a:
+        e7:f1:bd:2c:bd:71:bd:ce:b4:e7:c2:c4:57:a6:5f:51:6c:d6:
+        44:a5:83:25:74:92:47:62:f9:17:6d:04:be:48:12:e7:fa:8d:
+        1b:55:7a:32:b2:57:2c:d7:ca:91:a8:5e:44:b9:9f:86:d4:04:
+        39:25:cd:65:d7:c6:3e:3c:eb:e5:ab:90:70:91:72:d9:4a:97:
+        57:79:0a:ee:f2:d8:48:58:d5:07:0a:56:14:42:55:17:68:54:
+        7e:e5:91:a1:17:c9:84:0c:d9:22:6e:9d:48:ad:f8:5d:74:73:
+        54:89:b2:ff

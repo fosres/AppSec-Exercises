@@ -1,0 +1,73 @@
+# Test 19: Wildcard on root domain
+# Expected: Special case
+# Hostname: www.example.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            26:15:25:c2:f4:4d:57:ab:31:25:f9:37:35:cc:0c:ff:b1:2b:f2:69
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = Test CA
+        Validity
+            Not Before: Jan 23 18:36:44 2026 GMT
+            Not After : Apr 24 18:36:44 2026 GMT
+        Subject: CN = *.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:cc:ff:e0:fc:4f:b0:d6:68:8d:5e:71:b2:57:d0:
+                    a4:9d:8b:c6:d4:06:65:96:c6:8d:e9:1e:2b:a6:a8:
+                    9a:97:84:96:5e:bd:51:71:49:1a:89:74:a4:96:01:
+                    17:b5:2c:24:f2:17:80:a4:0f:b4:ad:88:de:3b:9f:
+                    e1:0d:be:9e:ca:0d:2e:1d:0e:39:d6:03:e5:e1:3e:
+                    0f:77:c8:99:f4:e3:76:48:e1:af:0e:82:4a:2d:54:
+                    09:3b:5b:5c:f2:38:8b:3a:d8:48:0a:5d:3e:9e:bf:
+                    7b:b8:78:17:14:6a:f5:0c:99:00:87:c2:a3:bd:3e:
+                    67:12:ca:38:b7:13:3a:0a:44:28:fd:11:1e:34:fc:
+                    a0:38:4b:63:c0:60:72:58:aa:0d:cb:b1:2a:84:84:
+                    64:da:0b:5b:4d:32:7d:10:df:36:94:99:db:5c:23:
+                    af:dc:a3:24:9e:27:ba:99:ff:66:b6:05:3b:e7:7b:
+                    ed:12:1c:61:db:79:3a:52:aa:05:db:a6:31:52:53:
+                    42:fe:d0:4f:a3:3f:7f:26:bb:1f:aa:3d:94:16:5e:
+                    71:6b:07:24:40:1a:a7:23:85:83:56:7a:31:95:04:
+                    6c:c9:1c:e6:b9:78:7e:f8:13:9f:19:b5:1a:72:87:
+                    ae:4c:54:84:04:0e:2a:c7:17:53:83:5f:f3:ed:56:
+                    f8:9f
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:*.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                1B:69:EF:6D:3A:6E:DB:F7:3F:28:4E:AA:C2:44:35:8C:15:7A:18:12
+            X509v3 Authority Key Identifier: 
+                F7:2B:CD:C9:9C:3F:AC:5A:84:D6:D7:F5:CA:13:BF:8F:B8:37:7B:80
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl.example.com/ca.crl
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.example.com
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        84:d2:0d:ce:89:d1:8e:00:b9:8c:fd:6a:a2:54:12:a9:13:1d:
+        71:d4:a9:f9:30:3c:58:72:60:31:5e:2f:cd:f5:d5:cc:c0:9f:
+        ac:d0:1d:12:07:34:9c:2c:5a:6b:63:54:4f:0f:94:73:e2:4e:
+        6f:34:29:90:3a:0c:25:7b:a1:9a:dd:9b:b6:c4:09:cd:8e:b5:
+        0e:8f:d2:14:f5:e6:73:a9:c7:51:19:73:45:2b:0e:d0:91:02:
+        bd:4d:08:17:21:e4:3d:c3:be:ea:d5:24:26:a4:a5:ae:4a:89:
+        ae:1f:22:94:0b:f8:07:0b:e6:3d:b3:4a:b3:ae:69:1a:1e:28:
+        0c:50:13:2d:4d:fc:8f:d6:06:ee:54:f5:9a:89:25:28:04:88:
+        56:3d:59:06:34:a4:4a:05:0c:6d:8a:6b:5f:0d:6b:ff:d3:b6:
+        77:1c:b0:4b:6d:7a:be:14:19:f7:e8:2f:fb:dc:48:9b:56:78:
+        b8:2f:4c:00:43:3c:6c:8b:2e:40:7b:4b:9c:e1:43:d8:e0:24:
+        04:d7:08:f1:e4:2e:6c:ac:e2:cf:b4:4a:b2:a7:2c:b1:98:98:
+        01:6f:96:44:bb:19:9a:e0:11:d3:4f:35:0e:90:4d:2f:57:a0:
+        e8:cf:a3:94:c2:d1:c0:13:84:94:25:2a:53:ce:af:55:6e:e5:
+        3f:2b:01:68

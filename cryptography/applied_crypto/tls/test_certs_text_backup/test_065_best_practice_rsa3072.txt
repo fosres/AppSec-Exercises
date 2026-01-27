@@ -1,0 +1,84 @@
+# Test 65: BEST PRACTICE: RSA-3072, 90 days, 2 CRLs
+# Expected: PASS - All best practices (20/20)
+# Hostname: www.example.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            25:25:57:fa:09:09:93:39:60:35:a3:f7:5f:2b:88:ec:91:b1:02:7f
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = Test CA
+        Validity
+            Not Before: Jan 23 18:54:30 2026 GMT
+            Not After : Apr 24 18:54:30 2026 GMT
+        Subject: C = US, ST = California, L = San Francisco, O = Example Corp, CN = www.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (3072 bit)
+                Modulus:
+                    00:9a:c9:f0:bb:39:a3:b5:95:7b:6b:94:c8:d1:46:
+                    a7:80:d1:b9:98:88:40:4c:d9:2a:d7:a1:10:3c:9b:
+                    af:6d:3a:55:fd:bf:bd:ed:0f:e0:78:20:20:cd:a4:
+                    43:cd:75:b6:fc:ce:5d:1c:e1:65:8f:32:d4:83:71:
+                    18:e2:74:78:29:57:15:db:b3:98:75:b8:7b:c4:af:
+                    14:47:d9:07:02:9c:61:11:41:e4:ef:2e:7f:31:f8:
+                    b5:bd:c3:5e:38:e9:3a:b4:18:2b:21:64:2a:08:b8:
+                    c2:6f:bf:fe:f9:61:1c:17:c2:36:ac:af:a3:3e:42:
+                    83:af:3d:69:cb:b9:83:1a:d3:6b:0d:14:45:fd:96:
+                    37:3f:fa:6b:7d:f8:85:51:98:ad:b4:2d:61:53:1a:
+                    ba:11:de:63:61:9d:1c:95:16:6c:32:2a:0f:aa:22:
+                    5b:a3:cb:d7:e5:11:50:16:08:f3:5d:7c:a1:4e:03:
+                    94:8b:4a:c7:21:a7:18:0e:5e:bb:69:c9:50:73:08:
+                    94:b8:ad:59:5e:e5:a9:ea:c2:b7:9a:68:e0:81:ea:
+                    8a:c3:0d:83:e4:cf:9d:e4:27:82:31:ff:1b:cb:ab:
+                    04:cb:82:7c:ae:9f:33:21:35:49:ab:c2:9e:2e:1a:
+                    4f:13:9e:68:24:a5:ef:5b:63:e7:ef:ca:56:4b:3a:
+                    36:37:23:14:4f:6e:65:63:6d:47:b9:0b:34:11:57:
+                    e7:5d:07:67:7c:12:0a:fe:e5:84:84:39:3d:3a:1a:
+                    fe:d8:e5:62:c3:98:01:be:32:3c:c5:a2:bd:0b:99:
+                    a9:ed:4d:0e:f1:d6:6a:48:09:bb:1e:28:30:0e:a6:
+                    58:89:32:cd:fd:28:63:cc:7a:22:f9:8a:dc:97:93:
+                    d7:c0:82:9e:17:f7:ee:cd:4e:6b:89:8a:a2:49:24:
+                    16:54:ae:43:5d:4e:c6:8b:c5:64:91:09:f5:93:00:
+                    ca:b3:6f:95:bd:3b:7e:e3:a6:e7:2a:02:41:04:2c:
+                    3c:3c:01:f1:eb:96:4b:1a:29:d5
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:www.example.com, DNS:example.com, DNS:api.example.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                D4:95:CF:E2:3C:63:56:3F:0A:BF:D2:9D:6D:C3:5A:7C:FB:A3:E6:49
+            X509v3 Authority Key Identifier: 
+                BC:76:02:98:55:07:77:86:48:8C:02:E4:61:C5:B9:BF:71:E9:C7:9E
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl.example.com/ca.crl
+                Full Name:
+                  URI:http://crl-backup.example.com/ca.crl
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.example.com
+                CA Issuers - URI:http://ca.example.com/ca.crt
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        a0:63:4f:35:5b:79:7d:b2:b4:69:a7:ad:b1:cb:29:e4:ad:b0:
+        f7:c3:4a:d1:81:bb:1e:51:fa:73:8a:bd:92:ee:8b:d5:53:72:
+        37:82:50:3f:36:8e:9d:eb:13:83:2a:34:16:57:69:24:b2:b4:
+        a5:7d:56:82:3c:14:36:0e:53:bc:4a:db:fb:52:24:f9:e7:72:
+        5b:8b:c3:4a:b8:12:cb:09:71:55:e9:5f:27:5e:88:7f:3b:9a:
+        13:88:1a:36:aa:69:b1:f1:29:df:15:1a:a5:b2:f7:65:81:01:
+        83:e6:90:a6:ab:8b:a8:47:d5:61:30:e7:e6:74:11:69:a0:44:
+        bf:53:83:34:78:71:22:32:fb:5e:8b:7c:ef:c9:9e:f1:f5:b8:
+        dc:0c:12:da:e0:00:31:af:f4:4b:f7:90:ed:79:3e:8c:f4:2d:
+        37:52:24:f1:c4:46:80:a0:6e:c4:cc:39:fc:a1:8d:78:85:0d:
+        ec:0a:32:84:56:89:33:6b:7a:15:f5:73:b3:41:b0:52:2a:0f:
+        b4:5b:8a:cb:4b:39:f1:50:b0:b0:c0:48:a8:c4:01:72:40:8f:
+        53:0e:e2:4e:37:b5:c2:46:88:31:fe:b5:92:0e:ed:b5:74:f2:
+        11:cf:5f:95:68:4d:0c:f9:3a:42:a4:51:04:a0:bd:e3:ce:d9:
+        e4:e9:da:5f

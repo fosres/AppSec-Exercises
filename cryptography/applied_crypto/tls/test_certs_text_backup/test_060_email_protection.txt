@@ -1,0 +1,73 @@
+# Test 60: Email Protection EKU
+# Expected: FAIL - Check 10 (needs SERVER_AUTH)
+# Hostname: www.example.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            17:56:75:9d:84:3b:bc:07:38:a8:e6:f5:11:cc:18:d3:eb:35:4e:18
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = Test CA
+        Validity
+            Not Before: Jan 23 18:53:33 2026 GMT
+            Not After : Apr 24 18:53:33 2026 GMT
+        Subject: CN = www.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:b8:c2:09:73:5d:ad:8a:2d:4b:b2:b3:f9:58:7e:
+                    6e:ba:09:f0:e1:dd:3f:b2:ff:e7:56:12:7f:25:6c:
+                    93:4c:c4:9c:03:8f:9c:cf:8b:09:1b:b9:e1:cb:64:
+                    d5:e7:3b:8f:90:d0:fe:2d:c5:bd:b1:80:c8:30:b0:
+                    82:ee:38:7f:27:8b:a8:a7:75:99:67:0d:36:8c:a8:
+                    db:e0:97:36:87:60:79:30:d4:a0:4e:12:4d:f4:31:
+                    c2:33:aa:7d:07:6d:a1:96:4f:f6:9d:45:7f:91:ba:
+                    fc:e5:79:52:01:f8:9d:a0:e9:e1:ae:ba:11:cd:73:
+                    c4:ad:cb:17:a8:71:99:b2:7c:5f:db:19:38:fa:f0:
+                    9c:66:35:8e:2e:5d:a6:04:5a:7c:99:31:32:86:52:
+                    a8:fb:d2:19:dc:a1:ef:22:69:19:80:90:61:ce:33:
+                    73:0b:34:e6:a1:8e:a8:40:3d:5a:be:e3:17:3f:cd:
+                    27:73:3f:df:c3:07:e2:51:5c:54:50:90:1b:f5:a9:
+                    92:79:ff:9f:20:37:cf:8f:d3:ce:6a:d8:74:3b:ac:
+                    4e:7a:d3:1f:aa:7c:59:85:76:41:cc:a8:94:fa:6c:
+                    95:30:b2:f1:c0:04:4a:60:b3:9e:04:db:6f:c7:e2:
+                    cb:5c:6a:1f:eb:3b:6d:f7:ff:c7:04:93:36:84:5b:
+                    c5:dd
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:www.example.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                E-mail Protection
+            X509v3 Subject Key Identifier: 
+                DD:BC:33:6E:93:51:11:43:EF:8F:F1:1A:28:C1:7A:EE:A0:2A:7B:14
+            X509v3 Authority Key Identifier: 
+                3E:94:62:76:97:09:18:0E:BC:4D:BA:43:FD:63:73:4E:4A:16:03:6F
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl.example.com/ca.crl
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.example.com
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        2e:84:00:dd:10:89:5f:7c:8f:eb:e3:c0:70:0d:ab:44:39:f9:
+        ef:89:c3:e7:a7:e7:0a:93:44:3f:f1:be:c0:6e:d5:85:fc:84:
+        21:c7:f8:cf:f0:69:69:53:df:e8:36:a4:b6:3f:59:5c:fa:94:
+        e1:fd:5a:42:d3:ad:43:d8:86:94:8d:67:68:12:78:98:ad:05:
+        ff:3a:db:20:3d:03:7e:83:1e:5d:f7:b5:37:cc:3b:d6:fb:f3:
+        4d:3b:d9:12:b0:c6:17:6f:2a:da:46:6a:5b:70:63:55:70:18:
+        5e:2c:ed:5d:7d:c3:c0:3e:5c:01:c1:02:9f:fb:64:50:52:68:
+        16:00:c9:dd:6e:2a:44:dd:19:64:99:95:df:99:81:92:76:cc:
+        86:4f:6a:a3:bd:62:59:3c:10:b0:27:d9:93:de:d2:f9:ea:da:
+        16:e0:0c:8f:a5:ca:e5:5a:9c:cc:00:d0:99:d7:84:71:c8:1d:
+        01:7d:09:12:53:4f:23:54:de:0d:2f:77:33:3a:8e:33:60:00:
+        7e:f8:2a:c7:4f:e9:75:65:9d:09:c6:f6:43:ef:35:20:b0:98:
+        dc:39:e4:d2:f3:bb:88:5b:83:f9:5d:56:5d:1e:dc:20:e3:be:
+        4d:23:b9:af:2e:63:89:07:6d:ee:16:04:81:29:83:06:30:e8:
+        96:d2:53:24

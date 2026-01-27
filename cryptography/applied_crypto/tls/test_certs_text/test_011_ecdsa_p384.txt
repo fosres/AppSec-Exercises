@@ -1,0 +1,63 @@
+# Test 11: ECDSA P-384
+# Expected: PASS - Strong ECDSA curve
+# Hostname: www.example.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            19:13:98:85:f9:d0:65:7c:b8:d6:02:9e:b7:84:57:44:e8:c9:9b:b4
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = US, O = Test CA, CN = Test CA
+        Validity
+            Not Before: Jan 23 18:35:39 2026 GMT
+            Not After : Apr 24 18:35:39 2026 GMT
+        Subject: CN = www.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (384 bit)
+                pub:
+                    04:0b:a9:7f:82:42:df:f6:3b:82:ea:a6:69:f8:75:
+                    ea:00:ad:e7:db:fc:74:61:00:80:60:db:7d:bd:92:
+                    9e:02:e7:4d:69:46:f4:c9:e1:7f:40:ba:90:4a:59:
+                    f4:1c:ab:a4:89:6d:02:89:f1:3c:d1:6a:4e:49:0d:
+                    92:97:9f:f5:d5:c2:1b:2d:16:57:42:0c:44:ee:af:
+                    8d:9b:26:16:14:0d:c0:8e:c8:2e:c6:67:45:06:91:
+                    6e:24:e3:78:9d:6c:2a
+                ASN1 OID: secp384r1
+                NIST CURVE: P-384
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:www.example.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Agreement
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                7D:00:B1:F7:B4:1A:F1:84:AD:71:72:2B:09:E2:20:C8:4F:94:F4:8C
+            X509v3 Authority Key Identifier: 
+                6C:4D:90:70:9E:E5:64:F8:96:32:32:82:09:7B:25:CD:AA:C2:90:D4
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl.example.com/ca.crl
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.example.com
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        0f:62:69:c7:dd:d1:9b:ae:9f:d3:53:d4:66:5a:57:94:2f:11:
+        e1:67:eb:d3:3a:b0:01:50:c1:41:09:71:e7:10:25:aa:c9:65:
+        a7:f7:a7:46:ef:4a:01:b4:ff:f2:db:7a:a3:7b:01:db:0b:09:
+        d2:5f:1a:1b:0c:a7:22:55:d4:45:cc:7c:e4:22:4d:a8:88:0f:
+        48:8c:96:9a:70:27:77:16:25:45:dd:83:8e:0c:b0:7c:89:0f:
+        94:58:d2:17:0d:d9:37:de:2c:cc:19:20:ce:39:49:cd:4b:6e:
+        04:dc:8c:21:48:3b:8d:c4:08:88:9a:83:cd:57:9d:37:a6:e6:
+        09:80:27:a5:22:bd:4a:97:b7:61:f7:9b:92:62:55:51:c0:e7:
+        10:2d:dc:7e:e2:d2:1e:8f:2c:8d:d5:34:ae:3c:16:cf:0c:f8:
+        4e:e5:45:d2:22:c0:5e:61:0c:5a:47:c8:ae:13:4a:2f:34:bd:
+        c6:4b:95:16:79:69:16:26:0c:97:b6:88:3c:f5:14:d8:eb:44:
+        67:de:06:d0:c2:08:21:bd:86:47:7f:be:28:d4:2b:75:86:39:
+        66:01:1b:00:51:04:17:42:ae:58:5b:3a:37:16:5e:b2:36:0b:
+        09:ed:95:ca:b8:cf:f9:05:43:4c:9a:da:08:6c:9f:4e:94:29:
+        a0:6b:0b:02

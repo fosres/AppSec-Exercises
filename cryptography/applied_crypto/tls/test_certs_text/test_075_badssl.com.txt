@@ -1,0 +1,96 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            06:17:1e:8f:ca:26:0a:2a:33:19:4f:1b:e5:a7:75:e1:c5:ed
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = US, O = Let's Encrypt, CN = R13
+        Validity
+            Not Before: Jan 20 20:02:51 2026 GMT
+            Not After : Apr 20 20:02:50 2026 GMT
+        Subject: CN = *.badssl.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:96:13:4e:bb:e9:60:c2:53:a4:1c:1c:1b:79:a5:
+                    44:f7:c3:f5:58:e8:72:4c:aa:1b:54:2c:a6:0f:17:
+                    89:18:f3:64:1c:c9:20:c3:a5:c1:d2:86:eb:69:73:
+                    a0:e2:e4:da:7b:c0:82:75:91:4d:24:b1:e1:27:b0:
+                    cc:c2:a3:44:0c:bd:9b:84:8c:7e:ed:49:79:72:43:
+                    ec:87:bb:65:1a:34:7d:25:fa:f1:45:a8:f7:38:a8:
+                    35:b5:20:0a:b0:37:f4:8c:a2:96:17:95:00:ea:f6:
+                    4c:f0:9a:34:c1:1f:f3:29:21:b7:03:73:4c:49:95:
+                    05:af:a8:32:81:cd:60:38:10:7b:f9:69:6c:fc:48:
+                    e7:b2:16:0c:f4:83:34:a5:13:1a:31:bd:62:13:32:
+                    58:65:5a:2e:55:b9:29:f8:85:19:f7:0f:c9:73:cc:
+                    ea:4b:b0:24:91:26:3e:5a:31:22:a8:7d:54:5b:b1:
+                    f0:77:08:92:5a:e1:36:6e:a4:75:58:ef:ec:8b:31:
+                    32:a1:fd:20:a1:37:43:87:d6:d5:bc:b8:a1:10:0c:
+                    74:d6:96:03:d8:d1:68:b2:34:6d:3d:a7:32:a7:93:
+                    05:af:ef:76:1a:8d:a7:c4:80:8c:ef:d6:dd:54:75:
+                    2d:cf:84:3c:43:2a:b9:d7:2d:94:24:09:6b:81:27:
+                    00:cf
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication, TLS Web Client Authentication
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                2F:70:81:3B:C8:46:E1:26:35:CD:23:DB:C7:65:DA:30:CE:90:E7:44
+            X509v3 Authority Key Identifier: 
+                E7:AB:9F:0F:2C:33:A0:53:D3:5E:4F:78:C8:B2:84:0E:3B:D6:92:33
+            Authority Information Access: 
+                CA Issuers - URI:http://r13.i.lencr.org/
+            X509v3 Subject Alternative Name: 
+                DNS:*.badssl.com, DNS:badssl.com
+            X509v3 Certificate Policies: 
+                Policy: 2.23.140.1.2.1
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://r13.c.lencr.org/110.crl
+            CT Precertificate SCTs: 
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : CB:38:F7:15:89:7C:84:A1:44:5F:5B:C1:DD:FB:C9:6E:
+                                F2:9A:59:CD:47:0A:69:05:85:B0:CB:14:C3:14:58:E7
+                    Timestamp : Jan 20 21:01:21.340 2026 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:44:02:20:5F:09:5C:8A:DB:B7:2D:07:40:2E:7B:B7:
+                                E8:04:FA:13:52:A3:BB:25:D6:DF:CB:D3:98:21:44:B6:
+                                D3:C8:8C:55:02:20:7C:3B:77:80:DC:FA:9B:49:74:DA:
+                                08:AA:13:FB:4C:7E:A5:CA:F6:04:CD:DC:A5:EC:EF:75:
+                                C7:E3:CD:ED:E5:48
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : D1:6E:A9:A5:68:07:7E:66:35:A0:3F:37:A5:DD:BC:03:
+                                A5:3C:41:12:14:D4:88:18:F5:E9:31:B3:23:CB:95:04
+                    Timestamp : Jan 20 21:01:21.523 2026 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:45:02:21:00:EA:E6:4D:C3:18:E7:51:91:BE:6E:A5:
+                                68:6F:85:B3:25:13:DB:6B:FA:1F:94:3C:35:A3:D9:E5:
+                                08:BB:08:E8:00:02:20:1A:34:AA:19:A3:CA:D2:6A:69:
+                                93:CE:DD:13:24:C7:05:02:6B:56:E6:F1:E4:64:D2:F1:
+                                1F:2C:CC:5D:95:2E:F3
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        2b:50:d8:c2:92:c1:1a:ee:13:6f:0d:9f:60:9c:aa:60:27:61:
+        ea:2f:c7:05:ed:6f:fa:23:0f:71:20:f9:c7:45:59:72:a9:bc:
+        90:dd:d7:79:11:c1:ee:e2:ae:33:32:d7:66:01:bb:12:fd:f7:
+        df:20:07:32:38:ac:4b:75:c7:40:92:e0:ff:fc:99:00:a9:fd:
+        43:10:1e:1e:40:4b:d7:7e:79:c2:c3:f1:31:68:2e:c2:56:c2:
+        d6:38:4a:88:4f:34:89:2d:3a:f5:8a:cc:c1:4c:dd:ff:cb:63:
+        fd:fd:0d:b6:ea:01:88:e5:c7:f4:13:b7:ef:96:bd:f5:14:55:
+        6c:3f:b5:f8:7e:f8:ff:c9:1e:3c:68:c2:fb:9d:ec:87:7e:b5:
+        87:e8:8b:73:e4:2b:3d:8a:9d:b8:08:fc:48:3a:c9:96:0a:f9:
+        66:99:b4:f6:65:b6:45:41:14:6f:22:cb:06:f8:fa:91:5a:a6:
+        82:d7:34:f2:a6:d8:a9:e6:c9:46:52:8a:19:d5:fb:2f:44:d4:
+        7e:1d:c9:67:44:22:66:8a:e5:0d:32:d9:f5:61:01:30:b1:08:
+        9d:f9:9b:2a:dc:34:60:b0:0b:93:69:b9:71:50:8e:a5:12:07:
+        79:38:b5:ff:75:2d:26:9a:62:8f:63:03:f8:76:8d:3d:0e:17:
+        0a:e3:ad:cd

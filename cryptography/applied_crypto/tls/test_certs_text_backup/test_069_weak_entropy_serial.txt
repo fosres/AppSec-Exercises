@@ -1,0 +1,73 @@
+# Test 69: Serial number with weak entropy (excessive leading zeros)
+# Expected: WARNING/FAIL - Check 16
+# Hostname: www.example.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 4660 (0x1234)
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = Test CA
+        Validity
+            Not Before: Jan 24 20:45:00 2026 GMT
+            Not After : Apr 24 20:45:00 2026 GMT
+        Subject: CN = www.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:c8:9f:2e:4a:5b:6c:7d:8e:9f:a0:b1:c2:d3:e4:
+                    f5:06:17:28:39:4a:5b:6c:7d:8e:9f:a0:b1:c2:d3:
+                    e4:f5:06:17:28:39:4a:5b:6c:7d:8e:9f:a0:b1:c2:
+                    d3:e4:f5:06:17:28:39:4a:5b:6c:7d:8e:9f:a0:b1:
+                    c2:d3:e4:f5:06:17:28:39:4a:5b:6c:7d:8e:9f:a0:
+                    b1:c2:d3:e4:f5:06:17:28:39:4a:5b:6c:7d:8e:9f:
+                    a0:b1:c2:d3:e4:f5:06:17:28:39:4a:5b:6c:7d:8e:
+                    9f:a0:b1:c2:d3:e4:f5:06:17:28:39:4a:5b:6c:7d:
+                    8e:9f:a0:b1:c2:d3:e4:f5:06:17:28:39:4a:5b:6c:
+                    7d:8e:9f:a0:b1:c2:d3:e4:f5:06:17:28:39:4a:5b:
+                    6c:7d:8e:9f:a0:b1:c2:d3:e4:f5:06:17:28:39:4a:
+                    5b:6c:7d:8e:9f:a0:b1:c2:d3:e4:f5:06:17:28:39:
+                    4a:5b:6c:7d:8e:9f:a0:b1:c2:d3:e4:f5:06:17:28:
+                    39:4a:5b:6c:7d:8e:9f:a0:b1:c2:d3:e4:f5:06:17:
+                    28:39:4a:5b:6c:7d:8e:9f:a0:b1:c2:d3:e4:f5:06:
+                    17:28:39:4a:5b:6c:7d:8e:9f:a0:b1:c2:d3:e4:f5:
+                    06:17:28:39:4a:5b:6c:7d:8e:9f:a0:b1:c2:d3:e4:
+                    f5:03
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:www.example.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.testca.com
+                CA Issuers - URI:http://testca.com/ca.crt
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl.testca.com/ca.crl
+            X509v3 Subject Key Identifier: 
+                A1:B2:C3:D4:E5:F6:07:18:29:3A:4B:5C:6D:7E:8F:90:A1:B2:C3:D4
+            X509v3 Authority Key Identifier: 
+                F0:E1:D2:C3:B4:A5:96:87:78:69:5A:4B:3C:2D:1E:0F:F0:E1:D2:C3
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        3d:4e:5f:60:71:82:93:a4:b5:c6:d7:e8:f9:0a:1b:2c:3d:4e:
+        5f:60:71:82:93:a4:b5:c6:d7:e8:f9:0a:1b:2c:3d:4e:5f:60:
+        71:82:93:a4:b5:c6:d7:e8:f9:0a:1b:2c:3d:4e:5f:60:71:82:
+        93:a4:b5:c6:d7:e8:f9:0a:1b:2c:3d:4e:5f:60:71:82:93:a4:
+        b5:c6:d7:e8:f9:0a:1b:2c:3d:4e:5f:60:71:82:93:a4:b5:c6:
+        d7:e8:f9:0a:1b:2c:3d:4e:5f:60:71:82:93:a4:b5:c6:d7:e8:
+        f9:0a:1b:2c:3d:4e:5f:60:71:82:93:a4:b5:c6:d7:e8:f9:0a:
+        1b:2c:3d:4e:5f:60:71:82:93:a4:b5:c6:d7:e8:f9:0a:1b:2c:
+        3d:4e:5f:60:71:82:93:a4:b5:c6:d7:e8:f9:0a:1b:2c:3d:4e:
+        5f:60:71:82:93:a4:b5:c6:d7:e8:f9:0a:1b:2c:3d:4e:5f:60:
+        71:82:93:a4:b5:c6:d7:e8:f9:0a:1b:2c:3d:4e:5f:60:71:82:
+        93:a4:b5:c6:d7:e8:f9:0a:1b:2c:3d:4e:5f:60:71:82:93:a4:
+        b5:c6:d7:e8:f9:0a:1b:2c:3d:4e:5f:60:71:82:93:a4:b5:c6:
+        d7:e8:f9:0a:1b:2c:3d:4e:5f:60:71:82:93:a4:b5:c6:d7:e8:
+        f9:0a:1b:2c

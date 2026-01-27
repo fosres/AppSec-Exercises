@@ -1,0 +1,73 @@
+# Test 47: Mixed wildcard
+# Expected: PASS - Wildcard + specific
+# Hostname: www.example.com
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            57:51:96:37:a9:f0:65:6d:b3:49:fb:67:ed:f9:dc:86:1a:5d:3a:12
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = Test CA
+        Validity
+            Not Before: Jan 23 18:39:42 2026 GMT
+            Not After : Apr 24 18:39:42 2026 GMT
+        Subject: CN = *.example.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:e8:a8:68:92:f9:31:1e:d1:27:89:db:8c:de:f4:
+                    93:bd:fa:87:39:21:10:c8:80:65:a7:0b:53:c4:47:
+                    b3:02:d3:32:94:74:c7:2d:3b:1d:c2:40:ff:b5:f1:
+                    be:93:2f:25:7b:c7:80:a5:cf:a0:2b:c0:c4:02:fb:
+                    0b:7a:e1:ce:28:19:f7:b7:14:54:df:bd:a1:ba:69:
+                    7f:b5:e3:31:7f:4f:8d:95:3b:f1:f1:f8:01:3a:0e:
+                    3c:82:d0:8a:de:2e:19:a9:6e:9c:83:99:8d:82:d0:
+                    2f:e3:de:82:97:12:8f:74:fa:9a:59:84:60:9e:f0:
+                    6b:80:ed:1e:9a:49:4b:b7:2f:5d:50:69:a7:c1:08:
+                    4a:ee:62:74:4d:d7:34:23:cc:3c:fd:c8:a1:72:22:
+                    4a:bb:cd:f6:de:a5:d2:30:3d:3f:e2:33:64:4a:23:
+                    10:0f:53:73:15:63:6b:83:fc:8d:da:8c:1b:6f:2b:
+                    ed:3f:10:e5:e7:0f:44:ae:62:58:36:58:86:b3:62:
+                    7b:92:fb:e0:2d:79:ec:b4:8f:d9:d4:b3:64:1e:c5:
+                    9d:bd:3a:21:7f:96:43:9a:a8:9c:11:b1:22:30:b6:
+                    bb:d4:5c:62:d6:13:e3:aa:33:12:6d:83:f4:69:4a:
+                    a1:d4:40:8b:9a:6f:51:b7:ac:73:cb:68:f6:b4:cb:
+                    d5:ef
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:*.example.com, DNS:www.example.com, DNS:example.com
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier: 
+                FC:5B:16:F3:7B:49:EB:F1:8E:04:3A:4B:1B:93:33:B2:C3:10:61:7B
+            X509v3 Authority Key Identifier: 
+                28:4D:DE:19:CE:94:1C:FE:88:75:74:B7:18:4B:3A:6E:14:61:96:05
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl.example.com/ca.crl
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.example.com
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        0e:19:63:c2:9f:5b:20:e7:68:d4:c3:26:5d:ff:ba:cf:a4:a9:
+        2d:00:7a:16:13:d7:1f:fa:b1:dc:75:4e:41:a9:86:86:3b:31:
+        7b:dc:12:ff:21:04:29:0b:f9:04:ae:7e:82:46:25:e2:1b:6a:
+        41:f6:a4:84:99:62:46:1d:56:55:a1:bf:d1:ac:19:2b:99:c6:
+        4a:e9:c0:9d:d4:6d:4b:b9:7b:56:84:48:fc:cd:68:32:27:f0:
+        70:ea:23:9e:86:3e:f4:94:cb:7b:3f:d4:18:ad:15:a2:46:87:
+        44:a5:98:7d:94:87:f1:41:0b:29:c2:be:5a:44:82:d7:0c:f6:
+        52:c8:1a:ba:83:cd:ec:83:14:cd:df:d3:2c:d9:35:d2:c9:fd:
+        0c:7c:56:54:f8:e2:9f:2b:b9:b1:cc:9e:17:51:98:c4:df:a4:
+        f0:23:6a:aa:b1:20:45:3b:2b:b1:fb:21:25:8b:5b:ca:25:52:
+        e0:9e:47:f1:c6:ce:55:a5:3b:07:8c:6c:7b:ba:64:0c:32:ac:
+        db:9a:10:94:69:6e:1e:bb:e4:80:1b:c2:88:8f:83:11:77:f6:
+        1a:b4:ca:40:e3:c0:1e:6b:ac:af:05:1f:d1:9e:60:95:30:78:
+        6f:46:8c:52:fd:04:ff:54:d6:9f:c0:09:22:0b:ad:39:cf:3e:
+        31:32:d6:7c
