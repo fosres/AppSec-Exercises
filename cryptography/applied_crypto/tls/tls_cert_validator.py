@@ -1,4 +1,3 @@
-import fnmatch
 import json
 import sys
 
@@ -228,6 +227,10 @@ def validate_tls_certificate(text_file,domain=""):
 
 			for line in file:	
 
+				if line[0] == '#':
+
+					continue
+
 				# Check 1
 
 				if "Version:" in line:
@@ -294,8 +297,6 @@ def validate_tls_certificate(text_file,domain=""):
 					field = {}
 						
 					field_vals = line.split(":")[1].strip()
-
-					print(f"field_vals:{field_vals}")
 
 					if field_vals == "":
 
@@ -401,7 +402,7 @@ def validate_tls_certificate(text_file,domain=""):
 				
 				elif	(
 
-						"X509v3 Key Usage"in line
+						"X509v3 Key Usage" in line
 
 						and
 
@@ -411,16 +412,22 @@ def validate_tls_certificate(text_file,domain=""):
 					
 					table["X509v3 Key Usage"]["critical"] = 1
 			
-				elif "Digital Signature" in line:
+				if "Digital Signature" in line:
 
 					table["X509v3 Key Usage"]["Values"].append("Digital Signature")
-				elif "Key Encipherment" in line:
+				if "Key Encipherment" in line:
 
 					table["X509v3 Key Usage"]["Values"].append("Key Encipherment")
-				elif "Certificate Sign" in line:
+				if "Data Encipherment" in line:
+
+					table["X509v3 Key Usage"]["Values"].append("Data Encipherment")
+				if "Non Repudiation" in line:
+
+					table["X509v3 Key Usage"]["Values"].append("Non Repudiation")
+				if "Certificate Sign" in line:
 
 					table["X509v3 Key Usage"]["Values"].append("Certificate Sign")
-				elif "CRL Sign" in line:
+				if "CRL Sign" in line:
 
 					table["X509v3 Key Usage"]["Values"].append("CRL Sign")
 				# Check 10
@@ -466,13 +473,13 @@ def validate_tls_certificate(text_file,domain=""):
 					table["X509v3 CRL Distribution Points"]["Values"].append(url_line) 
 				# Check 12
 
-				elif "OCSP" in line:
+				elif "OCSP:" in line:
 
 					ocsp_line = line.split("URI:")[1].strip()
 
 					table["Authority Information Access"]["OCSP"] = ocsp_line
 
-				elif "CA Issuers" in line:
+				elif "CA Issuers:" in line:
 
 					ca_issuers_line = line.split("URI:")[1].strip()
 
@@ -691,10 +698,12 @@ def validate_tls_certificate(text_file,domain=""):
 
 				and
 				
-				table["X509v3 SAN critical"] == 1
+				table["X509v3 SAN critical"] == 0
 			):
 
-			print("CHECK 5: Subject DN present (minimal ok) - PASS")
+			print("CHECK 5: Subject DN present (minimal ok) - FAIL")
+
+			fail_list.append(5)
 
 		elif	(
 
@@ -702,22 +711,40 @@ def validate_tls_certificate(text_file,domain=""):
 
 				and
 				
-				table["X509v3 SAN critical"] == 0
+				table["X509v3 SAN critical"] == 1
 
 			):
 
-			print("CHECK 5: Subject DN NOT present - FAIL")
-			
-			fail_list.append(5)
+			print("CHECK 5: Subject DN NOT present - PASS")
+
+		elif	(
+
+				table["Subject"] != {}
+
+			):
+
+			print("CHECK 5: Subject DN present - PASS")
+		
 
 		# Check 6
 
 		if	(
 				len(table["X509v3 Subject Alternative Name"]) > 0
+
+				and table["X509v3 SAN critical"] == 0
 			):
 
 			print("CHECK 6:  SANs present - PASS")
 		
+		elif	(
+				len(table["X509v3 Subject Alternative Name"]) > 0
+
+				and table["X509v3 SAN critical"] == 1
+			):
+
+			print("CHECK 6:  SANs present - FAIL")
+		
+			fail_list.append(6)
 		else:
 
 			print("CHECK 6:  SANs present - FAIL")
@@ -783,20 +810,24 @@ def validate_tls_certificate(text_file,domain=""):
 
 		# Check 9
 
-		ban_list = ["Certificate Sign","CRL Sign"]
-
+		ban_list = ["Certificate Sign","CRL Sign","Data Encipherment","Non Repudiation"]
 		allow_list = ["Digital Signature","Key Encipherment"]
+
 	
 		if table["X509v3 Key Usage"]["critical"] == 0:
 
-			print("CHECK 9:  Key Usage: Digital Signature, Key Encipherment (critical, optional) - PASS")	
+			print("CHECK 9:  Key Usage: Digital Signature, Key Encipherment (critical, optional) - FAIL")	
+			
+			fail_list.append(9)
 
 		elif table["X509v3 Key Usage"]["critical"] == 1:
 
+			algo = table["Subject Public Key Info"]["Public Key Algorithm"]
+
 			ban_found = 0
 
-			allow_found = 0
-
+			allow_found = []
+	
 			for ban in ban_list:
 
 				if ban in table["X509v3 Key Usage"]["Values"]:
@@ -813,15 +844,35 @@ def validate_tls_certificate(text_file,domain=""):
 
 				if allow in table["X509v3 Key Usage"]["Values"]:
 
-					allow_found = 1
+					allow_found.append(allow)
 					
-			if ban_found == 1:	
-			
+
+			if len(allow_found) == 0:
+
 				print("CHECK 9:  Key Usage: Digital Signature, Key Encipherment (critical, optional) - FAIL")	
 
-				fail_list.append(9)
+			elif	(
+					"rsa" in algo
 
-			elif allow_found == 1:
+					and
+
+					"Digital Signature" in allow_found
+
+					and
+
+					"Key Encipherment" in allow_found
+				):
+
+				print("CHECK 9:  Key Usage: Digital Signature, Key Encipherment (critical, optional) - PASS")	
+			
+			elif	(
+					"ecPublicKey" in algo
+
+					and
+
+					"Digital Signature" in allow_found
+
+				):
 
 				print("CHECK 9:  Key Usage: Digital Signature, Key Encipherment (critical, optional) - PASS")	
 
@@ -1030,6 +1081,8 @@ def validate_tls_certificate(text_file,domain=""):
 
 		print(json.dumps(table,indent=4))
 
+		return final_fail_list,final_optional_list
+
 	except FileNotFoundError:
 
 		raise Exception("File Not Found")
@@ -1045,7 +1098,7 @@ def validate_tls_certificate(text_file,domain=""):
 		
 def main():
 
-	if len(sys.argv) > 3:
+	if len(sys.argv) != 3:
 
 		raise Exception("Usage: python3 tls_cert_validator.py [hostname] [text version of TLS certificate]")
 
@@ -1053,7 +1106,7 @@ def main():
 
 	file = sys.argv[2]
 
-	validate_tls_certificate(file,domain)
+	required,optional = validate_tls_certificate(file,domain)
 	
 if __name__=="__main__":
 

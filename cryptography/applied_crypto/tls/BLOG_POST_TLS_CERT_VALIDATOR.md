@@ -973,13 +973,13 @@ Certificate could be used to forge other certificates → Reject
 
 ---
 
-#### ⚠️ CHECK 9: Key Usage Flags
+#### ⚠️ CHECK 9: Key Usage Flags (RSA vs ECDSA Requirements)
 
-**Status:** ⚠️ OPTIONAL (Universal in practice)
+**Status:** ⚠️ OPTIONAL (Universal in practice - 99%+ have it)
 
-**What you'll see in a good certificate:**
+**What you'll see in good certificates:**
 
-**RSA certificates (common pattern):**
+**RSA certificates:**
 ```
 Public Key Algorithm: rsaEncryption
 X509v3 Key Usage: critical
@@ -988,70 +988,225 @@ X509v3 Key Usage: critical
 
 **ECDSA certificates:**
 ```
-Public Key Algorithm: id-ecPublicKey
+Public Key Algorithm: id-ecPublicKey  
 X509v3 Key Usage: critical
     Digital Signature
 ```
 
 **Plain English explanation:**
-Key Usage = What this public key can be used for
+Key Usage = What cryptographic operations this public key can perform
 
-**What the standards actually require:**
+---
 
-**If Key Usage is present:**
-1. ✅ **Must be marked critical**
-2. ❌ **MUST NOT have Certificate Sign** (only CAs)
-3. ❌ **MUST NOT have CRL Sign** (only CAs)
-4. ⚠️ **Should have at least one appropriate usage flag**
+### 🔑 Algorithm-Specific Requirements
 
-**Appropriate flags for TLS:**
-- **Digital Signature** - For ECDHE key exchange (modern TLS 1.3)
-- **Key Encipherment** - For RSA key exchange (legacy TLS 1.2)
-- **Key Agreement** - For ECDH/ECDHE
+**The requirements differ based on the certificate's signature algorithm:**
 
-**Common real-world patterns:**
+#### For RSA Certificates:
+✅ **REQUIRED:** `Digital Signature`  
+✅ **REQUIRED:** `Key Encipherment`  
+✅ **MUST** be marked as critical
 
-**RSA certificates typically have:**
-- Digital Signature + Key Encipherment (most common - supports all cipher suites)
-- OR Digital Signature only (less common - ECDHE only)
-- OR Key Encipherment only (rare - legacy RSA key exchange only)
+#### For ECDSA Certificates:
+✅ **REQUIRED:** `Digital Signature`  
+✅ **MUST** be marked as critical  
+❌ **NOT REQUIRED:** `Key Encipherment` (ECDSA keys cannot encrypt)
 
-**ECDSA certificates typically have:**
-- Digital Signature only (ECDSA cannot perform key encipherment)
-- Sometimes Digital Signature + Key Agreement (for ECDH)
+---
 
-**Important:** Standards don't mandate that RSA certificates have BOTH flags - having one appropriate flag is technically valid!
+### 🤔 Why the Difference?
 
-**Why OPTIONAL per spec:**
-CA/Browser Forum uses "if present" language - the extension itself is not required
+#### RSA Key Exchange (TLS 1.2 and earlier)
 
-**However:** 99%+ of real-world certificates include this extension
+In traditional RSA key exchange, the server's RSA certificate is used for **TWO different operations:**
 
-**Must be marked CRITICAL (if present):**
+1. **Digital Signature:** Signs the ServerKeyExchange message (DHE) or verifies certificate authenticity
+2. **Key Encipherment:** Decrypts the pre-master secret that the client encrypts with the server's public RSA key
+
+**RSA Key Exchange Flow:**
 ```
-X509v3 Key Usage: critical  ← MUST say "critical"!
+Client → Server: ClientHello
+Server → Client: ServerHello, Certificate (RSA public key)
+
+Client: Generates random pre-master secret
+Client: Encrypts pre-master secret with server's RSA public key
+Client → Server: Encrypted pre-master secret
+
+Server: Decrypts with private RSA key    ← Needs Key Encipherment!
+Both: Derive session keys from pre-master secret
+```
+
+**Why RSA needs both flags:** The RSA key is used for both signing AND encrypting during the TLS handshake.
+
+#### ECDSA with ECDHE (Modern TLS)
+
+In modern TLS with ECDSA, the certificate is used for **ONLY ONE operation:**
+
+1. **Digital Signature:** Signs the ServerKeyExchange message containing ECDHE parameters
+2. **Key Encipherment:** NOT needed - ECDSA keys can only sign, not encrypt
+
+**ECDSA + ECDHE Flow:**
+```
+Client → Server: ClientHello
+Server → Client: ServerHello, Certificate (ECDSA public key)
+
+Server: Generates ephemeral ECDHE key pair
+Server: Signs ECDHE parameters with ECDSA private key
+Server → Client: Signed ECDHE parameters
+
+Client: Verifies signature    ← Only needs Digital Signature!
+Client: Generates own ECDHE key pair
+Client → Server: Client's ECDHE public key
+
+Both: Compute shared secret via ECDHE (no encryption!)
+Both: Derive session keys from shared secret
+```
+
+**Why ECDSA only needs Digital Signature:**
+- ECDSA keys can only sign, not encrypt
+- Key exchange uses ECDHE (Ephemeral Diffie-Hellman)
+- The pre-master secret is derived via DH key agreement, not encrypted
+- Provides Perfect Forward Secrecy (PFS)
+
+---
+
+### ❌ Banned Flags for TLS Server Certificates
+
+These flags should **NEVER** appear in TLS server certificates:
+
+| Flag | Why It's Banned | Impact if Present |
+|------|----------------|-------------------|
+| **Certificate Sign** | Reserved for CA certificates | End-entity cert could sign other certificates! (DigiNotar attack) |
+| **CRL Sign** | Reserved for CRL issuers | Could issue fake revocation lists |
+| **Data Encipherment** | For encrypting user data | Not used in TLS protocol |
+| **Content Commitment** (Non-Repudiation) | For legally-binding signatures | Unusual for TLS, adds legal liability |
+
+**Critical Security Issue:** If a TLS server certificate has `Certificate Sign`, it can create valid-looking certificates for ANY domain → Complete PKI compromise!
+
+---
+
+### 📊 Real-World Examples
+
+#### ✅ Valid RSA Certificate (Let's Encrypt)
+```
+Subject Public Key Info:
+    Public Key Algorithm: rsaEncryption
+    Public-Key: (2048 bit)
+
+X509v3 Key Usage: critical
     Digital Signature, Key Encipherment
 ```
+**Result:** PASS ✅ (RSA has both required flags)
+
+#### ✅ Valid ECDSA Certificate (Let's Encrypt)
+```
+Subject Public Key Info:
+    Public Key Algorithm: id-ecPublicKey
+    Public-Key: (256 bit)
+    ASN1 OID: prime256v1
+
+X509v3 Key Usage: critical
+    Digital Signature
+```
+**Result:** PASS ✅ (ECDSA only needs Digital Signature)
+
+#### ❌ Invalid RSA Certificate (Missing Key Encipherment)
+```
+Subject Public Key Info:
+    Public Key Algorithm: rsaEncryption
+
+X509v3 Key Usage: critical
+    Digital Signature
+```
+**Result:** FAIL ❌ (RSA certificate missing Key Encipherment)  
+**Impact:** Cannot perform RSA key exchange
+
+#### ❌ Invalid Certificate (Not Critical)
+```
+X509v3 Key Usage:
+    Digital Signature, Key Encipherment
+```
+**Result:** FAIL ❌ (Extension not marked as critical)
+
+#### ❌ Invalid Certificate (Banned Flag)
+```
+X509v3 Key Usage: critical
+    Digital Signature, Key Encipherment, Certificate Sign
+```
+**Result:** FAIL ❌ (Has Certificate Sign - security catastrophe!)  
+**Impact:** This certificate can forge other certificates!
+
+---
+
+### 🎯 Common Validation Failures
+
+**Test 055: RSA Missing Key Encipherment**
+```
+Algorithm: rsaEncryption
+X509v3 Key Usage: critical
+    Digital Signature    ← Missing Key Encipherment!
+```
+**Error:** RSA certificate must have both Digital Signature AND Key Encipherment
+
+**Test 056: Has Data Encipherment (Banned)**
+```
+X509v3 Key Usage: critical
+    Digital Signature, Key Encipherment, Data Encipherment
+                                         ^^^ Banned flag!
+```
+**Error:** Data Encipherment is not appropriate for TLS server certificates
+
+**Test 025: Not Marked Critical**
+```
+X509v3 Key Usage:    ← Missing "critical"!
+    Digital Signature, Key Encipherment
+```
+**Error:** Key Usage extension must be marked as critical
+
+---
+
+### 📖 Why OPTIONAL per Specification
+
+**CA/Browser Forum language:** "If present, bit positions for keyCertSign and cRLSign MUST NOT be set"
+
+**Key phrase:** "If present" - the extension itself is technically optional
+
+**Reality:** 99%+ of real-world TLS certificates include Key Usage (it's universal in practice)
 
 **Validation approach:**
 ```
 IF Key Usage extension is present:
-  1. Check: Must be marked critical
-  2. Check: MUST NOT have Certificate Sign
-  3. Check: MUST NOT have CRL Sign
-  4. Verify: Has at least one appropriate flag (Digital Signature, 
-     Key Encipherment, or Key Agreement)
+  1. ✅ Must be marked critical
+  2. ❌ MUST NOT have Certificate Sign or CRL Sign
+  3. ✅ Must have algorithm-appropriate flags:
+     - RSA: Digital Signature + Key Encipherment
+     - ECDSA: Digital Signature only
   
 IF Key Usage extension is absent:
   → Accept (extension is optional per CA/B Forum)
 ```
 
-**Source:** CA/Browser Forum Certificate Contents - "If present, bit positions for keyCertSign and cRLSign MUST NOT be set"
+---
+
+### 🔒 Why Modern TLS Prefers ECDSA + ECDHE
+
+**Advantages:**
+1. **Perfect Forward Secrecy (PFS):** Even if private key stolen later, past sessions remain secure
+2. **Smaller keys:** ECDSA P-256 (256-bit) ≈ RSA 3072-bit security
+3. **Faster operations:** ECDSA signing/verification is faster
+4. **Clearer requirements:** Only needs Digital Signature flag
+
+**Migration trend:** Industry moving from RSA to ECDSA + ECDHE for these security and performance benefits.
+
+---
+
+**Source:** RFC 5280 Section 4.2.1.3 (Key Usage), CA/Browser Forum Baseline Requirements Section 7.1.2.3
 
 **What happens if it fails:**
-- If has Certificate Sign or CRL Sign → Reject (catastrophic - can forge certs!)
-- If not marked critical → Reject
-- If absent → Accept (optional extension)
+- Missing required flags → Cannot establish TLS connection (cipher suite mismatch)
+- Has Certificate Sign or CRL Sign → REJECT IMMEDIATELY (security catastrophe!)
+- Not marked critical → Reject (violates RFC 5280)
+- Extension absent → Accept (optional per CA/B Forum)
 
 ---
 
@@ -1477,27 +1632,6 @@ Issuer:  C=US, O=Example Corp, OU=Engineering, CN=Test CA
 Subject: CN=Test CA, OU=Engineering, O=Example Corp, C=US
 ```
 
-**Naive string comparison will FAIL:**
-```python
-# ❌ WRONG - This will give FALSE NEGATIVE
-if issuer_string == subject_string:
-    return "self-signed"
-
-# Result: "not self-signed" ❌ WRONG!
-# The fields are the same, just in different order!
-```
-
-**Real-world example of same DN in different order:**
-```
-Certificate 1 (Issuer):
-    C=US, ST=California, L=San Francisco, O=Test CA Inc, CN=Root CA
-
-Certificate 2 (Subject - self-signed):
-    CN=Root CA, O=Test CA Inc, L=San Francisco, ST=California, C=US
-
-These are IDENTICAL DNs, just different order!
-```
-
 **Your challenge:** Figure out how to compare DNs correctly regardless of field order.
 
 **Hint:** Think about how to normalize or parse the DN components before comparing.
@@ -1580,18 +1714,7 @@ Every certificate MUST have a unique serial number with sufficient randomness.
 - Required revoking over **1 million certificates**
 - Affected Actalis: 230,000 active certificates
 
-**The bug:**
-```python
-# WRONG: EJBCA's bug
-serial = random_64_bits()
-if serial < 0:  # If negative (MSB = 1)
-    serial = abs(serial)  # Remove sign bit
-# Result: Only 63 bits! MSB always 0!
-
-# CORRECT: Full 64 bits
-serial = random_64_bits()
-# Keep all bits, no sign check
-```
+**The bug:** EJBCA generated serial numbers with only 63 bits of entropy instead of 64 bits because it incorrectly handled negative values in signed integers.
 
 **Real-world examples from test suite:**
 
@@ -1768,20 +1891,7 @@ Valid certificate:
   → Different! Has parent CA ✅
 ```
 
-**Logic:**
-```python
-if SKI is present and AKI is present:
-    if SKI == AKI:
-        # Self-signed certificate
-        return FAIL
-    else:
-        # Has separate issuer
-        return PASS
-else:
-    # Cannot perform this check (SKI missing)
-    # Rely on Check 15 (Issuer ≠ Subject) instead
-    return SKIP
-```
+**Logic:** If both SKI and AKI are present, compare them. If they're equal, it's self-signed (FAIL). If different, it has a separate issuer (PASS). If either is missing, rely on CHECK 15.
 
 **Source:** RFC 5280 logic for self-signed certificates
 
@@ -1839,12 +1949,7 @@ March 15, 2027: Max 100 days
 March 15, 2029: Max 47 days
 ```
 
-**Calculation:**
-```python
-validity_days = (not_after - not_before).days
-if validity_days > 398:
-    return FAIL  # Too long!
-```
+**Calculation:** Parse the Not Before and Not After dates, calculate the difference in days, and check if it exceeds 398 days.
 
 **Sources:**
 - CA/Browser Forum Ballot SC22 (effective September 1, 2020)
@@ -2084,6 +2189,8 @@ This certificate meets all requirements for public trust.
 
 ### Starter Code Structure
 
+**IMPORTANT:** Your solution must implement the `validate_tls_certificate()` function that returns `(fail_list, optional_list)`.
+
 ```python
 #!/usr/bin/env python3
 """
@@ -2094,70 +2201,246 @@ Validates X.509 certificates against 20 critical checks
 import re
 import sys
 from datetime import datetime
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 
-class CertificateValidator:
-	def __init__(self, cert_text: str):
-		self.cert_text = cert_text
-		self.results = {}
+def validate_tls_certificate(cert_file: str, hostname: str = "") -> Tuple[List[int], List[int]]:
+	"""
+	Validate TLS certificate against 20-point checklist.
 	
-	def validate(self) -> Dict[str, bool]:
-		"""Run all 20 validation checks"""
-		self.check_01_version()
-		self.check_02_expiration()
-		self.check_03_signature_algorithm()
-		self.check_04_key_size()
-		self.check_05_subject_dn()
-		self.check_06_sans_present()
-		self.check_07_hostname_match()
-		self.check_08_basic_constraints()
-		self.check_09_key_usage()
-		self.check_10_extended_key_usage()
-		self.check_11_crl_distribution()
-		self.check_12_authority_info_access()
-		self.check_13_ocsp_url()
-		self.check_14_certificate_transparency()
-		self.check_15_not_self_signed()
-		self.check_16_serial_number()
-		self.check_17_ski_present()
-		self.check_18_aki_present()
-		self.check_19_ski_not_equal_aki()
-		self.check_20_validity_period()
-		return self.results
+	Args:
+		cert_file: Path to certificate file in TEXT format (.txt)
+		hostname: Expected hostname (e.g., "www.example.com")
 	
-	def check_01_version(self):
-		"""Version must be 3 (0x2)"""
-		# TODO: Implement
-		pass
+	Returns:
+		Tuple of (fail_list, optional_list):
+		- fail_list: List of REQUIRED check numbers that failed (1-20)
+		- optional_list: List of OPTIONAL check numbers that failed (1-20)
 	
-	def check_02_expiration(self):
-		"""Certificate must not be expired or not yet valid"""
-		# TODO: Implement
-		pass
+	Example:
+		fail_list, optional_list = validate_tls_certificate("cert.txt", "www.example.com")
+		# fail_list = [2, 7, 12]      # REQUIRED: expired, hostname mismatch, no AIA
+		# optional_list = [9, 13]     # OPTIONAL: Key Usage, OCSP
+	"""
 	
-	# ... implement remaining checks ...
-	
-	def print_report(self):
-		"""Print validation report"""
-		print("=== TLS Certificate Validator ===\n")
-		# TODO: Implement
-		pass
-
-def main():
-	if len(sys.argv) != 2:
-		print("Usage: python validate_cert.py <certificate.txt>")
-		sys.exit(1)
-	
-	with open(sys.argv[1], 'r') as f:
+	# Read certificate file
+	with open(cert_file, 'r') as f:
 		cert_text = f.read()
 	
-	validator = CertificateValidator(cert_text)
-	results = validator.validate()
-	validator.print_report()
+	# Initialize lists
+	fail_list = []  # Checks that failed
+	
+	# Define optional checks (best practice but not strictly required)
+	optional_checks = [9, 13, 17]  # Key Usage, OCSP, SKI
+	
+	# CHECK 1: Version must be 3 (0x2)
+	# TODO: Parse "Version: 3 (0x2)" from cert_text
+	# If version != 3: fail_list.append(1)
+	
+	# CHECK 2: Not expired and not yet valid
+	# TODO: Parse "Not Before" and "Not After" dates
+	# If expired or not yet valid: fail_list.append(2)
+	
+	# CHECK 3: Signature algorithm SHA-256 or better
+	# TODO: Parse "Signature Algorithm"
+	# If SHA-1 or MD5: fail_list.append(3)
+	
+	# CHECK 4: Key size - RSA ≥2048, ECDSA ≥P-256
+	# TODO: Parse "Public Key Algorithm" and key size
+	# If weak: fail_list.append(4)
+	
+	# CHECK 5: Subject DN present (minimal OK if SANs critical)
+	# TODO: Parse "Subject" field
+	# If empty and SANs not critical: fail_list.append(5)
+	
+	# CHECK 6: SANs extension present
+	# TODO: Check for "X509v3 Subject Alternative Name"
+	# If missing: fail_list.append(6)
+	
+	# CHECK 7: Hostname matches SAN
+	# TODO: Check hostname against each SAN, handle wildcards
+	# If no match: fail_list.append(7)
+	
+	# CHECK 8: Basic Constraints CA:FALSE (critical)
+	# TODO: Parse "X509v3 Basic Constraints"
+	# If CA:TRUE or not critical: fail_list.append(8)
+	
+	# CHECK 9: Key Usage flags appropriate
+	# TODO: Parse "X509v3 Key Usage"
+	# Check RSA vs ECDSA requirements, no banned flags
+	# If inappropriate: fail_list.append(9)
+	
+	# CHECK 10: Extended Key Usage includes serverAuth
+	# TODO: Parse "X509v3 Extended Key Usage"
+	# If missing "TLS Web Server Authentication": fail_list.append(10)
+	
+	# CHECK 11: CRL Distribution Points present
+	# TODO: Check for "X509v3 CRL Distribution Points"
+	# If missing: fail_list.append(11)
+	
+	# CHECK 12: Authority Information Access present
+	# TODO: Check for "Authority Information Access"
+	# If missing: fail_list.append(12)
+	
+	# CHECK 13: OCSP URL present in AIA
+	# TODO: Check for "OCSP - URI:" in AIA section
+	# If missing: fail_list.append(13)
+	
+	# CHECK 14: Certificate Transparency (≥2 SCTs)
+	# TODO: Count "Signed Certificate Timestamp" entries
+	# If < 2: fail_list.append(14)
+	
+	# CHECK 15: Not self-signed
+	# TODO: Compare Issuer vs Subject, or check SKI vs AKI
+	# If self-signed: fail_list.append(15)
+	
+	# CHECK 16: Valid serial number (≥64 bits entropy)
+	# TODO: Parse "Serial Number" and validate
+	# If weak: fail_list.append(16)
+	
+	# CHECK 17: SKI present (recommended)
+	# TODO: Check for "X509v3 Subject Key Identifier"
+	# If missing: fail_list.append(17)
+	
+	# CHECK 18: AKI present
+	# TODO: Check for "X509v3 Authority Key Identifier"
+	# If missing: fail_list.append(18)
+	
+	# CHECK 19: SKI ≠ AKI (if both present)
+	# TODO: Compare SKI and AKI values
+	# If equal: fail_list.append(19)
+	
+	# CHECK 20: Validity period ≤ 398 days
+	# TODO: Calculate validity period from Not Before/After
+	# If > 398 days: fail_list.append(20)
+	
+	# Separate REQUIRED vs OPTIONAL failures
+	final_fail_list = []
+	final_optional_list = []
+	
+	for check_num in fail_list:
+		if check_num in optional_checks:
+			final_optional_list.append(check_num)
+		else:
+			final_fail_list.append(check_num)
+	
+	return (sorted(final_fail_list), sorted(final_optional_list))
+
+def main():
+	if len(sys.argv) != 3:
+		print("Usage: python validate_cert.py <hostname> <certificate.txt>")
+		print()
+		print("Example:")
+		print("  python validate_cert.py www.example.com cert.txt")
+		sys.exit(1)
+	
+	hostname = sys.argv[1]
+	cert_file = sys.argv[2]
+	
+	try:
+		fail_list, optional_list = validate_tls_certificate(cert_file, hostname)
+		
+		print("="*60)
+		print("TLS CERTIFICATE VALIDATION RESULTS")
+		print("="*60)
+		print()
+		
+		if not fail_list and not optional_list:
+			print("✓ All 20 checks PASSED!")
+		else:
+			if fail_list:
+				print(f"✗ REQUIRED failures: {fail_list}")
+				print("   These MUST be fixed")
+				print()
+			
+			if optional_list:
+				print(f"⚠ OPTIONAL failures: {optional_list}")
+				print("   Best practices but not required")
+				print()
+		
+		# Calculate score
+		failed_checks = len(fail_list) + len(optional_list)
+		passed_checks = 20 - failed_checks
+		score = (passed_checks / 20) * 100
+		
+		print(f"Score: {passed_checks}/20 checks passed ({score:.1f}%)")
+		
+	except FileNotFoundError:
+		print(f"✗ Error: Certificate file not found: {cert_file}")
+		sys.exit(1)
+	except Exception as e:
+		print(f"✗ Error: {e}")
+		sys.exit(1)
 
 if __name__ == "__main__":
 	main()
 ```
+
+**Key Requirements:**
+1. Function must be named `validate_tls_certificate(cert_file, hostname)`
+2. Must return tuple: `(fail_list, optional_list)`
+3. Both lists contain check numbers (1-20) that failed
+4. Optional checks: 9 (Key Usage), 13 (OCSP), 17 (SKI)
+
+### Automated Grader
+
+Your solution will be graded automatically by comparing your returned `fail_list` and `optional_list` against the reference implementation.
+
+**Grading script:**
+```bash
+python3 grader.py your_solution.py
+```
+
+**Scoring:**
+- **Perfect match:** Both `fail_list` and `optional_list` match → 100 points
+- **Partial match:** One list matches → 50 points  
+- **Mismatch:** Neither list matches → 0 points
+
+**Final grade:** Average score across all 68 test certificates
+
+**Example output:**
+```
+======================================================================
+TLS CERTIFICATE VALIDATOR GRADER
+======================================================================
+
+Loading reference: tls_cert_validator.py
+✓ Reference loaded
+Loading student:   my_validator.py
+✓ Student loaded
+
+Found 68 test certificates
+======================================================================
+
+Test                                       Status     Required   Optional
+----------------------------------------------------------------------
+test_001_perfect_cert.txt                  PERFECT    ✓          ✓
+test_002_ecdsa_cert.txt                    PERFECT    ✓          ✓
+test_006_expired.txt                       PERFECT    ✓          ✓
+test_013_hostname_mismatch.txt             PARTIAL    ✓          ✗
+test_019_wildcard_root.txt                 FAIL       ✗          ✗
+...
+
+======================================================================
+SUMMARY
+======================================================================
+
+Total Tests:      67
+Perfect Matches:  60 (89.6%)
+Partial Matches:  5 (7.5%)
+Failed:           2 (3.0%)
+
+SCORE: 92.5/100
+GRADE: A
+```
+
+**Grading scale:**
+- **A:** 90-100 (90%+ perfect matches)
+- **B:** 80-89
+- **C:** 70-79
+- **D:** 60-69
+- **F:** 0-59
+
+---
 
 ### Test Suite
 
@@ -2174,27 +2457,11 @@ Each test file shows which check should fail:
 
 ### Parsing Tips
 
-**Example: Extract version**
-```python
-version_match = re.search(r'Version:\s*(\d+)', cert_text)
-if version_match:
-	version = int(version_match.group(1))
-	# Version 3 in certificate = value 2 in encoding
-	return version == 2  # This represents "Version 3"
-```
-
-**Example: Extract dates**
-```python
-not_before = re.search(r'Not Before:\s*(.+)', cert_text).group(1)
-not_after = re.search(r'Not After\s*:\s*(.+)', cert_text).group(1)
-# Parse: "Dec  1 00:00:00 2025 GMT"
-```
-
-**Example: Check for extensions**
-```python
-has_sans = 'X509v3 Subject Alternative Name:' in cert_text
-has_crl = 'X509v3 CRL Distribution Points:' in cert_text
-```
+**Parsing hints:**
+- Use regular expressions to extract fields from the certificate text
+- Look for field names followed by colons and values
+- Extensions are prefixed with "X509v3"
+- Pay attention to spacing and formatting variations
 
 ---
 
@@ -2301,29 +2568,62 @@ By completing this challenge, you'll master:
 
 Your validator is complete when:
 
-1. ✅ All 20 checks implemented
-2. ✅ Passes all 23 valid test certificates
-3. ✅ Fails all 45 invalid test certificates (correct reason)
-4. ✅ Clear, detailed output for each check
-5. ✅ Proper error handling (malformed inputs)
+1. ✅ Function `validate_tls_certificate(cert_file, hostname)` implemented
+2. ✅ Returns tuple `(fail_list, optional_list)` with check numbers 1-20
+3. ✅ All 20 checks implemented correctly
+4. ✅ Achieves 90%+ match rate with reference solution
+5. ✅ Proper error handling (missing files, malformed inputs)
+
+**Example return values:**
+```python
+# Perfect certificate
+return ([], [])
+
+# Expired certificate with missing AIA
+return ([2, 12], [])  # REQUIRED: expired, no AIA
+
+# Missing Key Usage (optional check)
+return ([], [9])  # OPTIONAL: Key Usage
+
+# Multiple failures
+return ([2, 7, 12], [9, 13])  # REQUIRED: 2,7,12  OPTIONAL: 9,13
+```
 
 **Bonus points:**
+- Code quality: Clean, well-documented, RFC 5280 citations
 - Performance: Process 1000 certificates/second
-- Accuracy: Match Chrome/Firefox validation results
-- Usability: GitHub Actions integration for CI/CD
+- Perfect match: 100% accuracy with reference solution
 
 ---
 
 ## 🎯 Grading Rubric
 
-| Category | Points | Criteria |
-|----------|--------|----------|
-| **Correctness** | 50 | All checks implemented accurately |
-| **Test Coverage** | 20 | All 68 test cases pass |
-| **Code Quality** | 15 | Clean, well-documented, Pythonic |
-| **Error Handling** | 10 | Graceful failures, clear messages |
-| **Completeness** | 5 | All phases, proper output format |
-| **TOTAL** | 100 | |
+**Automated grading based on array matching:**
+
+| Grade | Score | Accuracy |
+|-------|-------|----------|
+| **A** | 90-100 | 90%+ perfect matches with reference |
+| **B** | 80-89 | 80%+ perfect matches |
+| **C** | 70-79 | 70%+ perfect matches |
+| **D** | 60-69 | 60%+ perfect matches |
+| **F** | 0-59 | Below 60% |
+
+**Scoring per test:**
+- Perfect match (both lists match): 100 points
+- Partial match (one list matches): 50 points
+- Mismatch (neither list matches): 0 points
+
+**Final score:** Average across all 68 test certificates
+
+**Quick check:**
+```bash
+# Run grader
+python3 grader.py my_validator.py
+
+# Target for A grade:
+# SCORE: 92.5/100
+# GRADE: A
+```
 
 ---
 
