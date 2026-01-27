@@ -473,13 +473,13 @@ def validate_tls_certificate(text_file,domain=""):
 					table["X509v3 CRL Distribution Points"]["Values"].append(url_line) 
 				# Check 12
 
-				elif "OCSP:" in line:
+				elif "OCSP" in line:
 
 					ocsp_line = line.split("URI:")[1].strip()
 
 					table["Authority Information Access"]["OCSP"] = ocsp_line
 
-				elif "CA Issuers:" in line:
+				elif "CA Issuers" in line:
 
 					ca_issuers_line = line.split("URI:")[1].strip()
 

@@ -110,6 +110,20 @@ Every time you visit `https://google.com`, your browser performs **20 critical s
 
 **Your mission:** Build the certificate validator that browsers use! Master the 20-point checklist, then implement it in Python.
 
+### 📦 Get the Complete Exercise
+
+**Exercise Files:** https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/tls
+
+**What's included:**
+- 📁 **test_certs_text/** - 68 test certificates (valid and invalid)
+- 🤖 **grader.py** - Automated grader (instant feedback)
+- ✅ **tls_cert_validator.py** - Reference solution
+- 📖 **README.md** - Setup instructions
+
+**Main Repository:** https://github.com/fosres/SecEng-Exercises (⭐ star for more exercises!)
+
+**⭐ Star the repo to get notified of new security exercises!**
+
 ---
 
 ## Why This Matters in Real Life
@@ -2440,6 +2454,17 @@ GRADE: A
 - **D:** 60-69
 - **F:** 0-59
 
+**📖 Get the Files:**
+
+**Exercise Directory:** https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/tls
+
+**Direct Links:**
+- 🤖 **Grader:** [grader.py](https://github.com/fosres/SecEng-Exercises/blob/main/cryptography/applied_crypto/tls/grader.py)
+- ✅ **Reference Solution:** [tls_cert_validator.py](https://github.com/fosres/SecEng-Exercises/blob/main/cryptography/applied_crypto/tls/tls_cert_validator.py)
+- 📁 **Test Certificates:** [test_certs_text/](https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/tls/test_certs_text)
+
+**⚠️ Try implementing yourself first!** The learning comes from struggling through the implementation.
+
 ---
 
 ### Test Suite
@@ -2535,6 +2560,57 @@ By completing this challenge, you'll master:
 9. **Symantec Distrust (2017-2018)**
    - Why validation matters
    - Google Chrome distrusted 30,000+ certificates
+
+### Solution & Grader
+10. **Exercise Files (GitHub Directory)**
+    - All exercise materials in one place
+    - https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/tls
+
+11. **Reference Solution (Python)**
+    - Full implementation with all 20 checks
+    - https://github.com/fosres/SecEng-Exercises/blob/main/cryptography/applied_crypto/tls/tls_cert_validator.py
+    - Production-quality, RFC 5280 compliant
+
+12. **Automated Grader Script**
+    - Compare your solution against reference
+    - https://github.com/fosres/SecEng-Exercises/blob/main/cryptography/applied_crypto/tls/grader.py
+    - Get instant feedback on correctness
+
+13. **Test Certificates (68 files)**
+    - Valid and invalid test cases
+    - https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/tls/test_certs_text
+    - Covers all 20 validation checks
+
+---
+
+## ⭐ Support This Project
+
+**If you found this exercise valuable, please star the repo!**
+
+🌟 **GitHub Repository:** https://github.com/fosres/SecEng-Exercises
+
+**This Exercise:** https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/tls
+
+**What's in the repo:**
+- ✅ Complete TLS Certificate Validator exercise
+- ✅ 68 test certificates ([test_certs_text/](https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/tls/test_certs_text))
+- ✅ Automated grader script ([grader.py](https://github.com/fosres/SecEng-Exercises/blob/main/cryptography/applied_crypto/tls/grader.py))
+- ✅ Reference solution ([tls_cert_validator.py](https://github.com/fosres/SecEng-Exercises/blob/main/cryptography/applied_crypto/tls/tls_cert_validator.py))
+- ✅ More security engineering exercises
+
+**Why star the repo?**
+- 📚 Get notified of new security exercises
+- 🎯 Show appreciation for free, high-quality AppSec content
+- 🚀 Help others discover these resources
+- 💪 Support open-source security education
+
+**Coming soon:**
+- More applied cryptography exercises
+- Web application security challenges
+- API security validator exercises
+- Secure coding challenges
+
+**⭐ Star the repo here:** https://github.com/fosres/SecEng-Exercises
 
 ---
 
@@ -2667,6 +2743,29 @@ Certificate validation is one of those "get it 100% right or users get hacked" p
 **Most importantly:** You'll never look at that little padlock icon in your browser the same way again! 🔐
 
 Good luck, and happy validating! 🚀
+
+---
+
+## 🎁 One More Thing...
+
+**If this exercise helped you, please ⭐ star the GitHub repo!**
+
+👉 **https://github.com/fosres/SecEng-Exercises**
+
+**Your star:**
+- 📣 Helps others discover high-quality AppSec exercises
+- 💡 Motivates creation of more security content
+- 🎯 Shows recruiters you're serious about AppSec
+- 🆓 Supports free, open-source security education
+
+**Get the complete exercise:**
+- 📂 **Exercise Directory:** https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/tls
+- 📁 **Test Certificates:** [test_certs_text/](https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/tls/test_certs_text)
+- 🤖 **Grader:** [grader.py](https://github.com/fosres/SecEng-Exercises/blob/main/cryptography/applied_crypto/tls/grader.py)
+- ✅ **Reference:** [tls_cert_validator.py](https://github.com/fosres/SecEng-Exercises/blob/main/cryptography/applied_crypto/tls/tls_cert_validator.py)
+- 📚 More AppSec challenges
+
+**Star the repo:** https://github.com/fosres/SecEng-Exercises ⭐
 
 ---
 

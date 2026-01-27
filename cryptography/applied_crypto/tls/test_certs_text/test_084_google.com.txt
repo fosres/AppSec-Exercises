@@ -1,0 +1,74 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            d5:6c:78:52:14:2b:51:56:12:fb:1e:41:28:ed:d7:38
+        Signature Algorithm: ecdsa-with-SHA256
+        Issuer: C = US, O = Google Trust Services, CN = WE2
+        Validity
+            Not Before: Jan 12 08:36:50 2026 GMT
+            Not After : Apr  6 08:36:49 2026 GMT
+        Subject: CN = *.google.com
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:b9:1a:67:46:2f:bd:2f:19:5c:7b:31:f9:2a:2a:
+                    02:47:e9:e1:78:ce:bc:b7:b9:3f:e1:7e:70:32:6d:
+                    c2:95:34:fd:3c:c7:d0:62:59:50:4c:d2:1a:fb:03:
+                    a6:b2:63:5d:ec:9a:e6:34:76:83:61:c8:90:d0:5d:
+                    c3:79:6d:17:a1
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Digital Signature
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                F7:43:0A:EB:C9:C6:82:78:7A:08:05:F7:67:47:57:8C:BC:8B:87:4C
+            X509v3 Authority Key Identifier: 
+                75:BE:C4:77:AE:89:F6:44:37:7D:CF:B1:68:1F:1D:1A:EB:DC:34:59
+            Authority Information Access: 
+                OCSP - URI:http://o.pki.goog/we2
+                CA Issuers - URI:http://i.pki.goog/we2.crt
+            X509v3 Subject Alternative Name: 
+                DNS:*.google.com, DNS:*.appengine.google.com, DNS:*.bdn.dev, DNS:*.origin-test.bdn.dev, DNS:*.cloud.google.com, DNS:*.crowdsource.google.com, DNS:*.datacompute.google.com, DNS:*.google.ca, DNS:*.google.cl, DNS:*.google.co.in, DNS:*.google.co.jp, DNS:*.google.co.uk, DNS:*.google.com.ar, DNS:*.google.com.au, DNS:*.google.com.br, DNS:*.google.com.co, DNS:*.google.com.mx, DNS:*.google.com.tr, DNS:*.google.com.vn, DNS:*.google.de, DNS:*.google.es, DNS:*.google.fr, DNS:*.google.hu, DNS:*.google.it, DNS:*.google.nl, DNS:*.google.pl, DNS:*.google.pt, DNS:*.googleapis.cn, DNS:*.googlevideo.com, DNS:*.gstatic.cn, DNS:*.gstatic-cn.com, DNS:googlecnapps.cn, DNS:*.googlecnapps.cn, DNS:googleapps-cn.com, DNS:*.googleapps-cn.com, DNS:gkecnapps.cn, DNS:*.gkecnapps.cn, DNS:googledownloads.cn, DNS:*.googledownloads.cn, DNS:recaptcha.net.cn, DNS:*.recaptcha.net.cn, DNS:recaptcha-cn.net, DNS:*.recaptcha-cn.net, DNS:widevine.cn, DNS:*.widevine.cn, DNS:ampproject.org.cn, DNS:*.ampproject.org.cn, DNS:ampproject.net.cn, DNS:*.ampproject.net.cn, DNS:google-analytics-cn.com, DNS:*.google-analytics-cn.com, DNS:googleadservices-cn.com, DNS:*.googleadservices-cn.com, DNS:googlevads-cn.com, DNS:*.googlevads-cn.com, DNS:googleapis-cn.com, DNS:*.googleapis-cn.com, DNS:googleoptimize-cn.com, DNS:*.googleoptimize-cn.com, DNS:doubleclick-cn.net, DNS:*.doubleclick-cn.net, DNS:*.fls.doubleclick-cn.net, DNS:*.g.doubleclick-cn.net, DNS:doubleclick.cn, DNS:*.doubleclick.cn, DNS:*.fls.doubleclick.cn, DNS:*.g.doubleclick.cn, DNS:dartsearch-cn.net, DNS:*.dartsearch-cn.net, DNS:googletraveladservices-cn.com, DNS:*.googletraveladservices-cn.com, DNS:googletagservices-cn.com, DNS:*.googletagservices-cn.com, DNS:googletagmanager-cn.com, DNS:*.googletagmanager-cn.com, DNS:googlesyndication-cn.com, DNS:*.googlesyndication-cn.com, DNS:*.safeframe.googlesyndication-cn.com, DNS:app-measurement-cn.com, DNS:*.app-measurement-cn.com, DNS:gvt1-cn.com, DNS:*.gvt1-cn.com, DNS:gvt2-cn.com, DNS:*.gvt2-cn.com, DNS:2mdn-cn.net, DNS:*.2mdn-cn.net, DNS:googleflights-cn.net, DNS:*.googleflights-cn.net, DNS:admob-cn.com, DNS:*.admob-cn.com, DNS:*.gemini.cloud.google.com, DNS:googlesandbox-cn.com, DNS:*.googlesandbox-cn.com, DNS:*.safenup.googlesandbox-cn.com, DNS:*.gstatic.com, DNS:*.metric.gstatic.com, DNS:*.gvt1.com, DNS:*.gcpcdn.gvt1.com, DNS:*.gvt2.com, DNS:*.gcp.gvt2.com, DNS:*.url.google.com, DNS:*.youtube-nocookie.com, DNS:*.ytimg.com, DNS:ai.android, DNS:android.com, DNS:*.android.com, DNS:*.flash.android.com, DNS:g.cn, DNS:*.g.cn, DNS:g.co, DNS:*.g.co, DNS:goo.gl, DNS:www.goo.gl, DNS:google-analytics.com, DNS:*.google-analytics.com, DNS:google.com, DNS:googlecommerce.com, DNS:*.googlecommerce.com, DNS:ggpht.cn, DNS:*.ggpht.cn, DNS:urchin.com, DNS:*.urchin.com, DNS:youtu.be, DNS:youtube.com, DNS:*.youtube.com, DNS:music.youtube.com, DNS:*.music.youtube.com, DNS:youtubeeducation.com, DNS:*.youtubeeducation.com, DNS:youtubekids.com, DNS:*.youtubekids.com, DNS:yt.be, DNS:*.yt.be, DNS:android.clients.google.com, DNS:*.android.google.cn, DNS:*.chrome.google.cn, DNS:*.developers.google.cn, DNS:*.aistudio.google.com
+            X509v3 Certificate Policies: 
+                Policy: 2.23.140.1.2.1
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://c.pki.goog/we2/yK5nPhtHKQs.crl
+            CT Precertificate SCTs: 
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : 0E:57:94:BC:F3:AE:A9:3E:33:1B:2C:99:07:B3:F7:90:
+                                DF:9B:C2:3D:71:32:25:DD:21:A9:25:AC:61:C5:4E:21
+                    Timestamp : Jan 12 09:36:52.987 2026 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:45:02:20:1F:1C:40:34:A8:15:9F:F6:62:A1:DA:B4:
+                                D5:49:61:CC:05:DE:F1:AF:44:91:A6:B4:49:E9:09:4E:
+                                AC:F1:E6:0E:02:21:00:EF:CF:AD:71:F0:DB:F0:2D:30:
+                                46:71:7C:48:B3:A5:12:48:21:D9:60:80:CF:B2:83:60:
+                                AA:7A:12:D5:C9:10:83
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : 16:83:2D:AB:F0:A9:25:0F:0F:F0:3A:A5:45:FF:C8:BF:
+                                C8:23:D0:87:4B:F6:04:29:27:F8:E7:1F:33:13:F5:FA
+                    Timestamp : Jan 12 09:36:53.024 2026 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:45:02:21:00:89:A8:46:7D:11:89:C6:C8:5E:95:4C:
+                                E8:36:13:D8:20:AE:C3:01:CE:CE:BE:C6:CC:2B:EC:DF:
+                                76:35:B5:BB:14:02:20:1A:F8:D4:0E:61:5C:5D:4C:60:
+                                D8:38:DF:8A:79:47:73:A1:0C:22:2A:61:B5:51:87:E0:
+                                60:A3:5F:3E:CF:EE:39
+    Signature Algorithm: ecdsa-with-SHA256
+    Signature Value:
+        30:46:02:21:00:b1:64:f1:72:b5:1e:95:fe:2e:5b:a4:c6:71:
+        97:dd:3d:34:72:fd:84:2d:e7:a7:f0:1c:48:5e:39:00:bb:20:
+        22:02:21:00:b6:bb:ba:9d:51:2e:1b:55:80:46:5b:24:14:70:
+        a2:4d:53:b6:cf:0e:2a:6b:36:f1:48:d2:e7:2b:6a:bc:e7:df
