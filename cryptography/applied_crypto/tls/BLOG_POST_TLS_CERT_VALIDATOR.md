@@ -393,81 +393,229 @@ Browser shows: "NET::ERR_CERT_WEAK_KEY"
 
 #### ⚠️ CHECK 5: Subject Distinguished Name (DN)
 
-**Status:** ⚠️ MINIMAL OK (Can be empty if SANs is critical)
+**Status:** ⚠️ MINIMAL OK
 
 **What you'll see in a good certificate:**
 ```
 Subject: C=US, ST=California, O=Example Inc, CN=www.example.com
 ```
 
-**Plain English explanation:**
+**Plain English explanation:**  
 Subject DN = Who owns this certificate
 
-**RFC 5280 Rules:**
+---
 
-**Case 1: Subject DN present (99% of certificates)**
+### 🎯 The Core Rule (RFC 5280 Section 4.1.2.6)
+
+Check 5 validates the Subject DN field with a **conditional requirement** based on whether Subject has content:
+
+| Subject DN Status | SANs Critical Requirement | Check 5 Result |
+|------------------|---------------------------|----------------|
+| **Has DN components** | ⚠️ **NOT CHECKED** - SANs can be critical OR non-critical | ✅ **PASS** |
+| **Empty** | ✅ **MUST be critical** | ❌ **FAIL** if SANs not critical |
+
+**Key Insight:** Check 5 only cares about the SANs critical flag when Subject is empty. When Subject has components, the SANs critical flag is irrelevant to Check 5.
+
+---
+
+### 📋 Case-by-Case Breakdown
+
+#### ✅ Case 1: Subject Present, SANs Non-Critical (99% of real certificates)
+
 ```
 Subject: C=US, ST=California, O=Example Inc, CN=www.example.com
 
 X509v3 Subject Alternative Name:
     DNS:www.example.com, DNS:example.com
 ```
-✅ **SANs does NOT need to be critical** (most common case)
 
-**Case 2: Subject DN empty (rare)**
+**Check 5 Result:** ✅ **PASS**  
+**Reason:** Subject has DN components (`C=US, O=Example Inc, CN=...`), so Check 5 passes immediately. The SANs critical flag is **not evaluated** by Check 5.
+
+**Real-world example:** ssllabs.com, google.com, amazon.com - nearly all production certificates follow this pattern.
+
+---
+
+#### ✅ Case 2: Subject Present, SANs Critical (also valid)
+
+```
+Subject: C=US, ST=California, O=Example Inc, CN=www.example.com
+
+X509v3 Subject Alternative Name: critical
+    DNS:www.example.com, DNS:example.com
+```
+
+**Check 5 Result:** ✅ **PASS**  
+**Reason:** Subject has DN components, so Check 5 passes. SANs being marked critical is **allowed but not required** when Subject is present.
+
+**Note:** Some CAs mark SANs as critical even when Subject is present - this is valid and doesn't affect Check 5.
+
+---
+
+#### ✅ Case 3: Empty Subject, SANs Critical (rare but valid)
+
 ```
 Subject: (empty)
 
 X509v3 Subject Alternative Name: critical
     DNS:www.example.com, DNS:example.com
 ```
-✅ **SANs MUST be marked critical** (notice "critical" keyword)
 
-**How to check if SANs is critical:**
+**Check 5 Result:** ✅ **PASS**  
+**Reason:** Subject is empty, BUT SANs is marked critical, which satisfies RFC 5280's requirement.
+
+**When this occurs:** Certificates issued by modern CAs that choose to omit the Subject DN entirely and rely solely on SANs for identity.
+
+---
+
+#### ❌ Case 4: Empty Subject, SANs Non-Critical (INVALID)
+
+```
+Subject: (empty)
+
+X509v3 Subject Alternative Name:
+    DNS:www.example.com, DNS:example.com
+```
+
+**Check 5 Result:** ❌ **FAIL**  
+**Reason:** Subject is empty AND SANs is not marked critical - violates RFC 5280.
+
+**Why this matters:** Without a Subject DN and without the critical flag, older validators might ignore the SANs extension completely, causing validation to fail in unpredictable ways.
+
+---
+
+### 🔍 How to Check if SANs is Critical
+
+The "critical" keyword appears on the same line as the extension name:
+
+**SANs is critical:**
 ```
 X509v3 Subject Alternative Name: critical  ← Has "critical" keyword
     DNS:www.example.com
+```
 
-vs.
-
+**SANs is NOT critical:**
+```
 X509v3 Subject Alternative Name:  ← No "critical" keyword
     DNS:www.example.com
 ```
 
-**Real-world examples:**
+---
 
-**ssllabs.com (Subject present, SANs not critical):**
-```
-Subject: C=US, ST=California, O="Qualys, Inc.", CN=www.ssllabs.com
-X509v3 Subject Alternative Name:
-    DNS:www.ssllabs.com, DNS:ssllabs.com, ...
-```
-✅ VALID (Subject present, so SANs doesn't need to be critical)
+### ⚠️ Common Misconceptions
 
-**Empty Subject (SANs must be critical):**
-```
-Subject: (empty)
-X509v3 Subject Alternative Name: critical
-    DNS:example.com
-```
-✅ VALID (Subject empty, SANs is critical)
+**WRONG:** "SANs must always be critical"
+- ❌ False - SANs only MUST be critical when Subject is empty
 
-**Empty Subject (SANs NOT critical) - INVALID:**
+**WRONG:** "Subject can never be empty"
+- ❌ False - RFC 5280 allows empty Subject if SANs is marked critical
+
+**WRONG:** "If Subject exists, SANs cannot be critical"
+- ❌ False - SANs can be critical even when Subject exists (it's just not required)
+
+**CORRECT:** "SANs critical flag requirement is conditional on Subject being empty"
+- ✅ True - this is the actual RFC 5280 rule
+
+---
+
+### 📊 Decision Tree for Check 5
+
 ```
-Subject: (empty)
-X509v3 Subject Alternative Name:
-    DNS:example.com
+START
+  │
+  ├─ Does Subject have DN components? (C=, O=, CN=, etc.)
+  │   │
+  │   ├─ YES → ✅ Check 5 PASS
+  │   │         (SANs critical flag doesn't matter)
+  │   │
+  │   └─ NO (Subject empty)
+  │       │
+  │       ├─ Is SANs marked critical?
+  │       │   │
+  │       │   ├─ YES → ✅ Check 5 PASS
+  │       │   │
+  │       │   └─ NO  → ❌ Check 5 FAIL
 ```
-❌ INVALID (Subject empty but SANs not marked critical)
 
-**Why this matters:**
-Older validation logic relied on Common Name (CN) in Subject DN. Modern certificates use SANs. When Subject is completely empty, SANs MUST be critical to ensure validators don't ignore it.
+---
 
-**Source:** RFC 5280 Section 4.1.2.6 - "If the subject field contains an empty sequence, then the issuing CA MUST include a subjectAltName extension that is marked as critical"
+### 🔬 What Counts as "Empty" Subject?
 
-**What happens if it fails:**
-- Both Subject DN and SANs empty → Reject
-- Subject DN empty and SANs not critical → Reject
+**These are considered empty:**
+```
+Subject:                    ← Nothing after colon
+Subject: (empty)            ← Explicit empty marker
+Subject: CN=                ← Key without value
+Subject: =value             ← Value without key
+Subject: CN= , O=           ← All values empty
+```
+
+**These are NOT empty:**
+```
+Subject: CN=www.example.com           ← Has valid component
+Subject: C=US, O=Example              ← Has valid components
+Subject: CN=www.example.com, O=       ← At least one valid component
+```
+
+**Implementation Note:** A Subject with at least one valid `KEY=value` pair (where both key and value are non-empty) is considered "present" for Check 5 purposes.
+
+---
+
+### 📖 Why This Rule Exists
+
+**Historical Context:**
+
+1. **Old certificates (pre-2000):** Used only Subject DN for identity
+   - Common Name (CN) field contained the hostname
+   - No SANs extension
+
+2. **Modern certificates (2000+):** Use SANs for identity
+   - SANs contains all valid hostnames
+   - Subject DN became optional
+   - CN field deprecated for hostname validation (RFC 6125)
+
+3. **RFC 5280 compromise:** Allows empty Subject IF:
+   - SANs is marked critical (forces validators to check it)
+   - Ensures backward compatibility with older validators
+
+**The Security Reasoning:**
+
+If Subject is empty and SANs is NOT critical:
+- Legacy validators might skip SANs (non-critical extensions can be ignored)
+- Certificate would have no identity information
+- Validation would fail unpredictably
+
+By requiring SANs to be critical when Subject is empty:
+- Forces all validators (old and new) to check SANs
+- Guarantees certificate identity can be validated
+- Maintains backward compatibility
+
+---
+
+### 📚 Source
+
+**RFC 5280 Section 4.1.2.6:**
+> "If the subject field contains an empty sequence, then the issuing CA MUST include a subjectAltName extension that is marked as critical."
+
+**Note:** This is a one-way requirement. It does NOT say "if Subject is present, SANs cannot be critical." Both critical and non-critical SANs are valid when Subject exists.
+
+---
+
+### ❓ What Happens if Check 5 Fails?
+
+**Scenario 1: Both Subject and SANs empty**
+- Certificate has no identity information
+- Cannot determine who owns the certificate
+- **Action:** Reject certificate immediately
+
+**Scenario 2: Subject empty, SANs not critical**
+- Violates RFC 5280 Section 4.1.2.6
+- Legacy validators might ignore SANs
+- **Action:** Reject certificate (non-compliant)
+
+**Scenario 3: Subject present**
+- Check 5 automatically passes
+- Identity validation continues with Check 6 (SANs present) and Check 7 (hostname match)
 
 ---
 
