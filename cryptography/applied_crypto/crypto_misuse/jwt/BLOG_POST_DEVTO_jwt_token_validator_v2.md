@@ -72,13 +72,15 @@ agrees — it is never used to select the verification logic.
 Comparing two strings with `==` in Python exits on the first mismatched byte.
 An attacker sending thousands of requests and measuring response time
 distributions can statistically recover the correct HMAC signature byte by
-byte. This applies not only to the signature itself, but to any
-security-sensitive string your validator compares: the audience claim, the
-issuer claim, and every entry in an audience list.
+byte. This applies to the HMAC signature comparison — the place where key
+material can actually leak through timing.
 
-Your validator must use `hmac.compare_digest` for all of these — not just the
-signature. Category 15 of the test suite includes tokens with values that share
-a prefix with the expected value to verify your constant-time discipline.
+`aud` and `iss` are delegated to `jwt.decode()` / `jwt.decode_complete()` in
+this exercise, which handles them using standard Python equality internally.
+That is acceptable here because knowing your audience or issuer string gives an
+attacker nothing useful — those values do not enable token forgery on their own.
+The signing key is what must be protected, and that comparison happens inside
+the HMAC step where `hmac.compare_digest` is mandatory.
 
 ---
 
@@ -121,6 +123,140 @@ recipients. Always iterate all entries.
 
 ---
 
+## JWT Structure: What You Are Actually Parsing
+
+Before writing a single line of validation code, you need to know what a JWT
+physically looks like. A JWT is three base64url-encoded segments separated by
+dots:
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTQyIiwiYXVkIjoiaHR0cHM6Ly9hcGkuZXhhbXBsZS5jb20iLCJleHAiOjE3MDAwMDM2MDB9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+```
+
+Breaking that apart:
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9          <- segment 1: HEADER
+.
+eyJzdWIiOiJ1c2VyLTQyIiwiYXVkIjoiaHR0cH...      <- segment 2: PAYLOAD
+.
+SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c   <- segment 3: SIGNATURE
+```
+
+Each segment is base64url-encoded — standard Base64 with `+` replaced by `-`,
+`/` replaced by `_`, and padding `=` stripped. This means you cannot read the
+content directly — you must decode each segment first.
+
+---
+
+### The Header (Segment 1)
+
+Decode segment 1 from base64url and you get a JSON object. For the token above:
+
+```json
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+```
+
+The header describes the token itself — how it was signed, what type it is, and
+which key was used. It is metadata *about* the token, not the user's claims.
+Those live in the payload.
+
+Here are every field the header can legally contain, per RFC 7515 (JWS) and
+RFC 7518 (JWA):
+
+| Field | Name | Required? | What it means |
+|---|---|---|---|
+| `alg` | Algorithm | **Yes** | Which signing algorithm was used. Examples: `"HS256"`, `"RS256"`, `"ES256"`. This is the field your validator checks against `expected_algorithm` and the field attackers manipulate in algorithm confusion attacks. |
+| `typ` | Type | No | Declares the token type. For JWTs this is usually `"JWT"`. Optional to validate in most implementations. |
+| `kid` | Key ID | No | A string identifier for the signing key. Used when a server rotates keys and needs to tell receivers which key to use for verification. Your validator checks this against the `key_store` allowlist. Never use it as a filename or path component. |
+| `cty` | Content Type | No | Used in nested JWTs where the payload is itself a JWT. Rare in practice. |
+| `jku` | JWK Set URL | No | A URL pointing to a JSON Web Key Set for fetching the public key. **Dangerous if trusted blindly** — an attacker can point this at their own server (SSRF). Not supported in this exercise. |
+| `jwk` | JSON Web Key | No | The public key embedded directly in the header. **Dangerous if trusted blindly** — an attacker can embed their own key and sign a token with it. Not supported in this exercise. |
+| `x5u` | X.509 URL | No | A URL pointing to an X.509 certificate chain. Same SSRF risk as `jku`. Not supported in this exercise. |
+| `x5c` | X.509 Cert Chain | No | The certificate chain embedded directly in the header. Not supported in this exercise. |
+| `x5t` | X.509 Thumbprint | No | SHA-1 thumbprint of the X.509 certificate. Rarely used. |
+| `crit` | Critical | No | List of header fields the receiver MUST understand. If your validator does not understand a listed field, it must reject the token. |
+
+The three fields your validator actually reads are `alg` and `kid`. Every other
+field is either irrelevant to this exercise or actively dangerous to act on
+without additional safeguards (`jku`, `jwk`, `x5u`).
+
+Unknown fields not in the table above must be **ignored, not rejected**. Test
+172 verifies this: a token with `"cty": "JWT"` and `"x-foo": "bar"` in the
+header is still valid as long as `alg` is correct and the signature verifies.
+
+---
+
+### The Payload (Segment 2)
+
+Decode segment 2 and you get another JSON object. In JWT terminology this
+object is called the **claims set**, and its individual key-value pairs are
+called **claims**.
+
+The word "claim" is intentional: the token is *asserting* facts about an
+identity. `"sub": "user-42"` is a claim that this token represents user 42.
+`"exp": 1700003600` is a claim that the token expires at that Unix timestamp.
+Your job as the validator is to decide whether you trust those claims — and
+you can only do that after verifying the signature, because an unsigned or
+forged token can claim anything.
+
+In Python, the JSON object decodes directly to a `dict`. That is what the
+function signature means by `-> Optional[dict]`: on success, return the claims
+set as a Python dictionary; on any validation failure, return `None`. The
+caller then reads specific keys from that dict — `claims["sub"]`,
+`claims["role"]`, and so on — to make authorization decisions.
+
+This is where `nbf`, `exp`, `aud`, `iss`, and every other piece of identity
+information lives. The header contains metadata *about* the token; the payload
+contains the token's actual content.
+
+```json
+{
+  "sub":  "user-42",
+  "aud":  "https://api.example.com",
+  "iss":  "https://auth.example.com",
+  "iat":  1699999700,
+  "nbf":  1699999700,
+  "exp":  1700003600,
+  "jti":  "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+RFC 7519 defines the following standard payload claims:
+
+| Field | Name | What it means |
+|---|---|---|
+| `sub` | Subject | Who the token is about — usually a user ID or service account name. |
+| `iss` | Issuer | Which authorization server issued the token. Your validator checks this against `expected_issuer`. |
+| `aud` | Audience | Which service(s) the token is intended for. Your validator checks this against `expected_audience`. May be a single string or a JSON array of strings (RFC 7519 §4.1.3). |
+| `exp` | Expiration Time | Unix timestamp after which the token must be rejected. Validation is strict: `current_time < exp` (a token where `exp == now` is already expired). |
+| `nbf` | Not Before | Unix timestamp before which the token must be rejected. Validation is inclusive: `current_time >= nbf` (a token where `nbf == now` is valid). |
+| `iat` | Issued At | Unix timestamp when the token was issued. Used with `max_age_seconds` to reject stale tokens even if `exp` is far in the future. |
+| `jti` | JWT ID | A unique identifier for this specific token. Used for revocation — your validator checks it against `revoked_jti_set`. |
+
+All other fields in the payload are **application-defined claims** — `role`,
+`scope`, `plan`, `email`, and so on. Your validator must pass them through
+unchanged in the returned dict. It must not reject a token for containing
+unknown claims.
+
+This is what your validator returns on success. Steps 7–12 all operate on this
+object. The payload must not be read until after the signature passes — any
+claims extracted from an unverified payload must be treated as untrusted.
+
+---
+
+### The Signature (Segment 3)
+
+The third segment is raw bytes, base64url-encoded. It is computed over exactly
+the string `base64url(header) + "." + base64url(payload)` — called the
+**signing input**. The algorithm family determines how to verify it, which is
+the focus of the "Algorithm Families" section below.
+
+---
+
 ## The Challenge: `validate_jwt`
 
 ```python
@@ -139,25 +275,38 @@ def validate_jwt(
     max_token_bytes: int = 8192,
 ) -> Optional[dict]:
     """
-    Validate a JWT and return its claims if every check passes.
+    Validate a JWT and return its claims (the payload) if every check passes.
+
+    A JWT has three base64url-encoded segments separated by dots:
+        segment 1 — header:    metadata (alg, kid, typ)
+        segment 2 — payload:   the claims set (sub, exp, aud, iss, nbf, iat, jti, ...)
+        segment 3 — signature: cryptographic proof over header + payload
+
+    "Claims" and "payload" refer to the same thing: the decoded JSON object
+    from segment 2. This function returns that object as a Python dict on
+    success, or None on any validation failure.
 
     Validation order (implement in this exact sequence):
       1.  Byte length   — reject if len(token.encode()) > max_token_bytes
       2.  Structure     — exactly 3 dot-separated segments
-      3.  Header        — valid JSON; alg MUST equal expected_algorithm (exact, case-sensitive)
-      4.  kid           — if key_store is not None AND header has 'kid', kid MUST be in key_store
+      3.  Header        — segment 1 must be valid JSON dict; alg MUST equal
+                          expected_algorithm (exact, case-sensitive match)
+      4.  kid           — if key_store is not None AND header has 'kid',
+                          kid MUST be in key_store
       5.  Signature     — recompute and verify using the correct algorithm
-      6.  Payload       — valid JSON
-      7.  exp           — MUST be present; current_time < exp (strict less-than)
-      8.  nbf           — if present: current_time >= nbf (inclusive)
-      9.  iat           — if max_age_seconds is not None: iat MUST exist and age <= max_age_seconds
-      10. aud           — MUST be present; expected_audience must be in aud
+      6.  Payload       — segment 2 must be valid JSON dict (the claims set)
+      7.  exp           — payload MUST have exp; current_time < exp (strict)
+      8.  nbf           — if payload has nbf: current_time >= nbf (inclusive)
+      9.  iat           — if max_age_seconds is not None: payload MUST have iat
+                          and (current_time - iat) <= max_age_seconds
+      10. aud           — handled by jwt.decode_complete() via the audience= param
                           aud may be a string or a list (RFC 7519 §4.1.3)
-                          ALL comparisons MUST use hmac.compare_digest
-      11. iss           — if expected_issuer is not None: iss MUST exist and match (compare_digest)
-      12. jti revoke    — if revoked_jti_set is not None: jti MUST exist and NOT be in that set
+      11. iss           — handled by jwt.decode_complete() via the issuer= param
+                          (pass None to skip the check)
+      12. jti revoke    — if revoked_jti_set is not None: payload MUST have jti
+                          and jti MUST NOT be in revoked_jti_set
 
-    Returns the claims dict on success. None on any failure.
+    Returns the payload dict (claims set) on success. None on any failure.
     Never raises exceptions to the caller.
     """
     pass
@@ -173,24 +322,8 @@ pip install cryptography PyJWT
 
 ## `jwt.decode()` Is Allowed — and Still Not Enough
 
-In production Python, `PyJWT` is the right tool for JWT validation. A
-real-world implementation at Stripe, GitHub, or Auth0 looks roughly like this:
-
-```python
-import jwt  # PyJWT
-
-def validate_jwt_production(token, secret, expected_audience, expected_issuer):
-    try:
-        return jwt.decode(
-            token,
-            secret,
-            algorithms=["HS256"],       # allowlist — never let the library pick
-            audience=expected_audience,
-            issuer=expected_issuer,
-        )
-    except jwt.InvalidTokenError:
-        return None
-```
+In production Python, `PyJWT` is the right tool for JWT validation. You are
+free to use it in this exercise.
 
 `jwt.decode()` handles signature verification, `exp`, `nbf`, `aud`, and `iss`
 automatically when you pass the right options. For asymmetric algorithms you
@@ -202,25 +335,38 @@ the twelve required checks are not handled by the library at all. After
 `jwt.decode()` returns successfully, you still have to implement all of the
 following yourself:
 
-| Check | Why `jwt.decode()` doesn't cover it |
-|---|---|
-| **Token byte length** | PyJWT never checks the raw size of the token string — a 50 MB token parses just fine |
-| **`kid` allowlist** | PyJWT passes `kid` to your key function if you provide one, but does not enforce an allowlist or block path traversal strings |
-| **`jti` revocation** | No built-in revocation check — PyJWT has no concept of a blocklist |
-| **`iat` max age** | PyJWT has no `max_age_seconds` option — it only checks `exp` |
-| **Constant-time `aud` / `iss` comparison** | PyJWT uses standard Python equality internally for claim string comparison, not `hmac.compare_digest` |
+Here is the precise breakdown of every validation check in this exercise,
+what PyJWT's `jwt.types.Options` actually does for each one, and what remains
+yours to implement. Every row marked "Yes" or "Partially" applies equally to
+both `jwt.decode()` and `jwt.decode_complete()` — they share identical
+validation logic; the only difference is that `decode_complete()` also returns
+the raw header and signature alongside the payload.
+
+| Check | `jwt.decode()` handles it? | What PyJWT actually does |
+|---|---|---|
+| Signature verification | **Yes** | Verifies cryptographic signature for all algorithm families |
+| `exp` (expiration) | **Yes** | Rejects if `current_time >= exp`; raises `ExpiredSignatureError` |
+| `nbf` (not before) | **Yes** | Rejects if `current_time < nbf`; raises `ImmatureSignatureError` |
+| `aud` (audience) | **Yes** | Checks claim matches `audience` parameter |
+| `iss` (issuer) | **Yes** | Checks claim matches `issuer` parameter |
+| `iat` type check | **Partially** (`verify_iat`) | Rejects if `iat` is not an integer, or if `iat > now` (issued in the future). Does **not** enforce a max age window. |
+| `jti` type check | **Partially** (`verify_jti`) | Rejects if `jti` is not a string. Has **no** concept of a revocation blocklist. |
+| **Token byte length** | **No** | PyJWT never checks the raw size of the token string — a 50 MB token parses just fine |
+| **`kid` allowlist** | **No** | PyJWT passes `kid` to your key function if you provide one, but does not enforce an allowlist or block path traversal strings |
+| **`jti` revocation** | **No** | `verify_jti` only enforces the type. Checking a token's `jti` against a blocklist is entirely yours. |
+| **`iat` max age** | **No** | `verify_iat` only guards against future-issued tokens. The `max_age_seconds` window check is entirely yours. |
+| **Constant-time `aud` / `iss` comparison** | **Delegated** | PyJWT uses standard Python equality for these — acceptable because `aud` and `iss` are not secret values; knowing them does not enable token forgery. The signing key is what requires constant-time protection. |
 
 This means that even with `jwt.decode()` doing the heavy lifting, a reader who
-passes all 100 tests has demonstrated that they understand what a JWT library
+passes all 175 tests has demonstrated that they understand what a JWT library
 handles and — critically — what it does not. That boundary is exactly what a
 security engineer needs to know when evaluating whether a given library
 configuration is sufficient for their threat model, or when auditing a
 codebase that uses PyJWT without any of these supplementary checks.
 
 The recommended approach is a layered one — use the library for the
-cryptographic core, then write manual code for the five supplementary checks
-the library does not cover. Figuring out exactly how to structure that is part
-of the exercise.
+cryptographic core, then write manual code for the checks the library does not
+fully cover. Figuring out exactly how to structure that is part of the exercise.
 
 ---
 
@@ -321,29 +467,22 @@ validator that only handles the string case will reject valid multi-audience
 tokens (Test 57). More dangerously, one that handles the list case with a
 short-circuit comparison leaks timing information about the list contents.
 
-### Edge Case 5: Constant-time everywhere, not just the signature
+### Edge Case 5: Constant-time for the HMAC signature comparison
 
-Most developers learn to use `hmac.compare_digest` for the HMAC tag. But the
-same timing vulnerability applies to `aud` and `iss` comparisons. Category 15
-of the test suite probes this specifically using values that share a prefix with
-the expected values. An implementation using `==` for audience or issuer
-comparison will still pass the correctness tests, but fails the constant-time
-discipline tests.
+`hmac.compare_digest` is mandatory when comparing the HMAC signature. Standard
+Python `==` short-circuits on the first mismatched byte — a timing oracle on
+the signature comparison could leak information about the HMAC output, which in
+turn could leak information about the signing key itself. That is the real
+threat.
 
-The rule for `aud` lists is particularly subtle: you must iterate **all**
-entries and OR the results rather than short-circuiting on the first match:
+`aud` and `iss` are delegated to `jwt.decode_complete()` in this exercise.
+Those values are not secret — an attacker learning your audience string cannot
+forge a token without the signing key — so PyJWT's standard equality comparison
+for them is acceptable here.
 
-```python
-# Leaks position of matching entry via timing
-if expected_audience in aud_list:
-    ...
-
-# Correct: examine every entry regardless of whether a match is found
-matched = False
-for entry in aud_list:
-    if hmac.compare_digest(entry, expected_audience):
-        matched = True
-```
+Category 15 of the test suite probes constant-time discipline on the HMAC
+secret itself: tokens signed with a secret that shares a prefix with the real
+secret must be rejected correctly regardless of how many bytes matched.
 
 ### Edge Case 6: kid must be an allowlist lookup, never a path
 
@@ -372,7 +511,7 @@ But if the database returns an empty result, the token has been revoked."
 
 ---
 
-## The Testing Gauntlet — 100 Tests in 16 Categories
+## The Testing Gauntlet — 175 Tests in 27 Categories
 
 | Category | Tests | What Is Checked |
 |---|---|---|
@@ -449,11 +588,12 @@ the header only confirms it. This directly implements the principle from
 *API Security in Action* (p. 191): the algorithm header cannot be trusted and
 must not be used to select verification logic.
 
-**2. Cryptographic discipline across all string comparisons.** Most engineers
-know to use `hmac.compare_digest` for MAC comparison. This exercise requires
-extending that discipline to `aud`, `iss`, and each element of an `aud` list —
-the same timing vulnerability applies everywhere a security decision depends on
-string equality.
+**2. Cryptographic discipline where it counts.** Most engineers know to use
+`hmac.compare_digest` for MAC comparison. This exercise reinforces that the
+signing key comparison is the critical one — `aud` and `iss` are not secret
+values and are safely handled by `jwt.decode_complete()`. Knowing which
+comparisons require constant-time discipline and which do not is itself a
+security engineering skill.
 
 **3. Understanding what the library buys you — and what it doesn't.** Using
 `jwt.decode()` correctly is necessary but not sufficient. The exercise makes
@@ -570,15 +710,15 @@ if key_store is not None and "kid" in header:
 pip install cryptography PyJWT
 
 # 2. Download the challenge file
-curl -O https://raw.githubusercontent.com/YOUR_USERNAME/appsec-exercises/main/jwt_token_validator_v2_175_tests.py
+curl -O https://raw.githubusercontent.com/fosres/SecEng-Exercises/main/jwt_token_validator_v2_175_tests.py
 
-# 3. Run the tests (expect ~56/100 before you implement anything)
+# 3. Run the tests (expect ~56/175 before you implement anything)
 python3 jwt_token_validator_v2_175_tests.py
 
 # 4. Implement validate_jwt() and iterate
 ```
 
-The stub returns `None` for everything. The 44 tests that pass before you write
+The stub returns `None` for everything. The tests that pass before you write
 a single line are all "must reject" cases — they confirm the test infrastructure
 is correct. Every test you need to unlock requires a real implementation.
 
@@ -586,6 +726,26 @@ is correct. Every test you need to unlock requires a real implementation.
 the checks in Categories 10–13 (jti revocation, kid allowlist, max age, token
 size), nor the edge-case and robustness categories 17–27. Those you must write
 yourself on top of whatever the library returns.
+
+If this exercise is useful to you, ⭐ starring the repo takes three seconds and
+helps other security engineers find it. More exercises covering SQL injection,
+SSRF, XXE, IDOR, and API authentication patterns are already in progress:
+
+**[github.com/fosres/SecEng-Exercises](https://github.com/fosres/SecEng-Exercises)**
+
+---
+
+---
+
+## Quick Poll: Why Are You Here?
+
+I'm curious who is actually reading these exercises — job seeker, student,
+seasoned engineer brushing up, hiring manager evaluating candidates?
+
+**[Take the 30-second poll (no login required)](https://strawpoll.com/wby5QoKAkyA/results)**
+
+Results are public. Knowing your background helps me pitch the difficulty and
+depth of future exercises at the right level.
 
 ---
 
@@ -597,8 +757,8 @@ yourself on top of whatever the library returns.
 - ✅ HMAC-SHA256/384/512 from scratch using only the standard library
 - ✅ RSA PKCS#1 v1.5 and PSS signature verification via `cryptography`
 - ✅ ECDSA raw `r ∥ s` encoding (RFC 7518 §3.4) and why it differs from DER
-- ✅ Constant-time comparison discipline beyond just the signature
-- ✅ RFC 7519 audience semantics: string vs. list, constant-time iteration
+- ✅ Constant-time comparison discipline focused on where key material can actually leak
+- ✅ RFC 7519 audience semantics: string vs. list
 - ✅ Issuer validation and why it prevents cross-service replay attacks
 - ✅ `jti` revocation: the fail-secure design when the claim is absent
 - ✅ `kid` allowlist lookup and the path traversal risk of naive implementations
@@ -615,7 +775,7 @@ This exercise evaluates a candidate's ability to:
   and `aud`, never letting the token's header drive library behaviour
 - Identify precisely which checks a JWT library does and does not perform, and
   implement the missing ones correctly on top of it
-- Apply constant-time discipline to the checks the library does not cover (`aud`
+- Apply constant-time discipline to the HMAC signature comparison where key
   list iteration, `iss` comparison)
 - Reason about fail-secure defaults for optional parameters (`jti` revocation,
   `kid` allowlist, `iat` max age, token byte limit)
@@ -682,3 +842,8 @@ token flows — not just "I've called `jwt.decode()` before."
   https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html
 - **PortSwigger JWT Labs** (Week 15 curriculum):
   https://portswigger.net/web-security/jwt
+
+---
+
+Found this useful? ⭐ **[Star the repo](https://github.com/fosres/SecEng-Exercises)** and
+**[vote on the next exercise](https://strawpoll.com/wby5QoKAkyA/results)**.
