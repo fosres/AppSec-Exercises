@@ -1,0 +1,110 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            01:a1:34:62:fb:a0:2c:51:a0:6d:bf:86:19:7c:18:96
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = US, O = DigiCert Inc, OU = www.digicert.com, CN = GeoTrust TLS RSA CA G1
+        Validity
+            Not Before: Oct 15 00:00:00 2025 GMT
+            Not After : Oct 14 23:59:59 2026 GMT
+        Subject: C = US, ST = District of Columbia, L = Washington, O = U.S. Department of Education, CN = fafsa.gov
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:b5:d6:ee:b1:60:c3:19:0d:ee:94:02:47:e9:ac:
+                    8a:cb:e5:f2:78:85:bd:9d:e9:81:bb:f3:c1:d4:5a:
+                    c2:81:96:0e:aa:ea:d2:3a:86:07:37:59:f3:8b:70:
+                    2a:af:74:fd:79:57:b1:9e:ac:a1:ca:5c:01:a7:7d:
+                    14:06:b3:ef:4d:da:2c:73:d6:1f:37:2b:56:93:4a:
+                    38:85:2d:47:11:0b:eb:e0:7c:bd:e7:84:4a:95:d8:
+                    40:6c:e8:cd:eb:44:bd:93:89:9e:75:17:d2:47:29:
+                    c3:9d:b1:44:16:f5:ac:b6:c8:f7:05:17:f7:df:30:
+                    14:c5:47:50:8a:36:82:5c:ca:a1:70:db:9a:07:8a:
+                    5a:41:2d:53:04:fa:df:19:f9:3e:5d:65:01:29:93:
+                    61:d8:37:aa:ed:24:1d:b0:8c:6d:66:6f:cf:f7:ce:
+                    04:74:3f:a4:45:bf:37:af:f6:1b:15:12:1b:59:9d:
+                    80:ef:02:5c:76:ad:8a:e5:bd:26:ea:61:9f:9e:3f:
+                    6a:25:52:f4:6e:65:85:75:29:38:11:30:6e:77:a4:
+                    96:1b:63:74:c7:0b:4f:5b:c2:df:2b:96:54:22:2c:
+                    e6:28:24:f3:36:c4:1f:52:d4:41:26:d6:99:65:55:
+                    ca:9b:a7:5d:ee:d8:a2:98:82:af:4f:f7:74:d1:fb:
+                    61:c7
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Authority Key Identifier: 
+                94:4F:D4:5D:8B:E4:A4:E2:A6:80:FE:FD:D8:F9:00:EF:A3:BE:02:57
+            X509v3 Subject Key Identifier: 
+                2C:E7:E6:57:28:05:1F:62:7F:42:2B:97:62:B2:18:EC:85:04:E4:9D
+            X509v3 Subject Alternative Name: 
+                DNS:fafsa.gov, DNS:analytics.cod.ed.gov, DNS:apig-pft-api-dcc.studentaid.gov, DNS:apig-pft-system-dcc.studentaid.gov, DNS:apig-test-api-dcc.studentaid.gov, DNS:apig-test-system-dcc.studentaid.gov, DNS:cod-cognos.test.cod.ed.gov, DNS:cod-system-api.test.cod.ed.gov, DNS:cod-web.test.cod.ed.gov, DNS:docs.ops.studentaid.gov, DNS:docs.test.studentaid.gov, DNS:document.edmaps.ed.gov, DNS:document.test.edmaps.ed.gov, DNS:edit.fsapartners.ed.gov, DNS:edmaps-system-api.test.edmaps.ed.gov, DNS:edmaps-tableau.test.edmaps.ed.gov, DNS:external-api.studentaid.gov, DNS:fsaid.ed.gov, DNS:ifapmedia-staging.ed.gov, DNS:ifapmedia.ed.gov, DNS:logs.studentaid.gov, DNS:mirror-mail-tce101.studentaid.gov, DNS:mirror-mail-tce102.studentaid.gov, DNS:mirror-mc-tce101.studentaid.gov, DNS:mirror-mc-tce102.studentaid.gov, DNS:mirror.mail.studentaid.gov, DNS:myfsapay.ed.gov, DNS:notify-mail-tce101.studentaid.gov, DNS:notify-mail-tce102.studentaid.gov, DNS:notify-mc-tce101.studentaid.gov, DNS:notify-mc-tce102.studentaid.gov, DNS:notify.mail.studentaid.gov, DNS:nslds-alation.test.nsldsfap.ed.gov, DNS:nslds-api.test.nsldsfap.ed.gov, DNS:nslds-cognos.test.nsldsfap.ed.gov, DNS:nslds-system-api.test.nsldsfap.ed.gov, DNS:nslds-web.test.nsldsfap.ed.gov, DNS:portal.ops.studentaid.gov, DNS:portal.test.studentaid.gov, DNS:ppo-pft-api.fsapartners.ed.gov, DNS:ppo-pft-edit.fsapartners.ed.gov, DNS:ppo-pft-system-api.fsapartners.ed.gov, DNS:ppo-test-api.fsapartners.ed.gov, DNS:ppo-test-edit.fsapartners.ed.gov, DNS:ppo-test-system-api.fsapartners.ed.gov, DNS:reports.nsldsfap.ed.gov, DNS:reports.nsldstraining.ed.gov, DNS:res-mail-tce101.studentaid.gov, DNS:res-mail-tce102.studentaid.gov, DNS:res-mc-tce101.studentaid.gov, DNS:res-mc-tce102.studentaid.gov, DNS:res.mail.studentaid.gov, DNS:rtmirror.mail.studentaid.gov, DNS:rtnotify.mail.studentaid.gov, DNS:rtres.mail.studentaid.gov, DNS:rttrack.mail.studentaid.gov, DNS:service-api.cod.ed.gov, DNS:service-api.edmaps.ed.gov, DNS:service-api.fsapartners.ed.gov, DNS:service-api.studentaid.gov, DNS:sfs.fsapartners.ed.gov, DNS:studentaid.gov, DNS:system-api.fsapartners.ed.gov, DNS:test-fixpath-cct-api.fsapartners.ed.gov, DNS:test-fixpath-cct-app.fsapartners.ed.gov, DNS:test-fixpath-cct-edit.fsapartners.ed.gov, DNS:test-fixpath-cct-system-api.fsapartners.ed.gov, DNS:test-fixpath-pdt-api.fsapartners.ed.gov, DNS:test-fixpath-pdt-app.fsapartners.ed.gov, DNS:test-fixpath-pdt-edit.fsapartners.ed.gov, DNS:test-fixpath-pdt-system-api.fsapartners.ed.gov, DNS:test-fixpath-uat-api.fsapartners.ed.gov, DNS:test-fixpath-uat-app.fsapartners.ed.gov, DNS:test-fixpath-uat-edit.fsapartners.ed.gov, DNS:test-fixpath-uat-system-api.fsapartners.ed.gov, DNS:test-uat-api.fsapartners.ed.gov, DNS:test-uat-app.fsapartners.ed.gov, DNS:test-uat-edit.fsapartners.ed.gov, DNS:test-uat-sfs.test.fsapartners.ed.gov, DNS:test-uat-system-api.fsapartners.ed.gov, DNS:testfsaid.ed.gov, DNS:track-mail-tce101.studentaid.gov, DNS:track-mail-tce102.studentaid.gov, DNS:track-mc-tce101.studentaid.gov, DNS:track-mc-tce102.studentaid.gov, DNS:track.mail.studentaid.gov, DNS:track.ops.studentaid.gov, DNS:track.test.studentaid.gov, DNS:training-test.ops.studentaid.gov, DNS:training.ops.studentaid.gov, DNS:training.test.fsapartners.ed.gov, DNS:user-api.fsapartners.ed.gov, DNS:user-api.nsldsfap.ed.gov, DNS:user-api.nsldstraining.ed.gov, DNS:user-api.studentaid.gov, DNS:viz.edmaps.ed.gov, DNS:www.fafsa.gov, DNS:www.studentaid.gov
+            X509v3 Certificate Policies: 
+                Policy: 2.23.140.1.2.2
+                  CPS: http://www.digicert.com/CPS
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://cdp.geotrust.com/GeoTrustTLSRSACAG1.crl
+            Authority Information Access: 
+                OCSP - URI:http://status.geotrust.com
+                CA Issuers - URI:http://cacerts.geotrust.com/GeoTrustTLSRSACAG1.crt
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            CT Precertificate SCTs: 
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : D7:6D:7D:10:D1:A7:F5:77:C2:C7:E9:5F:D7:00:BF:F9:
+                                82:C9:33:5A:65:E1:D0:B3:01:73:17:C0:C8:C5:69:77
+                    Timestamp : Oct 15 16:10:25.795 2025 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:45:02:21:00:A9:8B:FA:D2:0B:62:8C:4E:8D:16:A9:
+                                20:D9:E9:9B:18:26:1B:DF:2E:26:F8:CE:1D:13:6B:49:
+                                C9:77:D4:F5:41:02:20:6A:89:7F:98:16:C4:1D:6E:AC:
+                                BC:7A:E6:C5:9E:71:BA:EE:9E:DA:E1:74:D1:0A:CC:D8:
+                                2C:C6:3D:9F:F5:81:E0
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : C2:31:7E:57:45:19:A3:45:EE:7F:38:DE:B2:90:41:EB:
+                                C7:C2:21:5A:22:BF:7F:D5:B5:AD:76:9A:D9:0E:52:CD
+                    Timestamp : Oct 15 16:10:25.726 2025 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:46:02:21:00:88:19:BF:C8:36:DD:31:20:ED:0E:D4:
+                                E9:B7:FD:9E:CF:E7:F8:0D:FD:7A:4C:6F:5B:D8:77:98:
+                                07:2A:1E:67:BD:02:21:00:A0:70:92:67:A7:9D:1E:65:
+                                AA:FD:47:01:A9:36:F3:0C:13:BF:53:AF:74:53:1C:ED:
+                                DC:CB:48:95:E2:8E:7C:2E
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : 94:4E:43:87:FA:EC:C1:EF:81:F3:19:24:26:A8:18:65:
+                                01:C7:D3:5F:38:02:01:3F:72:67:7D:55:37:2E:19:D8
+                    Timestamp : Oct 15 16:10:25.743 2025 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:45:02:21:00:A7:FA:B6:E1:F7:54:57:C2:FF:F9:60:
+                                98:09:A9:32:0B:4B:58:26:CB:64:C3:03:34:3A:9D:E0:
+                                E4:CB:53:C9:A6:02:20:69:00:E0:D1:62:C7:B4:00:D6:
+                                60:70:FE:5E:5C:45:BF:15:54:D7:DB:94:5B:9C:E9:FA:
+                                E4:C5:62:B4:3F:C8:1C
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        27:22:f6:fd:a4:15:d8:74:2d:72:a4:c8:11:c6:15:2f:87:ba:
+        ca:93:00:a3:bc:cd:76:f9:ca:0f:fe:73:dc:b3:d3:1b:a9:0b:
+        fb:06:43:67:1f:3e:a9:c9:87:c4:50:f5:a7:52:92:60:dc:b8:
+        2c:59:b0:b7:62:1d:2b:7e:8c:79:9d:38:ce:dd:72:57:55:b2:
+        ab:bf:05:80:f2:bf:73:74:94:95:c6:c0:b1:e6:16:7c:95:88:
+        56:38:96:19:32:37:5a:e5:be:b3:dd:c2:ce:ec:f6:ce:8c:0d:
+        2a:7d:dc:36:cf:1e:a8:4b:93:47:77:cd:d5:60:3e:63:be:b6:
+        8e:05:42:5c:95:27:f6:11:b8:78:2f:78:dc:7f:58:ac:e2:e6:
+        90:6d:ea:3f:28:2a:98:cc:03:0a:38:d8:4a:8d:53:20:34:2c:
+        7e:47:39:92:8b:eb:fc:92:0a:9d:df:ef:28:35:0c:98:61:d3:
+        2e:06:09:8f:eb:a4:63:fd:4d:6c:a9:eb:9e:56:a0:38:eb:7a:
+        2c:33:f2:74:05:de:df:2a:77:a1:0a:60:83:0e:05:65:33:60:
+        a8:b4:e4:28:52:30:a0:cd:46:3d:91:cf:2a:bd:6e:8d:67:2f:
+        60:75:5d:e9:42:a0:c5:54:d0:eb:e2:ac:fb:52:75:0e:6b:d1:
+        f5:6a:62:a0
