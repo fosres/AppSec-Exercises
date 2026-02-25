@@ -847,3 +847,17 @@ token flows — not just "I've called `jwt.decode()` before."
 
 Found this useful? ⭐ **[Star the repo](https://github.com/fosres/SecEng-Exercises)** and
 **[vote on the next exercise](https://strawpoll.com/wby5QoKAkyA/results)**.
+
+---
+
+## Template Code for Challenge
+
+| File | Description |
+|---|---|
+| [jwt_token_validator_v2_200_tests.py](https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/crypto_misuse/jwt/jwt_token_validator_v2_200_tests.py) | Challenge file — 200 test cases, stub only |
+| [jwt_token_validator_v2_200_tests_solution.py](https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/crypto_misuse/jwt/jwt_token_validator_v2_200_tests_solution.py) | Reference solution — attempt the challenge before opening this |
+
+Both files live in the
+[SecEng-Exercises cryptography/applied_crypto/crypto_misuse/jwt](https://github.com/fosres/SecEng-Exercises/tree/main/cryptography/applied_crypto/crypto_misuse/jwt)
+directory. If you find a bug or want to contribute additional test cases, pull
+requests are welcome.
