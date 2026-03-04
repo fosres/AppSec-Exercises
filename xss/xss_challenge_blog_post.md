@@ -1,1120 +1,630 @@
 ---
-title: "Week 6 Challenge Audit XSS Vulnerabilities"
+title: "Security Challenge: Build an XSS Prevention Framework in Python (90 Tests)"
+published: false
+description: "A LeetCode-style secure coding challenge — implement a context-aware XSS prevention framework covering HTML, attribute, JavaScript, URL, and CSP output contexts. 90 comprehensive tests. P2P AppSec Exercise Series."
+tags: security, python, appsec, challenge
+cover_image:
+series: P2P AppSec Exercise Series
+---
+
+# Security Challenge: Build an XSS Prevention Framework in Python
+
+**Time:** 60–90 minutes  
+**Difficulty:** Intermediate  
+**Skills:** Web Application Security, Output Escaping, CSP, Open Redirect Prevention, Python OOP
+
+---
+
+## The Hook: 22 Lines That Broke British Airways
+
+In 2018, attackers injected 22 lines of JavaScript into British Airways' payment page. For 15 days, every customer who typed their credit card number had it silently copied and sent to an attacker-controlled server. Around 500,000 customers were affected. The UK ICO fined British Airways £20 million.
+
+The root cause? Unsanitized content rendered in the wrong context — the textbook definition of XSS.
+
+This challenge asks you to build the framework that prevents that.
+
+---
+
+## How Often Do Security Engineers Actually Deal With This?
+
+It depends heavily on which type of Security Engineering role you're in.
+
+**Product Security Engineers at large tech companies** — you'll *audit* output encoding regularly but *implement* it from scratch rarely. The workflow looks like this in practice:
+
+- Code review flags a place where user-controlled data is rendered without escaping, you file a bug, and the owning developer fixes it
+- You write a Semgrep rule that detects the pattern statically so it never reaches review in the first place
+- You update the secure coding guidelines or developer training to explain the correct escaping approach for each context
+- You evaluate whether a framework's auto-escaping is being bypassed — the Django `|safe` filter situation that Byrne calls out explicitly in *Full Stack Python Security* (pp. 219-221) is a real and common example of this
+
+Modern web frameworks handle HTML body context automatically. What trips teams up in practice is the other four contexts: JavaScript, URL, attribute, and CSP. Those are where real vulnerabilities appear because developers know the framework covers HTML body output but forget that it doesn't cover everything else.
+
+**Security consulting and penetration testing roles** — you encounter output encoding failures constantly, but from the attacker side. You're identifying missing or incorrect escaping in client codebases, writing proof-of-concept payloads, and documenting remediation paths. The polyglot and bypass test category in this exercise maps directly to that work.
+
+**The real day-to-day value of this exercise** is that it forces you to understand *why* each context is different at the mechanism level — which is exactly what Security Engineers are asked in code review scenarios and system design interviews. A question like "how does Django's template engine protect against XSS and where does that protection break down?" is entirely answerable from working through this exercise. That's a far more common interview question than "implement `escape_javascript` from scratch."
+
+So: audit output encoding — frequently. Implement it from scratch — rarely. But understanding how it works at this level is what separates engineers who understand security from engineers who have merely used security tools.
+
+---
+
+## Why Input Sanitization Is the Wrong Answer
+
+Before you write a single line of code, internalize this principle from *Full Stack Python Security* (Ch. 14, p. 218, Dennis Byrne, Manning 2021):
+
+> "Input sanitization is always a bad idea because it is too difficult to implement."
+
+Here's why. A sanitizer has to identify malicious content across at least three interpreters simultaneously: JavaScript, HTML, and CSS. Miss one context and you're back to square one. Worse, sanitizers corrupt legitimate data — a forum where users can post code snippets would mangle every post.
+
+The correct defense, as Byrne explains, is **context-aware output escaping**. A `<` character is *only dangerous when rendered as HTML*. Escape it at the output layer, in the correct context. Leave the input alone.
+
+*Secure by Design* (Ch. 9, pp. 247-249, Johnsson, Deogun, Sawano, Manning 2019) adds another sharp insight: never echo input verbatim in error messages. Even a URL-encoded payload like `%3Cscript%3Ealert(1)%3C%2Fscript%3E` becomes executable XSS inside a browser-based log analysis tool that doesn't escape its output.
+
+---
+
+## The Five Output Contexts
+
+XSS is not one problem — it is five problems, one per output context. Each context requires a different escaping strategy:
+
+| Context | Example | Wrong escape | Right escape |
+|---|---|---|---|
+| HTML body | `<p>{{ user_bio }}</p>` | Strip `<>` | Replace `< > & " '` with entities |
+| HTML attribute | `<input value="{{ name }}">` | HTML-escape only | Also escape `"` and `'` |
+| JavaScript string | `var name = "{{ name }}";` | HTML-escape | Backslash-escape + Unicode for `< > &` |
+| URL parameter | `href="/search?q={{ query }}"` | URL-encode only reserved chars | Percent-encode everything except RFC 3986 unreserved chars |
+| CSP header | `Content-Security-Policy: ...` | N/A | Build correct directive syntax |
+
+Apply the HTML body escaper to a JavaScript string and you will break the page. Apply the JavaScript escaper to a URL and you will corrupt the link. Context mismatch is exactly how most real XSS vulnerabilities arise.
+
+---
+
+## The Challenge
+
+Implement the `XSSPrevention` class with six methods:
+
+```python
+class XSSPrevention:
+
+	def escape_html(self, text: str) -> str:
+		"""Escape for HTML body context."""
+		pass
+
+	def escape_attribute(self, text: str) -> str:
+		"""Escape for HTML attribute value context."""
+		pass
+
+	def escape_javascript(self, text: str) -> str:
+		"""Escape for JavaScript string literal context."""
+		pass
+
+	def escape_url(self, text: str) -> str:
+		"""Percent-encode for URL query parameter context."""
+		pass
+
+	def build_csp_header(self, directives: dict) -> str:
+		"""Build a Content-Security-Policy header value."""
+		pass
+
+	def is_safe_url(self, url: str, allowed_hosts: list) -> bool:
+		"""Return True only if the URL is safe for redirect."""
+		pass
+```
+
+No imports from third-party libraries. No Django or Flask. Pure Python.
+
+---
+
+## Why This Is Harder Than It Looks
+
+### Edge Case 1: Ampersand Must Be Escaped First
+
+If you escape `<` before `&`, you get double-encoding bugs:
+
+```python
+# WRONG order
+"<b>Tom & Jerry</b>"
+→ "&lt;b&gt;Tom &amp;lt; Jerry&lt;/b&gt;"  # &lt; doubled!
+
+# CORRECT order: & first, then < >
+"<b>Tom & Jerry</b>"
+→ "&lt;b&gt;Tom &amp; Jerry&lt;/b&gt;"
+```
+
+*Full Stack Python Security* Table 14.1 (p. 219) lists the five characters and implies the correct replacement order.
+
+### Edge Case 2: JavaScript Context Needs Backslash First
+
+In JS string escaping, if you escape quotes before backslashes, you corrupt existing escape sequences:
+
+```python
+# Input: back\slash
+# WRONG: escape " before \
+"back\\slash" → "back\\slash"  # \ not escaped, \s survives as-is
+
+# CORRECT: escape \ first, then quotes
+"back\\slash" → "back\\\\slash"
+```
+
+### Edge Case 3: `</script>` Inside a JS Block
+
+Even inside a `<script>` tag, a `</script>` substring in a string literal will prematurely close the script block. The fix is to escape `<` and `>` to Unicode escapes (`\u003C`, `\u003E`) so the browser never sees the raw characters:
+
+```python
+xss.escape_javascript("</script>")
+# → "\\u003C/script\\u003E"
+```
+
+### Edge Case 4: Valueless CSP Directives
+
+Some CSP directives take no value — `upgrade-insecure-requests` is the most common. Your `build_csp_header` must output `upgrade-insecure-requests` (no trailing space) when the value is an empty string, not `upgrade-insecure-requests ` (with a space).
+
+### Edge Case 5: Protocol-Relative URLs
+
+An open redirect validator that only checks for `http://` and `https://` will miss `//evil.com/path` — a protocol-relative URL that the browser resolves using whatever scheme the current page uses. It must always return `False`.
+
+```python
+xss.is_safe_url("//evil.com/path", ["example.com"])
+# → False (protocol-relative, not a safe relative path)
+```
+
+---
+
+## The 90-Test Gauntlet
+
+Your implementation faces 90 deterministic tests across nine categories — ten tests per category:
+
+| # | Category | What It Tests |
+|---|---|---|
+| 1–10 | HTML Body Escaping | The five dangerous HTML chars, img/svg payloads, combined cases |
+| 11–20 | HTML Attribute Escaping | Quote breakout, event handler injection, edge chars |
+| 21–30 | JavaScript String Escaping | Backslash order, newlines, `</script>` Unicode escape |
+| 31–40 | URL Parameter Escaping | RFC 3986 unreserved chars, double-encoding, Unicode |
+| 41–50 | Polyglot & Bypass Attempts | Gareth Heyes polyglot, null bytes, pre-encoded entities |
+| 51–60 | CSP Header Building | Directive syntax, valueless directives, order preservation |
+| 61–70 | Open Redirect Prevention | `javascript:`, `data:`, `vbscript:`, `//`, subdomain bypass |
+| 71–80 | HTML Depth & Edge Cases | Double-encoding prevention, template literals, long strings |
+| 81–90 | JS & URL Advanced Edge Cases | Tab preservation, at-sign encoding, multiple allowed hosts |
+
+### Sample Output
+
+```
+╔════════════════════════════════════════════════════════════════════╗
+║         XSS PREVENTION FRAMEWORK — 90 COMPREHENSIVE TESTS         ║
+╚════════════════════════════════════════════════════════════════════╝
+
+HTML Body Escaping  (10/10)
+  ✅ PASS  Test 01 [HTML] Classic <script> tag
+  ✅ PASS  Test 02 [HTML] Ampersand escape (must come before < >)
+  ...
+
+JavaScript String Escaping  (7/10)
+  ✅ PASS  Test 21 [JS] Single-quote breakout
+  ✅ PASS  Test 22 [JS] Double-quote breakout
+  ❌ FAIL  Test 23 [JS] Backslash must be escaped first
+       Expected: 'back\\\\slash'
+       Got:      'back\\slash'
+  ...
+
+══════════════════════════════════════════════════════════════════════
+SCORE: 74/90  (82%)
+
+Almost there! Review the failed categories above.
+Hint: Ensure escaping is truly context-specific —
+      HTML body ≠ attribute ≠ JS string ≠ URL parameter.
+```
+
+---
+
+## What Real-World XSS Prevention Looks Like
+
+After you complete the exercise, compare your implementation to how production frameworks handle this:
+
+**Django** auto-escapes HTML body context via its template engine — but it does *not* auto-escape JavaScript or URL contexts. You still need to use `escapejs` and `urlencode` template filters explicitly. (*Full Stack Python Security*, pp. 219-221)
+
+**OWASP ESAPI** is the reference implementation of context-aware escaping for Java, and provides the mental model your implementation should follow for all six contexts.
+
+**Content-Security-Policy** is your Layer 3 defense — even if an attacker injects a payload, a strict CSP `script-src 'nonce-{random}'` policy prevents it from executing. Your `build_csp_header` method is the foundation of that defense. (*Full Stack Python Security*, pp. 234-236)
+
+---
+
+## Common Mistakes
+
+### ❌ Mistake 1: Sanitizing Instead of Escaping
+Stripping `<` and `>` from input prevents legitimate use cases (code snippets, mathematical notation) and fails against encoded variants like `%3C` in URL context.
+
+### ❌ Mistake 2: Using the Same Escaper for All Contexts
+`escape_html` is not safe for JavaScript string context. `&lt;` inside a JS string literal renders as `&lt;` — it does not prevent `</script>` breakout.
+
+### ❌ Mistake 3: Forgetting That `//` Is a Valid URL Prefix
+Protocol-relative URLs like `//evil.com` are a classic open redirect bypass that trips up validators checking only for `http://evil.com`.
+
+### ❌ Mistake 4: Adding a Trailing Space to Valueless CSP Directives
+`upgrade-insecure-requests ` (with a trailing space) is a malformed CSP directive. Some browsers will ignore it silently.
+
+### ❌ Mistake 5: Escaping `&` Last
+If you run `text.replace('<', '&lt;')` before `text.replace('&', '&amp;')`, an input of `&lt;` gets double-encoded to `&amp;lt;` instead of `&amp;lt;`. Always escape `&` first.
+
+---
+
+## The Exercise
+
+### Get the Challenge File
+
+```bash
+# Download from the P2P AppSec Exercises repository
+git clone https://github.com/fosres/appsec-exercises
+cd appsec-exercises/xss-prevention
+python3 xss_prevention_90_tests.py
+```
+
+### What You'll Get
+- A single Python file with the empty `XSSPrevention` class
+- 90 deterministic test cases with colored pass/fail output
+- Detailed failure messages showing expected vs. actual output
+- Progressive hints based on your score
+
+---
+
+## What You'll Learn
+
+- ✅ Why output context — not input sanitization — is the correct XSS defense
+- ✅ The five HTML special characters and the correct escaping order
+- ✅ Why JavaScript string context requires a different escaping strategy than HTML
+- ✅ How `</script>` inside a JS string literal closes the script block prematurely
+- ✅ RFC 3986 unreserved characters and percent-encoding for URL query parameters
+- ✅ Content-Security-Policy directive syntax including valueless directives
+- ✅ The three classes of dangerous URL schemes: `javascript:`, `data:`, `vbscript:`
+- ✅ Protocol-relative URL bypass in open redirect validators
+
+---
+
+## For Hiring Managers
+
+This exercise assesses:
+
+- **Security fundamentals** — understanding of XSS at the mechanism level, not just "what is XSS"
+- **Context-awareness** — recognizing that the same data requires different escaping depending on where it is rendered
+- **Defensive programming** — implementing defense in depth rather than a single escaping pass
+- **Python fluency** — clean, idiomatic string handling and OOP design
+- **Attention to edge cases** — the polyglot and bypass test category specifically rewards candidates who think like attackers while writing defensive code
+
+A candidate who passes all 90 tests has demonstrated the foundational secure coding knowledge expected of an Application Security Engineer at the junior-to-mid level.
+
+---
+
+## Level Up: After You Pass
+
+1. **Extend the framework** — add `escape_css()` for safe CSS value insertion, another context Django's template engine does not auto-escape
+2. **Build a linter** — write a Semgrep rule that detects raw string interpolation into HTML templates in Python codebases (the vulnerability your framework prevents)
+3. **Integrate CSP reporting** — extend `build_csp_header` to support `report-to` groups with a JSON policy endpoint configuration
+4. **Read the source** — compare your `escape_html` to Django's `django.utils.html.escape` and note what it does and does not cover
+
+---
+
+## Resources
+
+- *Full Stack Python Security*, Ch. 14 — Dennis Byrne (Manning, 2021): the definitive treatment of XSS defense in Django
+- *Secure by Design*, Ch. 9, pp. 247-249 — Johnsson, Deogun, Sawano (Manning, 2019): why never echoing input verbatim matters even in error messages
+- [OWASP XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html) — canonical escaping rules for all output contexts
+- [Web Security Academy XSS Learning Path](https://portswigger.net/web-security/cross-site-scripting) — hands-on labs for the attacker's perspective
+- [RFC 3986](https://tools.ietf.org/html/rfc3986#section-2.3) — unreserved character definition for URL escaping
+
+---
+
+*This challenge is part of the P2P AppSec Exercise Series — a collection of LeetCode-style secure coding exercises designed to curate high-quality, secure Python code for AI training datasets. The goal: train AI models to write secure code by default.*
+
+*→ [P2P AppSec Exercises on GitHub](https://github.com/fosres/appsec-exercises)*  
+---
+title: "Week 8 Challenge: Build an Anti-XSS Output Encoding Framework"
 published: true
-description: "Learn XSS prevention through real-world code challenges from a 48-week Security Engineering curriculum. Free exercises with 60+ test cases each. ⭐ Open source!"
-tags: security, python, webdev, appsec
+description: "A LeetCode-style secure coding challenge — implement a context-aware XSS prevention framework covering HTML, attribute, JavaScript, URL, and CSP output contexts. 90 comprehensive tests. P2P AppSec Exercise Series."
+tags: security, python, appsec, challenge
+cover_image:
 series: Security Engineering Interview Prep
-canonical_url: https://github.com/fosres/SecEng-Exercises
 ---
 
-> **📚 Part of Week 6** in the [SecEng-Exercises](https://github.com/fosres/SecEng-Exercises) curriculum - a free, open-source path to becoming a Security Engineer. **Star the repo** to follow along with weekly challenges!
+# Security Challenge: Build an XSS Prevention Framework in Python
 
-## The $5 Million XSS Disaster
-
-It was 3 AM when the security team at TechFinance Corporation received the alert. Their customer portal—processing millions of dollars in transactions daily—had been compromised. The attack vector? A simple Cross-Site Scripting (XSS) vulnerability in their search functionality.
-
-The attacker had crafted a malicious URL containing JavaScript that stole session cookies. They shared it on social media disguised as a "special promotion." Within hours, thousands of customers clicked the link. The malicious script silently harvested authentication tokens, granting the attacker access to customer accounts.
-
-By morning, the damage was catastrophic:
-- **15,000+ customer accounts compromised**
-- **$5.2 million in unauthorized transfers**
-- **Complete database exfiltration** including social security numbers
-- **Stock price plummeted 40%** after disclosure
-- **Class action lawsuit** filed within 72 hours
-
-The company's Chief Security Officer resigned. The engineering team worked 72-hour shifts to contain the breach. Regulatory fines exceeded $12 million. All because of a single XSS vulnerability that should have been caught in code review.
-
-**Don't let this happen to your application.**
+**Time:** 60–90 minutes  
+**Difficulty:** Intermediate  
+**Skills:** Web Application Security, Output Escaping, CSP, Open Redirect Prevention, Python OOP
 
 ---
 
-> ### 🎓 Learning Security Engineering?
-> 
-> This challenge is from my **free, open-source Security Engineering curriculum** with:
-> - ✅ LeetCode-style exercises with 60+ test cases
-> - ✅ Real CVEs and production-incident inspired scenarios  
-> - ✅ Complete solutions with best practices
-> - ✅ New challenges added weekly
-> 
-> **⭐ [Star SecEng-Exercises on GitHub](https://github.com/fosres/SecEng-Exercises)** - Join developers mastering AppSec fundamentals!
+## The Hook: 22 Lines That Broke British Airways
+
+In 2018, attackers injected 22 lines of JavaScript into British Airways' payment page. For 15 days, every customer who typed their credit card number had it silently copied and sent to an attacker-controlled server. Around 500,000 customers were affected. The UK ICO fined British Airways £20 million.
+
+The root cause? Unsanitized content rendered in the wrong context — the textbook definition of XSS.
+
+This challenge asks you to build the framework that prevents that.
 
 ---
 
-## 🎯 Part of the SecEng-Exercises Collection
+## How Often Do Security Engineers Actually Deal With This?
 
-This XSS challenge is **Week 6** of my comprehensive Security Engineering curriculum. I'm building a public collection of **LeetCode-style security exercises** with:
-- ✅ **60+ test cases per exercise** for thorough validation
-- ✅ **Real-world vulnerability patterns** from production systems
-- ✅ **Hands-on pentesting practice** against intentionally vulnerable code
-- ✅ **Complete solutions** with security best practices
+It depends heavily on which type of Security Engineering role you're in.
 
-**⭐ [Star the repo on GitHub](https://github.com/fosres/SecEng-Exercises)** to follow along as I add new exercises weekly covering AppSec, cryptography, API security, and more.
+**Product Security Engineers at large tech companies** — you'll *audit* output encoding regularly but *implement* it from scratch rarely. The workflow looks like this in practice:
 
-> 💡 **Why star the repo?** You'll get notified when I publish new challenges covering SQL injection, authentication bypasses, cryptographic vulnerabilities, and advanced API attacks. All exercises include comprehensive test suites and are production-incident inspired.
+- Code review flags a place where user-controlled data is rendered without escaping, you file a bug, and the owning developer fixes it
+- You write a Semgrep rule that detects the pattern statically so it never reaches review in the first place
+- You update the secure coding guidelines or developer training to explain the correct escaping approach for each context
+- You evaluate whether a framework's auto-escaping is being bypassed — the Django `|safe` filter situation that Byrne calls out explicitly in *Full Stack Python Security* (pp. 219-221) is a real and common example of this
 
-### 📋 What You'll Learn in This Post
+Modern web frameworks handle HTML body context automatically. What trips teams up in practice is the other four contexts: JavaScript, URL, attribute, and CSP. Those are where real vulnerabilities appear because developers know the framework covers HTML body output but forget that it doesn't cover everything else.
 
-1. **Real XSS attack scenario** and its $5M+ impact
-2. **Three vulnerable code challenges** to test your skills
-3. **Complete vulnerability analysis** with fix implementations  
-4. **Prevention patterns** used by security teams at top tech companies
+**Security consulting and penetration testing roles** — you encounter output encoding failures constantly, but from the attacker side. You're identifying missing or incorrect escaping in client codebases, writing proof-of-concept payloads, and documenting remediation paths. The polyglot and bypass test category in this exercise maps directly to that work.
 
-**Estimated completion time:** 30-45 minutes | **Difficulty:** Intermediate | **Prerequisites:** Basic Python, HTML/JavaScript
+**The real day-to-day value of this exercise** is that it forces you to understand *why* each context is different at the mechanism level — which is exactly what Security Engineers are asked in code review scenarios and system design interviews. A question like "how does Django's template engine protect against XSS and where does that protection break down?" is entirely answerable from working through this exercise. That's a far more common interview question than "implement `escape_javascript` from scratch."
+
+So: audit output encoding — frequently. Implement it from scratch — rarely. But understanding how it works at this level is what separates engineers who understand security from engineers who have merely used security tools.
 
 ---
 
-## Your Challenge: Find the XSS Vulnerabilities
+## Why Input Sanitization Is the Wrong Answer
 
-Below are **three real-world code snippets**, each containing multiple XSS vulnerabilities. Your task is to:
+Before you write a single line of code, internalize this principle from *Full Stack Python Security* (Ch. 14, p. 218, Dennis Byrne, Manning 2021):
 
-1. **Identify** all security vulnerabilities in each snippet
-2. **Understand** how an attacker could exploit them
-3. **Fix** the code to prevent XSS attacks
+> "Input sanitization is always a bad idea because it is too difficult to implement."
 
-These exercises are based on patterns from production systems and real security incidents. Study each carefully—the vulnerabilities range from obvious to subtle.
+Here's why. A sanitizer has to identify malicious content across at least three interpreters simultaneously: JavaScript, HTML, and CSS. Miss one context and you're back to square one. Worse, sanitizers corrupt legitimate data — a forum where users can post code snippets would mangle every post.
 
-**Sources for these exercises:**
-- *Full Stack Python Security* by Dennis Byrne, Chapter 14, pp. 208-226<sup>[1](#ref1)</sup>
-- *API Security in Action* by Neil Madden, Chapter 2, pp. 54-55<sup>[2](#ref2)</sup>
-- *Secure by Design* by Johnsson et al., Chapter 9, pp. 247-249<sup>[3](#ref3)</sup>
-- *Hacking APIs* by Corey Ball<sup>[4](#ref4)</sup>
+The correct defense, as Byrne explains, is **context-aware output escaping**. A `<` character is *only dangerous when rendered as HTML*. Escape it at the output layer, in the correct context. Leave the input alone.
 
-> **📖 Following the curriculum?** I'm documenting my journey through these books in the [SecEng-Exercises repository](https://github.com/fosres/SecEng-Exercises), creating exercises for each chapter. Week 7 covers *Full Stack Python Security* Chapter 15 (CSRF) and *Hacking APIs* Chapter 3 (API Authentication Bypasses). **Star the repo** for weekly updates!
+*Secure by Design* (Ch. 9, pp. 247-249, Johnsson, Deogun, Sawano, Manning 2019) adds another sharp insight: never echo input verbatim in error messages. Even a URL-encoded payload like `%3Cscript%3Ealert(1)%3C%2Fscript%3E` becomes executable XSS inside a browser-based log analysis tool that doesn't escape its output.
 
 ---
 
-## Vulnerable Code Snippet #1: Flask Search Application
+## The Five Output Contexts
+
+XSS is not one problem — it is five problems, one per output context. Each context requires a different escaping strategy:
+
+| Context | Example | Wrong escape | Right escape |
+|---|---|---|---|
+| HTML body | `<p>{{ user_bio }}</p>` | Strip `<>` | Replace `< > & " '` with entities |
+| HTML attribute | `<input value="{{ name }}">` | HTML-escape only | Also escape `"` and `'` |
+| JavaScript string | `var name = "{{ name }}";` | HTML-escape | Backslash-escape + Unicode for `< > &` |
+| URL parameter | `href="/search?q={{ query }}"` | URL-encode only reserved chars | Percent-encode everything except RFC 3986 unreserved chars |
+| CSP header | `Content-Security-Policy: ...` | N/A | Build correct directive syntax |
+
+Apply the HTML body escaper to a JavaScript string and you will break the page. Apply the JavaScript escaper to a URL and you will corrupt the link. Context mismatch is exactly how most real XSS vulnerabilities arise.
+
+---
+
+## The Challenge
+
+Implement the `XSSPrevention` class with six methods:
 
 ```python
-from flask import Flask, request
+class XSSPrevention:
 
-app = Flask(__name__)
+	def escape_html(self, text: str) -> str:
+		"""Escape for HTML body context."""
+		pass
 
-@app.route('/search')
-def search():
-	"""Search endpoint - handles user queries"""
-	query = request.args.get('q', '')
-	
-	# Simulate database search
-	results = []
-	if query:
-		query_lower = query.lower()
-		if 'laptop' in query_lower:
-			results = [
-				{'name': 'Gaming Laptop Pro', 'price': 1299.99, 'stock': 12},
-				{'name': 'Business Laptop Elite', 'price': 899.99, 'stock': 8},
-			]
-	
-	# Generate HTML response
-	html = f"""
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<title>Search Results</title>
-</head>
-<body>
-	<h1>Search Results for: <span>{query}</span></h1>
-	<div class="results">
-	"""
-	
-	if results:
-		for product in results:
-			html += f"""
-			<div class="product">
-				<h3>{product['name']}</h3>
-				<div class="price">${product['price']}</div>
-				<div class="stock">In stock: {product['stock']} units</div>
-			</div>
-			"""
-	else:
-		html += f"""
-		<div class="no-results">
-			<h2>No Results Found</h2>
-			<p>Your search for '<strong>{query}</strong>' did not match any products.</p>
-		</div>
-		"""
-	
-	html += """
-	</div>
-</body>
-</html>
-	"""
-	
-	return html
+	def escape_attribute(self, text: str) -> str:
+		"""Escape for HTML attribute value context."""
+		pass
 
-if __name__ == '__main__':
-	app.run(debug=True, port=5000, host='127.0.0.1')
+	def escape_javascript(self, text: str) -> str:
+		"""Escape for JavaScript string literal context."""
+		pass
+
+	def escape_url(self, text: str) -> str:
+		"""Percent-encode for URL query parameter context."""
+		pass
+
+	def build_csp_header(self, directives: dict) -> str:
+		"""Build a Content-Security-Policy header value."""
+		pass
+
+	def is_safe_url(self, url: str, allowed_hosts: list) -> bool:
+		"""Return True only if the URL is safe for redirect."""
+		pass
 ```
+
+No imports from third-party libraries. No Django or Flask. Pure Python.
 
 ---
 
-## Vulnerable Code Snippet #2: FastAPI Comment Board
+## Why This Is Harder Than It Looks
+
+### Edge Case 1: Ampersand Must Be Escaped First
+
+If you escape `<` before `&`, you get double-encoding bugs:
 
 ```python
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
-import sqlite3
-import html
+# WRONG order
+"<b>Tom & Jerry</b>"
+→ "&lt;b&gt;Tom &amp;lt; Jerry&lt;/b&gt;"  # &lt; doubled!
 
-app = FastAPI()
-
-class Comment(BaseModel):
-	author: str
-	content: str
-
-@app.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-	"""Main page with comment form"""
-	return """
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<title>Comment Board</title>
-</head>
-<body>
-	<h1>Community Comment Board</h1>
-	<form id="commentForm">
-		<input type="text" id="author" placeholder="Your name" required>
-		<textarea id="content" placeholder="Your comment" required></textarea>
-		<button type="submit">Post Comment</button>
-	</form>
-	<div id="commentsContainer"></div>
-	
-	<script>
-		// Load comments when page loads
-		loadComments();
-		
-		// Handle form submission
-		document.getElementById('commentForm').addEventListener('submit', async (e) => {
-			e.preventDefault();
-			
-			const author = document.getElementById('author').value;
-			const content = document.getElementById('content').value;
-			
-			const response = await fetch('/api/comments', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({ author, content })
-			});
-			
-			if (response.ok) {
-				document.getElementById('author').value = '';
-				document.getElementById('content').value = '';
-				loadComments();
-			}
-		});
-		
-		// Load and display comments
-		async function loadComments() {
-			const response = await fetch('/api/comments');
-			const comments = await response.json();
-			
-			const container = document.getElementById('commentsContainer');
-			container.innerHTML = '';
-			
-			comments.forEach(comment => {
-				const div = document.createElement('div');
-				div.className = 'comment';
-				
-				div.innerHTML = `
-					<div class="comment-author">${comment.author}</div>
-					<div class="comment-time">${comment.timestamp}</div>
-					<div class="comment-content">${comment.content}</div>
-				`;
-				container.appendChild(div);
-			});
-		}
-	</script>
-</body>
-</html>
-	"""
-
-@app.post("/api/comments")
-async def create_comment(comment: Comment):
-	"""Create a new comment"""
-	conn = sqlite3.connect('comments.db')
-	cursor = conn.cursor()
-	
-	# Escape HTML to prevent XSS
-	author = html.escape(comment.author, quote=True)
-	content = html.escape(comment.content, quote=True)
-	
-	# SQL Injection vulnerable query
-	query = f"INSERT INTO comments (author, content, timestamp) VALUES ('{author}', '{content}', datetime('now'))"
-	cursor.execute(query)
-	
-	conn.commit()
-	conn.close()
-	
-	return {"status": "success"}
-
-@app.get("/api/comments")
-async def get_comments():
-	"""Get all comments"""
-	conn = sqlite3.connect('comments.db')
-	cursor = conn.cursor()
-	
-	# SQL Injection vulnerable query
-	query = "SELECT author, content, timestamp FROM comments ORDER BY id DESC"
-	cursor.execute(query)
-	
-	comments = []
-	for row in cursor.fetchall():
-		comments.append({
-			"author": row[0],
-			"content": row[1],
-			"timestamp": row[2]
-		})
-	
-	conn.close()
-	return comments
+# CORRECT order: & first, then < >
+"<b>Tom & Jerry</b>"
+→ "&lt;b&gt;Tom &amp; Jerry&lt;/b&gt;"
 ```
 
----
+*Full Stack Python Security* Table 14.1 (p. 219) lists the five characters and implies the correct replacement order.
 
-## Vulnerable Code Snippet #3: Session Management API
+### Edge Case 2: JavaScript Context Needs Backslash First
+
+In JS string escaping, if you escape quotes before backslashes, you corrupt existing escape sequences:
 
 ```python
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
-import sqlite3
+# Input: back\slash
+# WRONG: escape " before \
+"back\\slash" → "back\\slash"  # \ not escaped, \s survives as-is
 
-app = FastAPI()
-
-@app.post("/auth/register")
-async def register(username: str, password: str):
-	"""Register a new user"""
-	conn = sqlite3.connect('security_app.db')
-	cursor = conn.cursor()
-	
-	# Store user in database
-	cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", 
-				   (username, password))
-	
-	user_id = cursor.lastrowid
-	conn.commit()
-	conn.close()
-	
-	return {"user_id": user_id, "username": username}
-
-@app.post("/sessions/create")
-async def create_session(user_id: int, metadata: str):
-	"""Create a new session"""
-	conn = sqlite3.connect('security_app.db')
-	cursor = conn.cursor()
-	
-	import secrets
-	session_id = secrets.token_urlsafe(32)
-	
-	# Store raw session ID in database
-	cursor.execute(
-		"INSERT INTO sessions (session_id, user_id, metadata) VALUES (?, ?, ?)",
-		(session_id, user_id, metadata)
-	)
-	
-	conn.commit()
-	conn.close()
-	
-	return {"session_id": session_id}
-
-@app.get("/", response_class=HTMLResponse)
-async def home():
-	"""Frontend with session management"""
-	return """
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<title>Session Manager</title>
-</head>
-<body>
-	<h1>Session Management System</h1>
-	
-	<div id="register_section">
-		<h2>Register</h2>
-		<input type="text" id="register_username" placeholder="Username">
-		<input type="password" id="register_password" placeholder="Password">
-		<button onclick="registerUser()">Register</button>
-		<div id="register_result"></div>
-	</div>
-	
-	<div id="login_section">
-		<h2>Login</h2>
-		<input type="text" id="login_username" placeholder="Username">
-		<input type="password" id="login_password" placeholder="Password">
-		<button onclick="loginUser()">Login</button>
-		<div id="login_result"></div>
-	</div>
-	
-	<div id="profile_section">
-		<h2>Get Profile</h2>
-		<input type="text" id="profile_user_id" placeholder="User ID">
-		<button onclick="getProfile()">Get Profile</button>
-		<div id="profile_result"></div>
-	</div>
-	
-	<script>
-		async function registerUser() {
-			const username = document.getElementById('register_username').value;
-			const password = document.getElementById('register_password').value;
-			
-			const response = await fetch('/auth/register', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({username, password})
-			});
-			
-			const data = await response.json();
-			const result = document.getElementById('register_result');
-			
-			if (response.ok) {
-				result.innerHTML = `<div class="result">✓ Registered! User ID: ${data.user_id}, Username: ${data.username}</div>`;
-			} else {
-				result.innerHTML = `<div class="result error">✗ ${data.detail}</div>`;
-			}
-		}
-		
-		async function loginUser() {
-			const username = document.getElementById('login_username').value;
-			const password = document.getElementById('login_password').value;
-			
-			const response = await fetch('/auth/login', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({username, password})
-			});
-			
-			const data = await response.json();
-			const result = document.getElementById('login_result');
-			
-			if (response.ok) {
-				result.innerHTML = `<div class="result">✓ Login successful! User ID: ${data.user_id}</div>`;
-			} else {
-				result.innerHTML = `<div class="result error">✗ ${data.message}</div>`;
-			}
-		}
-		
-		async function getProfile() {
-			const userId = document.getElementById('profile_user_id').value;
-			
-			const response = await fetch(`/auth/profile/${userId}`);
-			const data = await response.json();
-			const result = document.getElementById('profile_result');
-			
-			if (response.ok) {
-				result.innerHTML = `
-					<div class="result">
-						<h4>Profile Information</h4>
-						<p><strong>Username:</strong> ${data.username}</p>
-						<p><strong>Bio:</strong> ${data.bio}</p>
-						<p><strong>Created:</strong> ${data.created_at}</p>
-					</div>
-				`;
-			} else {
-				result.innerHTML = `<div class="result error">✗ ${data.detail}</div>`;
-			}
-		}
-	</script>
-</body>
-</html>
-	"""
+# CORRECT: escape \ first, then quotes
+"back\\slash" → "back\\\\slash"
 ```
 
----
+### Edge Case 3: `</script>` Inside a JS Block
 
-## 🔒 Test Yourself First
-
-Before scrolling to the answers, try identifying the vulnerabilities yourself! Each exercise in the [SecEng-Exercises repository](https://github.com/fosres/SecEng-Exercises) includes:
-
-- **Automated test suites** with 60+ test cases
-- **Vulnerable and fixed versions** for comparison
-- **Step-by-step exploitation guides**
-- **Production-ready security patterns**
-
-**⭐ Star the repo** to get the full test suites and run the exploits yourself. The hands-on practice is 10x more valuable than just reading solutions.
-
----
-
-## Answer Key: Vulnerabilities & Fixes
-
-### Exercise 1: Flask Search Application
-
-**Identified Vulnerabilities:**
-
-1. **Reflected XSS Vulnerability** (Critical)
-   - **Location:** Lines where `{query}` is directly embedded in HTML
-   - **Impact:** Attacker can inject malicious JavaScript via the search parameter
-   - **Example Attack:** `?q=<script>alert(document.cookie)</script>`
-   - **Reference:** *Full Stack Python Security*, Chapter 14, pp. 208-212<sup>[1](#ref1)</sup>
-
-2. **Missing Security Headers**
-   - No `X-XSS-Protection` header
-   - No `X-Content-Type-Options: nosniff` header
-   - No `Content-Security-Policy` header
-   - **Reference:** *Secure by Design*, Chapter 9, pp. 247-249<sup>[3](#ref3)</sup>
-
-3. **Missing Rate Limiting**
-   - Attacker can overwhelm server with excessive requests
-   - No protection against brute-force attacks
-
-4. **Debug Mode Enabled in Production**
-   - `debug=True` exposes sensitive stack traces and system information
-   - Should always be `False` in production environments
-
-**Fixed Code:**
+Even inside a `<script>` tag, a `</script>` substring in a string literal will prematurely close the script block. The fix is to escape `<` and `>` to Unicode escapes (`\u003C`, `\u003E`) so the browser never sees the raw characters:
 
 ```python
-from flask import Flask, request
-from flask_talisman import Talisman
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-import html
-
-app = Flask(__name__)
-
-# Configure security headers with Talisman
-talisman = Talisman(
-	app,
-	content_security_policy={
-		'default-src': ["'self'"]
-	}
-)
-
-# Add rate limiting
-limiter = Limiter(
-	key_func=get_remote_address,
-	app=app,
-	default_limits=["100/hour"],
-	storage_uri="memory://",
-)
-
-# Enable security headers
-talisman.x_xss_protection = True
-talisman.x_content_type_options = True
-
-@app.route('/search')
-@limiter.limit("30/minute")
-def search():
-	"""Search endpoint - handles user queries"""
-	query = request.args.get('q', '')
-	
-	# ✅ FIX: HTML escape user input to prevent XSS
-	query_escaped = html.escape(query, quote=True)
-	
-	# Simulate database search
-	results = []
-	if query:
-		query_lower = query.lower()
-		if 'laptop' in query_lower:
-			results = [
-				{'name': 'Gaming Laptop Pro', 'price': 1299.99, 'stock': 12},
-				{'name': 'Business Laptop Elite', 'price': 899.99, 'stock': 8},
-			]
-	
-	# Generate HTML response with escaped query
-	html_content = f"""
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<title>Search Results</title>
-</head>
-<body>
-	<h1>Search Results for: <span>{query_escaped}</span></h1>
-	<div class="results">
-	"""
-	
-	if results:
-		for product in results:
-			html_content += f"""
-			<div class="product">
-				<h3>{html.escape(product['name'])}</h3>
-				<div class="price">${product['price']}</div>
-				<div class="stock">In stock: {product['stock']} units</div>
-			</div>
-			"""
-	else:
-		html_content += f"""
-		<div class="no-results">
-			<h2>No Results Found</h2>
-			<p>Your search for '<strong>{query_escaped}</strong>' did not match any products.</p>
-		</div>
-		"""
-	
-	html_content += """
-	</div>
-</body>
-</html>
-	"""
-	
-	return html_content
-
-if __name__ == '__main__':
-	# ✅ FIX: Disable debug mode in production
-	app.run(debug=False, port=5000, host='127.0.0.1')
+xss.escape_javascript("</script>")
+# → "\\u003C/script\\u003E"
 ```
 
-**Key Security Improvements:**
-- Used `html.escape()` to sanitize all user input<sup>[1](#ref1)</sup>
-- Added Flask-Talisman for Content Security Policy
-- Implemented rate limiting with Flask-Limiter
-- Disabled debug mode
-- Added `X-XSS-Protection` and `X-Content-Type-Options` headers
+### Edge Case 4: Valueless CSP Directives
 
-> **💡 Want the complete test suite?** The [GitHub repository](https://github.com/fosres/SecEng-Exercises) includes 60+ pytest test cases for this exercise, including edge cases like double-encoded attacks, null byte injection, and DOM clobbering attempts. **Star the repo** to access all test files!
+Some CSP directives take no value — `upgrade-insecure-requests` is the most common. Your `build_csp_header` must output `upgrade-insecure-requests` (no trailing space) when the value is an empty string, not `upgrade-insecure-requests ` (with a space).
 
----
+### Edge Case 5: Protocol-Relative URLs
 
-### Exercise 2: FastAPI Comment Board
-
-**Identified Vulnerabilities:**
-
-1. **Stored/DOM XSS Vulnerability** (Critical)
-   - **Location:** Line where `div.innerHTML` is set with unescaped comment data
-   - **Impact:** Malicious JavaScript stored in database executes when loaded
-   - **Attack Flow:** 
-     1. Attacker posts comment with XSS payload
-     2. Payload stored in database (even though it's HTML-escaped on server)
-     3. Server returns escaped HTML entities to client
-     4. Client-side JavaScript inserts into DOM via `innerHTML`
-     5. Browser unescapes HTML entities and executes script
-   - **Reference:** *Full Stack Python Security*, Chapter 14, pp. 213-220<sup>[1](#ref1)</sup>
-
-2. **SQL Injection Vulnerability** (Critical)
-   - **Location:** String interpolation in SQL queries
-   - Despite HTML escaping, the query uses f-string formatting which is vulnerable
-   - **Reference:** *API Security in Action*, Chapter 2, pp. 54-55<sup>[2](#ref2)</sup>
-
-3. **Missing Rate Limiting**
-   - No protection against comment spam or DoS attacks
-
-4. **Inline Scripts Without CSP Nonces**
-   - Inline `<script>` tags violate Content Security Policy best practices
-   - Should use nonces or move scripts to external files
-   - **Reference:** https://www.johal.in/fastapi-content-security-csp-policies-nonce-hashes-strict-dynamic-2026/
-
-**Fixed Code:**
+An open redirect validator that only checks for `http://` and `https://` will miss `//evil.com/path` — a protocol-relative URL that the browser resolves using whatever scheme the current page uses. It must always return `False`.
 
 ```python
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
-from slowapi import Limiter
-from slowapi.util import get_remote_address
-import sqlite3
-import html
-
-app = FastAPI()
-
-# Add rate limiting
-limiter = Limiter(key_func=get_remote_address)
-app.state.limiter = limiter
-
-class Comment(BaseModel):
-	author: str
-	content: str
-
-@app.get("/", response_class=HTMLResponse)
-@limiter.limit("10/minute")
-async def home(request: Request):
-	"""Main page with comment form"""
-	return """
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'">
-	<title>Comment Board</title>
-</head>
-<body>
-	<h1>Community Comment Board</h1>
-	<form id="commentForm">
-		<input type="text" id="author" placeholder="Your name" required>
-		<textarea id="content" placeholder="Your comment" required></textarea>
-		<button type="submit">Post Comment</button>
-	</form>
-	<div id="commentsContainer"></div>
-	
-	<script>
-		loadComments();
-		
-		document.getElementById('commentForm').addEventListener('submit', async (e) => {
-			e.preventDefault();
-			
-			const author = document.getElementById('author').value;
-			const content = document.getElementById('content').value;
-			
-			const response = await fetch('/api/comments', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({ author, content })
-			});
-			
-			if (response.ok) {
-				document.getElementById('author').value = '';
-				document.getElementById('content').value = '';
-				loadComments();
-			}
-		});
-		
-		// ✅ FIX: Use textContent instead of innerHTML to prevent XSS
-		async function loadComments() {
-			const response = await fetch('/api/comments');
-			const comments = await response.json();
-			
-			const container = document.getElementById('commentsContainer');
-			container.innerHTML = '';
-			
-			comments.forEach(comment => {
-				const div = document.createElement('div');
-				div.className = 'comment';
-				
-				// Create separate elements and use textContent
-				const authorDiv = document.createElement('div');
-				authorDiv.className = 'comment-author';
-				authorDiv.textContent = comment.author;  // ✅ Safe: Uses textContent
-				
-				const timeDiv = document.createElement('div');
-				timeDiv.className = 'comment-time';
-				timeDiv.textContent = comment.timestamp;  // ✅ Safe: Uses textContent
-				
-				const contentDiv = document.createElement('div');
-				contentDiv.className = 'comment-content';
-				contentDiv.textContent = comment.content;  // ✅ Safe: Uses textContent
-				
-				div.appendChild(authorDiv);
-				div.appendChild(timeDiv);
-				div.appendChild(contentDiv);
-				
-				container.appendChild(div);
-			});
-		}
-	</script>
-</body>
-</html>
-	"""
-
-@app.post("/api/comments")
-@limiter.limit("5/minute")
-async def create_comment(request: Request, comment: Comment):
-	"""Create a new comment"""
-	conn = sqlite3.connect('comments.db')
-	cursor = conn.cursor()
-	
-	# ✅ FIX: Use parameterized queries to prevent SQL injection
-	query = "INSERT INTO comments (author, content, timestamp) VALUES (?, ?, datetime('now'))"
-	cursor.execute(query, (comment.author, comment.content))
-	
-	conn.commit()
-	conn.close()
-	
-	return {"status": "success"}
-
-@app.get("/api/comments")
-@limiter.limit("10/minute")
-async def get_comments(request: Request):
-	"""Get all comments"""
-	conn = sqlite3.connect('comments.db')
-	cursor = conn.cursor()
-	
-	# ✅ FIX: Use parameterized query
-	query = "SELECT author, content, timestamp FROM comments ORDER BY id DESC"
-	cursor.execute(query)
-	
-	comments = []
-	for row in cursor.fetchall():
-		comments.append({
-			"author": row[0],
-			"content": row[1],
-			"timestamp": row[2]
-		})
-	
-	conn.close()
-	return comments
-```
-
-**Key Security Improvements:**
-- **Critical:** Changed from `innerHTML` to `textContent` for DOM manipulation<sup>[1](#ref1)</sup>
-- Used parameterized SQL queries to prevent SQL injection<sup>[2](#ref2)</sup>
-- Added Content-Security-Policy header
-- Implemented rate limiting on all endpoints
-- Removed HTML escaping on server since client now uses textContent (defense in depth still valuable)
-
-**Why innerHTML is Dangerous:**
-Even though the server HTML-escapes the data, when the client retrieves it and uses `innerHTML`, the browser automatically unescapes HTML entities, converting `&lt;script&gt;` back to `<script>`, which then executes. Using `textContent` prevents this by treating everything as plain text.<sup>[1](#ref1)</sup>
-
-> **🔥 Pro Tip:** Exercise 2 in the [SecEng-Exercises repo](https://github.com/fosres/SecEng-Exercises) includes a bonus challenge on CSP nonces and hash-based script whitelisting—an advanced defense technique used by Google and Facebook. **Star to unlock!**
-
----
-
-### Exercise 3: Session Management API
-
-**Identified Vulnerabilities:**
-
-1. **Multiple DOM-Based XSS Vulnerabilities** (Critical)
-   - **Locations:** Every use of `.innerHTML` in JavaScript functions
-   - Lines with `result.innerHTML = ...${data.user_id}...` and similar
-   - **Impact:** API responses containing malicious data execute as JavaScript
-   - **Reference:** *Full Stack Python Security*, Chapter 14, pp. 220-226<sup>[1](#ref1)</sup>
-
-2. **Session ID Storage Vulnerability** (High)
-   - **Location:** `create_session()` stores raw session ID in database
-   - **Impact:** If database is compromised, all session IDs are exposed
-   - **Best Practice:** Store only hashed session IDs<sup>[2](#ref2)</sup>
-
-3. **Missing Rate Limiting** (Medium)
-   - No protection against brute-force login attempts
-   - No limits on session creation
-
-4. **Password Storage Issue** (Critical, implied)
-   - Password likely stored in plaintext (not shown hashing in register)
-   - Should use bcrypt or similar
-
-**Fixed Code:**
-
-```python
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
-import sqlite3
-import secrets
-import hashlib
-
-app = FastAPI()
-
-# Add rate limiting (import statements omitted for brevity)
-
-@app.post("/auth/register")
-async def register(username: str, password: str):
-	"""Register a new user"""
-	conn = sqlite3.connect('security_app.db')
-	cursor = conn.cursor()
-	
-	# ✅ FIX: Hash password before storing
-	import bcrypt
-	password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-	
-	cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", 
-				   (username, password_hash))
-	
-	user_id = cursor.lastrowid
-	conn.commit()
-	conn.close()
-	
-	return {"user_id": user_id, "username": username}
-
-@app.post("/sessions/create")
-async def create_session(user_id: int, metadata: str):
-	"""Create a new session"""
-	conn = sqlite3.connect('security_app.db')
-	cursor = conn.cursor()
-	
-	session_id = secrets.token_urlsafe(32)
-	
-	# ✅ FIX: Store hashed session ID, not raw value
-	session_hash = hashlib.sha256(session_id.encode()).hexdigest()
-	
-	cursor.execute(
-		"INSERT INTO sessions (session_hash, user_id, metadata) VALUES (?, ?, ?)",
-		(session_hash, user_id, metadata)
-	)
-	
-	conn.commit()
-	conn.close()
-	
-	# Return raw session ID to client (only once)
-	return {"session_id": session_id}
-
-@app.get("/", response_class=HTMLResponse)
-async def home():
-	"""Frontend with session management"""
-	return """
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'">
-	<title>Session Manager</title>
-</head>
-<body>
-	<h1>Session Management System</h1>
-	
-	<div id="register_section">
-		<h2>Register</h2>
-		<input type="text" id="register_username" placeholder="Username">
-		<input type="password" id="register_password" placeholder="Password">
-		<button onclick="registerUser()">Register</button>
-		<div id="register_result"></div>
-	</div>
-	
-	<div id="login_section">
-		<h2>Login</h2>
-		<input type="text" id="login_username" placeholder="Username">
-		<input type="password" id="login_password" placeholder="Password">
-		<button onclick="loginUser()">Login</button>
-		<div id="login_result"></div>
-	</div>
-	
-	<div id="profile_section">
-		<h2>Get Profile</h2>
-		<input type="text" id="profile_user_id" placeholder="User ID">
-		<button onclick="getProfile()">Get Profile</button>
-		<div id="profile_result"></div>
-	</div>
-	
-	<script>
-		// ✅ FIX: Helper function to safely display text
-		function createTextElement(tag, className, text) {
-			const element = document.createElement(tag);
-			element.className = className;
-			element.textContent = text;  // Safe: textContent prevents XSS
-			return element;
-		}
-		
-		async function registerUser() {
-			const username = document.getElementById('register_username').value;
-			const password = document.getElementById('register_password').value;
-			
-			const response = await fetch('/auth/register', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({username, password})
-			});
-			
-			const data = await response.json();
-			const result = document.getElementById('register_result');
-			result.innerHTML = '';  // Clear previous content
-			
-			if (response.ok) {
-				const div = document.createElement('div');
-				div.className = 'result';
-				// ✅ FIX: Use textContent instead of innerHTML
-				div.textContent = `✓ Registered! User ID: ${data.user_id}, Username: ${data.username}`;
-				result.appendChild(div);
-			} else {
-				const div = document.createElement('div');
-				div.className = 'result error';
-				div.textContent = `✗ ${data.detail}`;
-				result.appendChild(div);
-			}
-		}
-		
-		async function loginUser() {
-			const username = document.getElementById('login_username').value;
-			const password = document.getElementById('login_password').value;
-			
-			const response = await fetch('/auth/login', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({username, password})
-			});
-			
-			const data = await response.json();
-			const result = document.getElementById('login_result');
-			result.innerHTML = '';
-			
-			if (response.ok) {
-				const div = document.createElement('div');
-				div.className = 'result';
-				// ✅ FIX: Use textContent
-				div.textContent = `✓ Login successful! User ID: ${data.user_id}`;
-				result.appendChild(div);
-			} else {
-				const div = document.createElement('div');
-				div.className = 'result error';
-				div.textContent = `✗ ${data.message}`;
-				result.appendChild(div);
-			}
-		}
-		
-		async function getProfile() {
-			const userId = document.getElementById('profile_user_id').value;
-			
-			const response = await fetch(`/auth/profile/${userId}`);
-			const data = await response.json();
-			const result = document.getElementById('profile_result');
-			result.innerHTML = '';
-			
-			if (response.ok) {
-				// ✅ FIX: Build DOM safely without innerHTML
-				const div = document.createElement('div');
-				div.className = 'result';
-				
-				const h4 = document.createElement('h4');
-				h4.textContent = 'Profile Information';
-				div.appendChild(h4);
-				
-				const usernamePara = document.createElement('p');
-				const usernameStrong = document.createElement('strong');
-				usernameStrong.textContent = 'Username: ';
-				usernamePara.appendChild(usernameStrong);
-				usernamePara.appendChild(document.createTextNode(data.username));
-				div.appendChild(usernamePara);
-				
-				const bioPara = document.createElement('p');
-				const bioStrong = document.createElement('strong');
-				bioStrong.textContent = 'Bio: ';
-				bioPara.appendChild(bioStrong);
-				bioPara.appendChild(document.createTextNode(data.bio));
-				div.appendChild(bioPara);
-				
-				const createdPara = document.createElement('p');
-				const createdStrong = document.createElement('strong');
-				createdStrong.textContent = 'Created: ';
-				createdPara.appendChild(createdStrong);
-				createdPara.appendChild(document.createTextNode(data.created_at));
-				div.appendChild(createdPara);
-				
-				result.appendChild(div);
-			} else {
-				const div = document.createElement('div');
-				div.className = 'result error';
-				div.textContent = `✗ ${data.detail}`;
-				result.appendChild(div);
-			}
-		}
-	</script>
-</body>
-</html>
-	"""
-```
-
-**Key Security Improvements:**
-- **Replaced ALL `innerHTML` assignments with safe DOM manipulation**<sup>[1](#ref1)</sup>
-- Used `textContent` to prevent XSS when displaying user data
-- Added password hashing with bcrypt
-- Implemented session ID hashing before database storage<sup>[2](#ref2)</sup>
-- Added Content-Security-Policy header
-- Should add rate limiting (not shown for brevity)
-
-**Pattern to Remember:**
-```javascript
-// ❌ DANGEROUS
-element.innerHTML = `<p>${untrustedData}</p>`;
-
-// ✅ SAFE
-const p = document.createElement('p');
-p.textContent = untrustedData;
-element.appendChild(p);
+xss.is_safe_url("//evil.com/path", ["example.com"])
+# → False (protocol-relative, not a safe relative path)
 ```
 
 ---
 
-## Key Takeaways
+## The 90-Test Gauntlet
 
-### The Three Types of XSS
+Your implementation faces 90 deterministic tests across nine categories — ten tests per category:
 
-1. **Reflected XSS** (Exercise 1): User input immediately reflected in response
-2. **Stored XSS** (Exercise 2): Malicious payload stored in database
-3. **DOM-Based XSS** (Exercise 3): Vulnerability in client-side JavaScript
+| # | Category | What It Tests |
+|---|---|---|
+| 1–10 | HTML Body Escaping | The five dangerous HTML chars, img/svg payloads, combined cases |
+| 11–20 | HTML Attribute Escaping | Quote breakout, event handler injection, edge chars |
+| 21–30 | JavaScript String Escaping | Backslash order, newlines, `</script>` Unicode escape |
+| 31–40 | URL Parameter Escaping | RFC 3986 unreserved chars, double-encoding, Unicode |
+| 41–50 | Polyglot & Bypass Attempts | Gareth Heyes polyglot, null bytes, pre-encoded entities |
+| 51–60 | CSP Header Building | Directive syntax, valueless directives, order preservation |
+| 61–70 | Open Redirect Prevention | `javascript:`, `data:`, `vbscript:`, `//`, subdomain bypass |
+| 71–80 | HTML Depth & Edge Cases | Double-encoding prevention, template literals, long strings |
+| 81–90 | JS & URL Advanced Edge Cases | Tab preservation, at-sign encoding, multiple allowed hosts |
 
-### Universal Prevention Rules
+### Sample Output
 
-1. **Never trust user input** - Always assume it's malicious
-2. **Escape output** - Use `html.escape()` in Python, `textContent` in JavaScript
-3. **Use parameterized queries** - Prevent SQL injection
-4. **Implement CSP** - Content Security Policy headers
-5. **Rate limit everything** - Prevent abuse and DoS
-6. **Hash sensitive data** - Session IDs, passwords, tokens
-7. **Disable debug mode** - Never run production with `debug=True`
+```
+╔════════════════════════════════════════════════════════════════════╗
+║         XSS PREVENTION FRAMEWORK — 90 COMPREHENSIVE TESTS         ║
+╚════════════════════════════════════════════════════════════════════╝
 
-These exercises are inspired by real vulnerabilities and industry-standard security books. I invest significant time ensuring each exercise is:
-- **Technically accurate** - Based on actual CVEs and production incidents
-- **Properly cited** - All patterns sourced from authoritative security literature  
-- **Interview-relevant** - Covers topics asked in Security Engineer interviews at FAANG+ companies
+HTML Body Escaping  (10/10)
+  ✅ PASS  Test 01 [HTML] Classic <script> tag
+  ✅ PASS  Test 02 [HTML] Ampersand escape (must come before < >)
+  ...
 
-**All 48 weeks of exercises available in the [SecEng-Exercises repository](https://github.com/fosres/SecEng-Exercises).** Star it to stay updated!
+JavaScript String Escaping  (7/10)
+  ✅ PASS  Test 21 [JS] Single-quote breakout
+  ✅ PASS  Test 22 [JS] Double-quote breakout
+  ❌ FAIL  Test 23 [JS] Backslash must be escaped first
+       Expected: 'back\\\\slash'
+       Got:      'back\\slash'
+  ...
 
-### References
+══════════════════════════════════════════════════════════════════════
+SCORE: 74/90  (82%)
 
-<a name="ref1"></a>
-1. Byrne, Dennis. *Full Stack Python Security*. Manning Publications, 2021. Chapter 14: "Cross-Site Scripting", pp. 208-226.
-
-<a name="ref2"></a>
-2. Madden, Neil. *API Security in Action*. Manning Publications, 2020. Chapter 2: "Secure API development", pp. 54-55.
-
-<a name="ref3"></a>
-3. Johnsson, Dan, et al. *Secure by Design*. Manning Publications, 2019. Chapter 9: "Handling output safely", pp. 247-249.
-
-<a name="ref4"></a>
-4. Ball, Corey. *Hacking APIs*. No Starch Press, 2022.
-
----
-
-## 🚀 What's Next? Continue Your Security Training
-
-This XSS challenge is just **one exercise** from a complete Security Engineering curriculum. The [SecEng-Exercises repository](https://github.com/fosres/SecEng-Exercises) includes:
-
-### Current Exercises (Updated Weekly)
-- ✅ Week 1-5: TCP/IP fundamentals, SQL injection, Python security patterns
-- ✅ **Week 6: XSS vulnerabilities** (you just completed this!)
-- 🔄 Week 7-10: SAST/DAST tools, authentication bypasses, API security
-- 📅 Coming soon: Cryptographic attacks, race conditions, SSRF, and more
-
-### What Makes These Exercises Different?
-1. **Battle-tested patterns** - Every vulnerability is based on real CVEs and production incidents
-2. **Comprehensive testing** - 60+ test cases per exercise ensure you truly understand the exploits
-3. **Career-focused** - Designed to prepare you for Security Engineer interviews at top companies
-4. **Open source** - Free forever, community-driven, continuously improving
-
-### 📊 Exercise Difficulty Progression
-- Weeks 1-8: Foundation (beginner-friendly)
-- Weeks 9-16: Intermediate (interview-ready)  
-- Weeks 17-24: Advanced (senior-level concepts)
-
-## Practice Challenge
-
-Can you identify which vulnerability would cause the most damage in each scenario?
-
-1. **Exercise 1**: Which attack vector is most dangerous—the search query or the "no results" message?
-2. **Exercise 2**: Why doesn't HTML escaping on the server prevent the XSS?
-3. **Exercise 3**: If you could only fix ONE vulnerability, which would have the biggest security impact?
-
-**⭐ [Star the GitHub repo](https://github.com/fosres/SecEng-Exercises)** and share your answers in the Issues tab—I respond to every submission!
+Almost there! Review the failed categories above.
+Hint: Ensure escaping is truly context-specific —
+      HTML body ≠ attribute ≠ JS string ≠ URL parameter.
+```
 
 ---
 
-## 🎯 Ready to Level Up Your Security Skills?
+## What Real-World XSS Prevention Looks Like
 
-If this exercise helped you understand XSS better, imagine mastering:
-- SQL injection with 15 different attack vectors
-- JWT authentication bypasses
-- Race condition exploits
-- Cryptographic timing attacks
-- API rate limit bypasses
-- Server-Side Request Forgery (SSRF)
-- XML External Entity (XXE) attacks
+After you complete the exercise, compare your implementation to how production frameworks handle this:
 
-**All available for free in the repository.**
+**Django** auto-escapes HTML body context via its template engine — but it does *not* auto-escape JavaScript or URL contexts. You still need to use `escapejs` and `urlencode` template filters explicitly. (*Full Stack Python Security*, pp. 219-221)
 
-### Take Action Now:
-1. **⭐ [Star the SecEng-Exercises repo](https://github.com/fosres/SecEng-Exercises)** - Get notified of new challenges
-2. **🔀 Fork it** - Customize exercises for your learning style
-3. **💬 Join discussions** - Ask questions, share solutions, help others
-4. **📢 Share** - Help other aspiring Security Engineers discover these resources
+**OWASP ESAPI** is the reference implementation of context-aware escaping for Java, and provides the mental model your implementation should follow for all six contexts.
 
-### My Goal
-I'm creating the **most comprehensive, free, open-source Security Engineering curriculum** available. Every week I add new exercises based on real vulnerabilities I've encountered in my career at Intel and from analyzing thousands of CVEs.
-
-**Your ⭐ star helps more developers discover these resources and motivates me to create even better content.**
+**Content-Security-Policy** is your Layer 3 defense — even if an attacker injects a payload, a strict CSP `script-src 'nonce-{random}'` policy prevents it from executing. Your `build_csp_header` method is the foundation of that defense. (*Full Stack Python Security*, pp. 234-236)
 
 ---
 
-**Remember:** The TechFinance disaster started with a single XSS vulnerability. Don't let it happen to your application. 
+## Common Mistakes
 
-**Master these patterns. Review code carefully. Always assume user input is malicious.**
+### ❌ Mistake 1: Sanitizing Instead of Escaping
+Stripping `<` and `>` from input prevents legitimate use cases (code snippets, mathematical notation) and fails against encoded variants like `%3C` in URL context.
 
-### 🎓 Continue Your Journey
-This is just Week 6 of a 48-week curriculum. **[Star the SecEng-Exercises repository](https://github.com/fosres/SecEng-Exercises)** to follow the complete path from beginner to senior Security Engineer.
+### ❌ Mistake 2: Using the Same Escaper for All Contexts
+`escape_html` is not safe for JavaScript string context. `&lt;` inside a JS string literal renders as `&lt;` — it does not prevent `</script>` breakout.
 
-**Next up:** Week 7 covers SAST/DAST tool implementation and code review automation—exercises drop this Friday!
+### ❌ Mistake 3: Forgetting That `//` Is a Valid URL Prefix
+Protocol-relative URLs like `//evil.com` are a classic open redirect bypass that trips up validators checking only for `http://evil.com`.
+
+### ❌ Mistake 4: Adding a Trailing Space to Valueless CSP Directives
+`upgrade-insecure-requests ` (with a trailing space) is a malformed CSP directive. Some browsers will ignore it silently.
+
+### ❌ Mistake 5: Escaping `&` Last
+If you run `text.replace('<', '&lt;')` before `text.replace('&', '&amp;')`, an input of `&lt;` gets double-encoded to `&amp;lt;` instead of `&amp;lt;`. Always escape `&` first.
 
 ---
 
-*Built by a Security Engineer, for Security Engineers. All exercises are free and open source forever. Star the repo to support the project! ⭐*
+## The Exercise
 
-**Repository:** https://github.com/fosres/SecEng-Exercises
+### Get the Challenge File
 
-Stay secure! 🔒
+```bash
+# Download from the P2P AppSec Exercises repository
+git clone https://github.com/fosres/appsec-exercises
+cd appsec-exercises/xss-prevention
+python3 xss_prevention_90_tests.py
+```
+
+### What You'll Get
+- A single Python file with the empty `XSSPrevention` class
+- 90 deterministic test cases with colored pass/fail output
+- Detailed failure messages showing expected vs. actual output
+- Progressive hints based on your score
+
+---
+
+## What You'll Learn
+
+- ✅ Why output context — not input sanitization — is the correct XSS defense
+- ✅ The five HTML special characters and the correct escaping order
+- ✅ Why JavaScript string context requires a different escaping strategy than HTML
+- ✅ How `</script>` inside a JS string literal closes the script block prematurely
+- ✅ RFC 3986 unreserved characters and percent-encoding for URL query parameters
+- ✅ Content-Security-Policy directive syntax including valueless directives
+- ✅ The three classes of dangerous URL schemes: `javascript:`, `data:`, `vbscript:`
+- ✅ Protocol-relative URL bypass in open redirect validators
+
+---
+
+## For Hiring Managers
+
+This exercise assesses:
+
+- **Security fundamentals** — understanding of XSS at the mechanism level, not just "what is XSS"
+- **Context-awareness** — recognizing that the same data requires different escaping depending on where it is rendered
+- **Defensive programming** — implementing defense in depth rather than a single escaping pass
+- **Python fluency** — clean, idiomatic string handling and OOP design
+- **Attention to edge cases** — the polyglot and bypass test category specifically rewards candidates who think like attackers while writing defensive code
+
+A candidate who passes all 90 tests has demonstrated the foundational secure coding knowledge expected of an Application Security Engineer at the junior-to-mid level.
+
+---
+
+## Level Up: After You Pass
+
+1. **Extend the framework** — add `escape_css()` for safe CSS value insertion, another context Django's template engine does not auto-escape
+2. **Build a linter** — write a Semgrep rule that detects raw string interpolation into HTML templates in Python codebases (the vulnerability your framework prevents)
+3. **Integrate CSP reporting** — extend `build_csp_header` to support `report-to` groups with a JSON policy endpoint configuration
+4. **Read the source** — compare your `escape_html` to Django's `django.utils.html.escape` and note what it does and does not cover
+
+---
+
+## Resources
+
+- *Full Stack Python Security*, Ch. 14 — Dennis Byrne (Manning, 2021): the definitive treatment of XSS defense in Django
+- *Secure by Design*, Ch. 9, pp. 247-249 — Johnsson, Deogun, Sawano (Manning, 2019): why never echoing input verbatim matters even in error messages
+- [OWASP XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html) — canonical escaping rules for all output contexts
+- [Web Security Academy XSS Learning Path](https://portswigger.net/web-security/cross-site-scripting) — hands-on labs for the attacker's perspective
+- [RFC 3986](https://tools.ietf.org/html/rfc3986#section-2.3) — unreserved character definition for URL escaping
+
+---
+
+*This challenge is part of the P2P AppSec Exercise Series — a collection of LeetCode-style secure coding exercises designed to curate high-quality, secure Python code for AI training datasets. The goal: train AI models to write secure code by default.*
+
+*→ [P2P AppSec Exercises on GitHub](https://github.com/fosres/appsec-exercises)*  
+*→ [More challenges on dev.to/fosres](https://dev.to/fosres)*
+*→ [More challenges on dev.to/fosres](https://dev.to/fosres)*

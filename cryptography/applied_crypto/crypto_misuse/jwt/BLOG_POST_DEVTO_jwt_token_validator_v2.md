@@ -742,7 +742,7 @@ SSRF, XXE, IDOR, and API authentication patterns are already in progress:
 I'm curious who is actually reading these exercises — job seeker, student,
 seasoned engineer brushing up, hiring manager evaluating candidates?
 
-**[Take the 30-second poll (no login required)](https://strawpoll.com/wby5QoKAkyA/results)**
+**[Take the 30-second poll (no login required)](https://strawpoll.com/wby5QoKAkyA)**
 
 Results are public. Knowing your background helps me pitch the difficulty and
 depth of future exercises at the right level.
@@ -846,7 +846,7 @@ token flows — not just "I've called `jwt.decode()` before."
 ---
 
 Found this useful? ⭐ **[Star the repo](https://github.com/fosres/SecEng-Exercises)** and
-**[vote on the next exercise](https://strawpoll.com/wby5QoKAkyA/results)**.
+**[vote on the next exercise](https://strawpoll.com/wby5QoKAkyA)**.
 
 ---
 
