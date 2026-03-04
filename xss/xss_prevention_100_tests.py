@@ -1,5 +1,5 @@
 """
-Exercise: XSS Prevention Framework — 90 COMPREHENSIVE TESTS
+Exercise: XSS Prevention Framework — 100 COMPREHENSIVE TESTS
 =============================================================
 
 Cross-site scripting (XSS) remains one of the most exploited web
@@ -9,8 +9,8 @@ rendered in five distinct output contexts.
 
 INSTRUCTIONS:
 	1. Implement all methods in XSSPrevention below
-	2. Run:  python3 xss_prevention_90_tests.py
-	3. Pass all 90 tests!
+	2. Run:  python3 xss_prevention_100_tests.py
+	3. Pass all 100 tests!
 
 Key insight from Full Stack Python Security (Ch. 14, pp. 218-226):
 	Input sanitization is ALWAYS the wrong approach. The correct defense
@@ -108,7 +108,7 @@ class XSSPrevention:
 		#   >  →  &gt;
 		#   "  →  &quot;
 		#   '  →  &#x27;
-		return html.escape(text,quote=True)
+		pass
 
 	def escape_attribute(self, text: str) -> str:
 		"""
@@ -153,7 +153,7 @@ class XSSPrevention:
 		#   >  →  &gt;
 		#   "  →  &quot;
 		#   '  →  &#x27;
-		return html.escape(text,quote=True)
+		pass	
 
 	def escape_javascript(self, text: str) -> str:
 		"""
@@ -212,53 +212,7 @@ class XSSPrevention:
 		# <   →  \\u003C  (prevents </script> tag breakout)
 		# >   →  \\u003E
 		# &   →  \\u0026  (prevents HTML entity injection in JS block)
-
-		escape_javascript_string = ""
-
-		i = 0
-
-		while i < len(text):
-
-			if text[i] == "\\":
-
-				escape_javascript_string += "\\\\"
-			
-			elif text[i] == "\'":
-
-				escape_javascript_string += "\\'"
-			
-			elif text[i] == '\"':
-
-				escape_javascript_string += '\\"'
-			
-			elif text[i] == '\n':
-
-				escape_javascript_string += '\\n'
-
-			elif text[i] == '\r':
-
-				escape_javascript_string += '\\r'
-
-			elif text[i] == '<':
-
-				escape_javascript_string += '\\u003C'
-
-			elif text[i] == '>':
-
-				escape_javascript_string += '\\u003E'
-
-			elif text[i] == '&':
-
-				escape_javascript_string += '\\u0026'
-
-			else:
-
-				escape_javascript_string += text[i]
-
-			i += 1
-		
-
-		return escape_javascript_string 
+		pass	
 
 	def escape_url(self, text: str) -> str:
 		"""
@@ -312,8 +266,7 @@ class XSSPrevention:
 		# encoded. See also: Richer & Sanso, OAuth 2 in Action,
 		# Ch. 8, p. 143 (Manning, 2017) for a worked URL-encoding
 		# example fixing reflected XSS in an API endpoint.
-
-		return urllib.parse.quote(text, safe='', encoding=None, errors=None)
+		pass	
 
 	def build_csp_header(self, directives: Dict[str, str]) -> str:
 		"""
@@ -366,19 +319,7 @@ class XSSPrevention:
 		#   - Non-empty value  →  "directive-name value"
 		#   - Empty string val →  "directive-name"   (no trailing space)
 		#   - Join all parts   →  "; ".join(parts)
-
-		assembly = []
-
-		for key,val in directives.items():
-
-			if val == "":
-
-				assembly.append(f"{key}")
-
-			else:
-				assembly.append(f"{key} {val}")
-
-		return "; ".join(assembly)	
+		pass	
 
 	def is_safe_url(
 		self,
@@ -473,51 +414,7 @@ class XSSPrevention:
 		#      b. require_https=True
 		#         AND scheme != https  → False  (HTTP-downgrade attack)
 		#      c. otherwise            → True
-		
-		if url == "":
-
-			return False
-
-		elif url.find("//") == 0:
-
-			return False
-		
-		elif url.startswith(("javascript:","data:","vbscript:")):
-	
-			return False
-
-		elif url.find("/") == 0:
-	
-			return True 
-
-		spliturl = urlsplit(url)
-
-		schema = spliturl.scheme
-
-		hostname = spliturl.hostname
-		
-		print(f"schema:{schema}\nhostname:{hostname}")
-
-		if hostname not in allowed_hosts:
-
-			return False
-
-		if require_https == True and schema != "https":
-
-			return False
-		
-		elif require_https == True and schema == "https":
-
-			return True
-
-		else:
-			# Note redirect suspectible to MITM
-
-			# since connection is bare-HTTP
-
-			return True 
-
-		
+		pass	
 
 
 # ==========================================================
