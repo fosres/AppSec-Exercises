@@ -495,8 +495,6 @@ class XSSPrevention:
 		schema = spliturl.scheme
 
 		hostname = spliturl.hostname
-		
-		print(f"schema:{schema}\nhostname:{hostname}")
 
 		if hostname not in allowed_hosts:
 
