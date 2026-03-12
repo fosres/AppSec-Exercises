@@ -1,3 +1,10 @@
+'''
+Usage:
+
+cd SecEng-Exercises
+python3 .github/scripts/aggregate_clones.py
+'''
+
 import json
 from datetime import datetime, timedelta
 from collections import defaultdict

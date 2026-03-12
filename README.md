@@ -231,6 +231,12 @@ Recommended progression for maximum learning:
 
 These exercises are designed for self-study and skill development. If you find errors or have suggestions for improvements, please open an issue or submit a pull request.
 
+## Feedback
+
+Found this repo useful? Takes 10 seconds — tell me why you cloned it:
+
+👉 [Take the poll](https://strawpoll.com/wby5QoKAkyA)
+
 ## License
 
 These exercises are provided for educational purposes. Use them to strengthen your security skills and build safer software.
