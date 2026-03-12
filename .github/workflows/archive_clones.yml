@@ -1,0 +1,32 @@
+name: Archive Clone Stats
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # runs daily at midnight UTC
+  workflow_dispatch:      # lets you trigger it manually too
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fetch clone data
+        run: |
+          mkdir -p data
+          curl -s \
+            -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/fosres/SecEng-Exercises/traffic/clones?per=day" \
+            >> data/clones_raw.json
+
+      - name: Commit data
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add data/clones_raw.json
+          git diff --staged --quiet || git commit -m "chore: daily clone snapshot"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
