@@ -2,6 +2,10 @@
 
 A comprehensive collection of hands-on Application Security exercises designed to sharpen your skills for production environments and security-critical roles. These challenges are grounded in real-world CVEs, industry standards, and best practices from authoritative security references.
 
+## Tell Me Why You're Interested
+
+> 👋 Just visited this? [Tell me why (30 seconds)](https://strawpoll.com/wby5QoKAkyA)
+
 ## Overview
 
 This repository provides practical, production-focused security exercises covering common vulnerability classes and secure coding practices. Each exercise is inspired by actual CVEs and references industry-standard security resources including the CERT C Coding Standard, "Effective C", "The Art of Software Security Assessment", and "API Security in Action".
