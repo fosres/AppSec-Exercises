@@ -36,6 +36,7 @@ jobs:
           git config user.name "GitHub Action"
           git add data/clones_raw.json data/views_raw.json
           git diff --staged --quiet || git commit -m "chore: daily traffic snapshot"
+          git pull --rebase origin main
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
