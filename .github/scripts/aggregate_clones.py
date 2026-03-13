@@ -10,8 +10,8 @@ from datetime import datetime
 from collections import defaultdict
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-RAW_FILE = os.path.join(SCRIPT_DIR, "..", "data", "clones_raw.json")
-VIEWS_FILE = os.path.join(SCRIPT_DIR, "..", "data", "views_raw.json")
+RAW_FILE = os.path.join(SCRIPT_DIR, "../..", "data", "clones_raw.json")
+VIEWS_FILE = os.path.join(SCRIPT_DIR, "../..", "data", "views_raw.json")
 
 def load_clones(filepath):
 	"""Load and deduplicate clone entries by timestamp."""
