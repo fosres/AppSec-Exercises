@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Let Humans Write. Let AI Critique. — A Manifesto for Security Engineers</title>
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');
+
+	:root {
+		--ink: #0d0d0d;
+		--paper: #f5f0e8;
+		--accent: #c0392b;
+		--accent-dim: #922b21;
+		--rule: #2c2c2c;
+		--cite-bg: #e8e3d8;
+		--mono: #1a1a2e;
+		--gutter: clamp(1.5rem, 5vw, 4rem);
+	}
+
+	*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+	html { font-size: 18px; scroll-behavior: smooth; }
+
+	body {
+		background: var(--paper);
+		color: var(--ink);
+		font-family: 'IBM Plex Sans', sans-serif;
+		font-weight: 300;
+		line-height: 1.8;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	/* ── Masthead ─────────────────────────────────────────── */
+	.masthead {
+		border-bottom: 3px solid var(--rule);
+		padding: 1.2rem var(--gutter);
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+	.masthead-label {
+		font-family: 'IBM Plex Mono', monospace;
+		font-size: 0.65rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--accent);
+		font-weight: 500;
+	}
+	.masthead-divider {
+		flex: 1;
+		height: 1px;
+		background: var(--rule);
+		opacity: 0.3;
+	}
+	.masthead-date {
+		font-family: 'IBM Plex Mono', monospace;
+		font-size: 0.65rem;
+		letter-spacing: 0.1em;
+		color: #666;
+	}
+
+	/* ── Hero ─────────────────────────────────────────────── */
+	.hero {
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 4rem var(--gutter) 2rem;
+		border-bottom: 1px solid rgba(0,0,0,0.15);
+	}
+	.hero-kicker {
+		font-family: 'IBM Plex Mono', monospace;
+		font-size: 0.7rem;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		color: var(--accent);
+		margin-bottom: 1.2rem;
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.hero-kicker::before {
+		content: '';
+		display: inline-block;
+		width: 2rem;
+		height: 2px;
+		background: var(--accent);
+	}
+	h1 {
+		font-family: 'Playfair Display', serif;
+		font-size: clamp(2.2rem, 5vw, 3.8rem);
+		font-weight: 900;
+		line-height: 1.08;
+		letter-spacing: -0.02em;
+		margin-bottom: 1.5rem;
+		color: var(--ink);
+	}
+	h1 em {
+		font-style: italic;
+		color: var(--accent);
+	}
+	.hero-deck {
+		font-size: 1.15rem;
+		font-weight: 400;
+		line-height: 1.65;
+		color: #333;
+		max-width: 640px;
+		border-left: 3px solid var(--accent);
+		padding-left: 1.2rem;
+		margin-bottom: 2rem;
+	}
+	.byline {
+		font-family: 'IBM Plex Mono', monospace;
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+		color: #666;
+		text-transform: uppercase;
+	}
+	.byline strong { color: var(--ink); }
+
+	/* ── Rule dividers ────────────────────────────────────── */
+	.rule-triple {
+		max-width: 860px;
+		margin: 2rem auto;
+		padding: 0 var(--gutter);
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+	.rule-triple span {
+		display: block;
+		height: 1px;
+		background: var(--rule);
+	}
+	.rule-triple span:first-child { height: 3px; }
+
+	/* ── Body ─────────────────────────────────────────────── */
+	.body-wrap {
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 0 var(--gutter);
+	}
+
+	/* ── Section headers ──────────────────────────────────── */
+	.section-number {
+		font-family: 'Playfair Display', serif;
+		font-size: 5rem;
+		font-weight: 900;
+		color: rgba(0,0,0,0.07);
+		line-height: 1;
+		margin-bottom: -1rem;
+		user-select: none;
+	}
+	h2 {
+		font-family: 'Playfair Display', serif;
+		font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+		font-weight: 700;
+		line-height: 1.2;
+		margin-bottom: 1.2rem;
+		color: var(--ink);
+	}
+	h2 em { font-style: italic; color: var(--accent-dim); }
+
+	/* ── Body copy ────────────────────────────────────────── */
+	.body-wrap p {
+		margin-bottom: 1.4rem;
+		font-size: 1rem;
+		line-height: 1.85;
+	}
+
+	/* ── Citation blocks ──────────────────────────────────── */
+	.cite-block {
+		background: var(--cite-bg);
+		border-left: 4px solid var(--accent);
+		padding: 1rem 1.2rem;
+		margin: 1.8rem 0;
+		font-style: italic;
+		font-size: 0.95rem;
+		line-height: 1.7;
+		color: #2a2a2a;
+	}
+	.cite-block .cite-source {
+		display: block;
+		margin-top: 0.6rem;
+		font-style: normal;
+		font-family: 'IBM Plex Mono', monospace;
+		font-size: 0.68rem;
+		letter-spacing: 0.06em;
+		color: var(--accent-dim);
+		text-transform: uppercase;
+	}
+
+	/* ── Stat callouts ────────────────────────────────────── */
+	.stat-row {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+		gap: 1px;
+		background: var(--rule);
+		margin: 2.5rem 0;
+		border: 1px solid var(--rule);
+	}
+	.stat-cell {
+		background: var(--paper);
+		padding: 1.4rem 1.2rem;
+		text-align: center;
+	}
+	.stat-cell .stat-num {
+		font-family: 'Playfair Display', serif;
+		font-size: 2.6rem;
+		font-weight: 900;
+		color: var(--accent);
+		line-height: 1;
+		display: block;
+	}
+	.stat-cell .stat-label {
+		font-family: 'IBM Plex Mono', monospace;
+		font-size: 0.65rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: #555;
+		display: block;
+		margin-top: 0.4rem;
+		line-height: 1.5;
+	}
+	.stat-cell .stat-cite {
+		font-family: 'IBM Plex Mono', monospace;
+		font-size: 0.58rem;
+		color: #999;
+		display: block;
+		margin-top: 0.3rem;
+	}
+
+	/* ── Pull quote ───────────────────────────────────────── */
+	.pull-quote {
+		font-family: 'Playfair Display', serif;
+		font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+		font-weight: 700;
+		font-style: italic;
+		line-height: 1.35;
+		color: var(--ink);
+		padding: 2rem 0;
+		border-top: 3px solid var(--rule);
+		border-bottom: 3px solid var(--rule);
+		margin: 2.5rem 0;
+		text-align: center;
+	}
+	.pull-quote em { color: var(--accent); font-style: normal; }
+
+	/* ── Stage pipeline ───────────────────────────────────── */
+	.pipeline {
+		margin: 2.5rem 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+	.pipeline-stage {
+		display: grid;
+		grid-template-columns: 180px 1fr;
+		border: 1px solid rgba(0,0,0,0.2);
+		border-bottom: none;
+	}
+	.pipeline-stage:last-child { border-bottom: 1px solid rgba(0,0,0,0.2); }
+	.pipeline-label {
+		background: var(--rule);
+		color: #f5f0e8;
+		font-family: 'IBM Plex Mono', monospace;
+		font-size: 0.68rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		padding: 1rem;
+		display: flex;
+		align-items: center;
+		font-weight: 500;
+	}
+	.pipeline-content {
+		padding: 1rem 1.2rem;
+		font-size: 0.9rem;
+		line-height: 1.6;
+	}
+	.pipeline-content strong {
+		color: var(--accent);
+		font-weight: 500;
+	}
+
+	/* ── Sections ─────────────────────────────────────────── */
+	.section {
+		padding: 3rem 0 2rem;
+		border-top: 1px solid rgba(0,0,0,0.12);
+	}
+	.section:first-child { border-top: none; }
+
+	/* ── Closing manifesto ────────────────────────────────── */
+	.manifesto {
+		background: var(--rule);
+		color: var(--paper);
+		padding: 3rem var(--gutter);
+		margin: 3rem 0 0;
+	}
+	.manifesto h2 {
+		font-family: 'Playfair Display', serif;
+		color: var(--paper);
+		font-size: clamp(1.5rem, 3vw, 2.2rem);
+		margin-bottom: 1.5rem;
+		font-style: italic;
+	}
+	.manifesto ul {
+		list-style: none;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		max-width: 640px;
+	}
+	.manifesto li {
+		display: grid;
+		grid-template-columns: 1.5rem 1fr;
+		gap: 0.75rem;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: rgba(245,240,232,0.85);
+	}
+	.manifesto li::before {
+		content: '→';
+		color: var(--accent);
+		font-family: 'IBM Plex Mono', monospace;
+		font-weight: 500;
+		margin-top: 0.05rem;
+	}
+	.manifesto .cite-tag {
+		font-family: 'IBM Plex Mono', monospace;
+		font-size: 0.62rem;
+		color: rgba(245,240,232,0.45);
+		letter-spacing: 0.06em;
+	}
+
+	/* ── Footer ───────────────────────────────────────────── */
+	footer {
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 2rem var(--gutter);
+		border-top: 1px solid rgba(0,0,0,0.15);
+		font-family: 'IBM Plex Mono', monospace;
+		font-size: 0.65rem;
+		color: #888;
+		letter-spacing: 0.08em;
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	@media (max-width: 600px) {
+		.pipeline-stage {
+			grid-template-columns: 1fr;
+		}
+		.stat-row {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+	<span class="masthead-label">Security Engineering</span>
+	<span class="masthead-divider"></span>
+	<span class="masthead-date">March 2026</span>
+</header>
+
+<article>
+
+	<div class="hero">
+		<div class="hero-kicker">Manifesto for Security Engineers</div>
+		<h1>Let Humans Write.<br><em>Let AI Critique.</em></h1>
+		<p class="hero-deck">
+			The evidence is in. AI-generated code ships more security vulnerabilities than
+			human-written code. The solution is not to abandon AI — it is to use it for
+			what it actually does well: finding flaws before the code exists.
+		</p>
+		<div class="byline">
+			<strong>dev.to/fosres</strong> &nbsp;·&nbsp; Security Engineering Series
+		</div>
+	</div>
+
+	<div class="rule-triple"><span></span><span></span><span></span></div>
+
+	<div class="body-wrap">
+
+		<!-- ── Section 1 ── -->
+		<section class="section">
+			<div class="section-number">01</div>
+			<h2>The Problem Is Not That AI Exists.<br><em>It Is That We Gave It the Pen.</em></h2>
+
+			<p>
+				Every week another team mandates AI coding assistants. Every quarter another
+				report confirms the same thing: the code those assistants write is measurably
+				less secure than code written by a careful human developer. This is not a
+				matter of opinion. The data is replicated across multiple independent studies,
+				multiple languages, and multiple AI models.
+			</p>
+
+			<div class="cite-block">
+				"AI-generated PRs contain approximately 1.7× more issues on average than
+				human-written PRs. Critical and major defects are up to 1.7× higher in
+				AI-authored changes. Security vulnerabilities rise 1.5–2×, especially
+				improper password handling and insecure object references."
+				<span class="cite-source">CodeRabbit — State of AI vs Human Code Generation Report, December 2025 (470 open-source GitHub PRs)</span>
+			</div>
+
+			<p>
+				The pattern holds at the architectural level, not just the line level. When
+				Apiiro analyzed Fortune 50 enterprise repositories, the findings were
+				significantly more severe than surface-level vulnerability counts suggest.
+			</p>
+
+			<div class="cite-block">
+				"While trivial syntax errors in AI-written code dropped by 76% and logic bugs
+				fell by more than 60%, privilege escalation paths jumped 322% and architectural
+				design flaws spiked 153%. These are the kinds of issues scanners miss and
+				reviewers struggle to spot — broken auth flows that look correct but aren't."
+				<span class="cite-source">Apiiro — 4× Velocity, 10× Vulnerabilities: AI Coding Assistants Are Shipping More Risks, September 2025</span>
+			</div>
+
+			<p>
+				AI is excellent at eliminating the shallow bugs — the typos, the
+				off-by-ones, the missing null checks. It fails precisely where it is most
+				dangerous to fail: trust boundaries, authorization logic, cryptographic
+				implementation, and the systemic design flaws that span multiple files and
+				services.
+			</p>
+		</section>
+
+		<!-- ── Stats ── -->
+		<div class="stat-row">
+			<div class="stat-cell">
+				<span class="stat-num">1.7×</span>
+				<span class="stat-label">More security vulnerabilities in AI-authored PRs vs. human PRs</span>
+				<span class="stat-cite">CodeRabbit, Dec 2025</span>
+			</div>
+			<div class="stat-cell">
+				<span class="stat-num">322%</span>
+				<span class="stat-label">Increase in privilege escalation paths with AI coding assistants</span>
+				<span class="stat-cite">Apiiro, Sep 2025</span>
+			</div>
+			<div class="stat-cell">
+				<span class="stat-num">37.6%</span>
+				<span class="stat-label">Increase in critical vulnerabilities after just 5 AI refinement iterations</span>
+				<span class="stat-cite">arXiv:2506.11022, IEEE-ISTAS 2025</span>
+			</div>
+			<div class="stat-cell">
+				<span class="stat-num">45%</span>
+				<span class="stat-label">Of AI-generated code samples failed security tests across 100+ LLMs</span>
+				<span class="stat-cite">Veracode GenAI Code Security Report, 2025</span>
+			</div>
+		</div>
+
+		<!-- ── Section 2 ── -->
+		<section class="section">
+			<div class="section-number">02</div>
+			<h2>Asking AI to Revise Its Own Code<br><em>Makes It Worse, Not Better.</em></h2>
+
+			<p>
+				An intuitive response to insecure AI-generated code is to prompt the AI to
+				fix it. Ask it to review, to harden, to patch. This is the wrong instinct.
+				The research is unambiguous: iterative AI refinement degrades security
+				rather than improving it.
+			</p>
+
+			<div class="cite-block">
+				"A controlled experiment with 400 code samples across 40 rounds of
+				'improvements' using four distinct prompting strategies found a 37.6%
+				increase in critical vulnerabilities after just five iterations. This evidence
+				challenges the assumption that iterative LLM refinement improves code
+				security — the researchers term this counterintuitive phenomenon 'feedback
+				loop security degradation.'"
+				<span class="cite-source">Joshi et al. — Security Degradation in Iterative AI Code Generation: A Systematic Analysis of the Paradox, arXiv:2506.11022, accepted IEEE-ISTAS 2025 (University of San Francisco, Vector Institute, UMass Boston)</span>
+			</div>
+
+			<p>
+				The mechanism is not accidental. Each refinement pass takes the previous
+				output as ground truth, compounding flaws rather than eliminating them. An
+				authorization bug introduced in iteration one is baked deeper into the
+				architecture by iteration five. The AI has no threat model for your system.
+				It has patterns. And it applies them recursively.
+			</p>
+
+			<div class="cite-block">
+				"LLMs don't understand your architecture, context, or risk — they mimic
+				patterns, not purpose. A fix that looks right might violate your access
+				control model. A cleanup might strip away a critical logging statement.
+				And unless someone is there to catch it, you'll only find out when it's
+				too late."
+				<span class="cite-source">Symbiotec Security — Exploring Security Degradation in Iterative AI Code Generation, July 2025</span>
+			</div>
+		</section>
+
+		<!-- ── Section 3 ── -->
+		<section class="section">
+			<div class="section-number">03</div>
+			<h2>The One Variable That Reduces Vulnerabilities:<br><em>Trust the AI Less.</em></h2>
+
+			<p>
+				This finding from Stanford is the most important result in this entire
+				literature for practicing security engineers. It does not say AI is useless.
+				It says the engineers who got better security outcomes were the ones who
+				engaged critically — who questioned, rephrased, and rejected AI suggestions
+				rather than accepting them.
+			</p>
+
+			<div class="cite-block">
+				"Participants who trusted the AI less and engaged more with the language and
+				format of their prompts — rephrasing, adjusting temperature — provided code
+				with fewer security vulnerabilities. Participants with access to an AI
+				assistant were more likely to believe they wrote secure code, suggesting that
+				such tools may lead users to be overconfident about security flaws in their
+				code."
+				<span class="cite-source">Perry, Srivastava, Kumar & Boneh (Stanford/UC San Diego) — Do Users Write More Insecure Code with AI Assistants? ACM CCS 2023, arXiv:2211.03622</span>
+			</div>
+
+			<p>
+				This is not a call to stop using AI. It is a precise description of
+				<em>how</em> to use it. The security benefit does not come from AI
+				generating code. It comes from human judgment evaluating AI criticism.
+				Those are structurally different workflows with measurably different outcomes.
+			</p>
+
+			<div class="pull-quote">
+				"The security benefit comes from <em>human judgment evaluating AI criticism</em> —
+				not from AI generating code."
+			</div>
+		</section>
+
+		<!-- ── Section 4 ── -->
+		<section class="section">
+			<div class="section-number">04</div>
+			<h2>What AI Actually Does Well:<br><em>Finding Flaws Before the Code Exists.</em></h2>
+
+			<p>
+				There is real positive evidence for AI in security — but it is concentrated
+				in AI as a <em>reviewer and critic</em>, not as a writer. The Gemini user
+				study published in March 2026 found meaningful reductions in specific
+				vulnerability categories when developers used AI assistance for review.
+			</p>
+
+			<div class="cite-block">
+				"Gemini assistance led to approximately 21.7% fewer vulnerabilities in
+				password storage and 10.5% fewer in SQL vulnerabilities. However, participants
+				still faced challenges, such as Gemini suggesting outdated libraries or
+				omitting hashing recommendations. XSS vulnerabilities improved by only 3.5%.
+				CSRF and improper input validation seemed almost not to be influenced by
+				Gemini usage at all."
+				<span class="cite-source">Jost et al. — The Impact of AI-Assisted Development on Software Security: A Study of Gemini and Developer Experience, arXiv:2603.15298, March 2026</span>
+			</div>
+
+			<p>
+				The pattern is clear: AI critique of specific, well-defined security
+				properties helps. AI as an autonomous author does not. The right
+				architecture for your workflow follows directly from that finding.
+			</p>
+
+			<p>
+				This maps to what software engineering has understood for decades about
+				defect economics. Catching a design flaw at the requirements stage costs
+				nearly nothing. Catching it in production costs orders of magnitude more.
+				AI critics operating at the design, architecture, and specification stage
+				apply pressure exactly where it is cheapest to respond to it.
+			</p>
+
+			<div class="cite-block">
+				"Finding and fixing vulnerabilities in production is orders of magnitude
+				more expensive than preventing them during development. A skilled development
+				team will write fewer insecure lines of code, resulting in fewer security
+				findings, less rework, and a faster, more efficient delivery cycle."
+				<span class="cite-source">SANS Institute — Why Security Tools Alone Won't Secure Your Code — and What Developers Really Need, September 2025</span>
+			</div>
+		</section>
+
+		<!-- ── Section 5 ── -->
+		<section class="section">
+			<div class="section-number">05</div>
+			<h2>The Workflow:<br><em>AI as Critic at Every Stage of the SDLC.</em></h2>
+
+			<p>
+				The principle is simple. Humans write. AI criticizes. At every stage. Not
+				after the code is written and shipped — at every decision point in the
+				development lifecycle, from requirements through architecture through
+				implementation to review. Here is what that looks like in practice.
+			</p>
+
+			<div class="pipeline">
+				<div class="pipeline-stage">
+					<div class="pipeline-label">Requirements</div>
+					<div class="pipeline-content">
+						<strong>AI Critic asks:</strong> What are the trust boundaries here?
+						Who can call this? What data flows through it? What invariants must hold?
+						Human defines the security requirements based on that challenge.
+					</div>
+				</div>
+				<div class="pipeline-stage">
+					<div class="pipeline-label">Architecture</div>
+					<div class="pipeline-content">
+						<strong>AI Critic asks:</strong> Where are the privilege escalation paths?
+						What happens if this service is compromised? What data does each component
+						have access to? Human redesigns based on STRIDE analysis of the critique.
+					</div>
+				</div>
+				<div class="pipeline-stage">
+					<div class="pipeline-label">API Design</div>
+					<div class="pipeline-content">
+						<strong>AI Critic asks:</strong> Is authorization checked at the right layer?
+						What happens with a null input, a unicode bomb, an oversized payload?
+						Human writes the spec that answers those questions.
+					</div>
+				</div>
+				<div class="pipeline-stage">
+					<div class="pipeline-label">Implementation</div>
+					<div class="pipeline-content">
+						<strong>Human writes the code.</strong> AI does not author it. AI may be
+						asked to explain a library's security properties, or to confirm that a
+						proposed pattern is safe — but the implementation decision is human.
+					</div>
+				</div>
+				<div class="pipeline-stage">
+					<div class="pipeline-label">Code Review</div>
+					<div class="pipeline-content">
+						<strong>AI scans for pattern-based issues:</strong> Semgrep, Bandit, CodeQL.
+						Human triages findings against the threat model established in earlier stages.
+						AI cannot determine exploitability — that judgment is human.
+					</div>
+				</div>
+			</div>
+
+			<p>
+				This workflow is consistent with OWASP's own guidance on AI-assisted
+				development, published in the OWASP Top 10 2025 Next Steps section:
+			</p>
+
+			<div class="cite-block">
+				"You should be able to read and fully understand all code you submit, even
+				if it is written by an AI or copied from an online forum. You are responsible
+				for all code that you commit. You should review all AI-assisted code
+				thoroughly for vulnerabilities, ideally with your own eyes and also with
+				security tooling made for this purpose."
+				<span class="cite-source">OWASP Top 10 2025 — Next Steps (X01:2025), owasp.org/Top10/2025/X01_2025-Next_Steps/</span>
+			</div>
+		</section>
+
+		<!-- ── Section 6 ── -->
+		<section class="section">
+			<div class="section-number">06</div>
+			<h2>The Expert Advantage:<br><em>Threat Modeling Is What the AI Cannot Replicate.</em></h2>
+
+			<p>
+				The reason experienced security engineers get better outcomes from this
+				workflow than junior developers is precisely because AI criticism is only as
+				useful as the human evaluating it. The AI surfaces a list of concerns. The
+				expert maps each concern against a real threat model — your specific system,
+				your actual attack surface, your deployment context.
+			</p>
+
+			<div class="cite-block">
+				"AI can accelerate the mechanics of threat modeling, but developers still
+				need to understand the fundamentals: how to think about trust boundaries,
+				how to identify assets worth protecting, and how to reason about what an
+				attacker would do."
+				<span class="cite-source">CSO Online — The New Paradigm for Raising Up Secure Software Engineers, February 2026</span>
+			</div>
+
+			<p>
+				This is not a reason for junior engineers to abandon the workflow. It is a
+				reason for organizations to invest in security fundamentals alongside AI
+				tooling. The OpenSSF has documented precisely what those fundamentals look
+				like in the context of AI code assistants.
+			</p>
+
+			<div class="cite-block">
+				"Assume AI-written code can have bugs or vulnerabilities, because it often
+				does. AI coding assistants can introduce security issues like using outdated
+				cryptography, ignoring error handling, or leaking secrets. Don't hesitate
+				to modify or reject AI outputs."
+				<span class="cite-source">OpenSSF Best Practices Working Group — Security-Focused Guide for AI Code Assistant Instructions, August 2025, best.openssf.org</span>
+			</div>
+		</section>
+
+	</div><!-- /body-wrap -->
+
+	<!-- ── Manifesto ── -->
+	<div class="manifesto">
+		<div class="body-wrap" style="max-width:860px;margin:0 auto;padding:0;">
+		<h2>The Principles. With Their Sources.</h2>
+		<ul>
+			<li>
+				Humans write the code. AI-generated code ships 1.7× more security vulnerabilities than human-written code in production repositories.
+				<span class="cite-tag">— CodeRabbit State of AI vs Human Code Generation, Dec 2025</span>
+			</li>
+			<li>
+				Do not ask AI to fix its own output. After five AI refinement iterations, critical vulnerabilities increase by 37.6%.
+				<span class="cite-tag">— Joshi et al., arXiv:2506.11022, IEEE-ISTAS 2025</span>
+			</li>
+			<li>
+				AI is a critic, not a coauthor. Engaging critically with AI output — not accepting it passively — is what produces fewer vulnerabilities.
+				<span class="cite-tag">— Perry, Srivastava, Kumar & Boneh, ACM CCS 2023, arXiv:2211.03622</span>
+			</li>
+			<li>
+				Critique at design time is cheaper than scanning at ship time. Finding and fixing vulnerabilities in production costs orders of magnitude more than preventing them at design.
+				<span class="cite-tag">— SANS Institute, September 2025</span>
+			</li>
+			<li>
+				Threat modeling is the human skill AI cannot replace. AI surfaces concerns. Experts map them against real threat models.
+				<span class="cite-tag">— CSO Online, February 2026</span>
+			</li>
+			<li>
+				You are responsible for all code you commit, regardless of whether AI suggested it.
+				<span class="cite-tag">— OWASP Top 10 2025, X01:2025 Next Steps</span>
+			</li>
+		</ul>
+		</div>
+	</div>
+
+</article>
+
+<footer>
+	<span>dev.to/fosres · Security Engineering Series · March 2026</span>
+	<span>All citations link to primary sources</span>
+</footer>
+
+</body>
+</html>

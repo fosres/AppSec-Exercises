@@ -292,14 +292,22 @@ function lab-snapshot
         return 1
     end
 
+    # Auto-detect the root volume device name from the running instance
+    set device_name (aws ec2 describe-instances \
+        --instance-ids $instance_id \
+        --query "Reservations[0].Instances[0].RootDeviceName" \
+        --output text \
+        --profile lab-sso)
+
     set today (date +%Y-%m-%d)
-    echo "Creating snapshot of $instance_id..."
+    echo "Creating encrypted snapshot of $instance_id..."
 
     set ami_id (aws ec2 create-image \
         --instance-id $instance_id \
         --name "$snapshot_name-$today" \
         --description "Lab snapshot: $snapshot_name" \
         --no-reboot \
+        --block-device-mappings "[{\"DeviceName\":\"$device_name\",\"Ebs\":{\"Encrypted\":true,\"DeleteOnTermination\":true}}]" \
         --profile lab-sso \
         --query "ImageId" \
         --output text)
@@ -309,7 +317,7 @@ function lab-snapshot
         return 1
     end
 
-    echo "Snapshot created: $ami_id"
+    echo "Snapshot created: $ami_id (encrypted)"
     echo "Waiting for snapshot to become available..."
     aws ec2 wait image-available \
         --image-ids $ami_id \
@@ -321,6 +329,8 @@ end
 ```
 
 **`--no-reboot`** — takes the snapshot while the instance keeps running. You stay connected the whole time.
+
+**Encryption** — snapshots are encrypted at rest using the AWS-managed EBS key (`aws/ebs`). No password, no key to manage — AWS handles decryption transparently when the instance boots from the snapshot. The device name is auto-detected from the running instance so the encryption flag always targets the correct volume.
 
 > ⏳ **Expect to wait 3-5 minutes** for the snapshot to complete. AWS is copying the entire EBS volume to S3. A heavily loaded instance may take up to 10-15 minutes. Do not interrupt it.
 
@@ -532,7 +542,7 @@ Done. Storage charges for deleted snapshots will stop within the hour.
 | `lab-terminate` | Permanently delete the instance (zero ongoing cost) |
 | `lab-create` | Launch a fresh instance from Launch Template |
 | `lab-snapshot-list` | List all saved AMI snapshots |
-| `lab-snapshot` | Save current instance state to a new AMI |
+| `lab-snapshot` | Save current instance state to an encrypted AMI snapshot |
 | `lab-restore` | Launch an instance from a saved AMI snapshot |
 | `lab-snapshot-delete` | Delete one or more AMIs and their underlying EBS snapshots (line-separated input, Ctrl+D to finish) |
 
