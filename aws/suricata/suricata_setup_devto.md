@@ -1,6 +1,6 @@
 ---
 title: "Use Suricata as An Intrusion Detection System on AWS"
-published: false
+published: true
 description: "How to install and configure Suricata IDS on a Debian 13 EC2 instance, write custom detection rules for SQL injection, port scans, C2 beaconing, and DNS tunneling, and analyze traffic with PCAP."
 tags: aws, security, devsecops, tutorial
 cover_image:
@@ -105,7 +105,7 @@ lab-snapshot-delete    # delete old snapshots to stop storage charges
 
 **You do not need to remember the AMI ID.** When you run `lab-restore` it prints a table of all your saved snapshots by name:
 
-```
+```plaintext
 Your saved AMIs:
 +------------------------+---------------------------+----------------------+
 | ami-0xxxxxxxxxxxxxxxxx | suricata_setup-2026-03-15 | 2026-03-15T12:00:00Z |
@@ -167,7 +167,7 @@ Run `ip addr` and look for the interface that has:
 
 For example on my Debian 13 EC2 instance my correct interface looks like:
 
-```
+```console
 2: enX0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9001 qdisc fq_codel state UP group default qlen 1000
     link/ether 0a:ff:cd:e5:67:a9 brd ff:ff:ff:ff:ff:ff
     inet 172.31.25.81/20 metric 100 brd 172.31.31.255 scope global dynamic enX0
@@ -203,7 +203,7 @@ The default value is `[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]` which technical
 
 From the `ip addr` output, the relevant line is:
 
-```
+```plaintext
 inet 172.31.25.81/20 ... scope global dynamic enX0
 ```
 
@@ -266,7 +266,7 @@ suricata -T -c /etc/suricata/suricata.yaml -v
 
 `-T` runs a config test without starting capture. Look for:
 
-```
+```plaintext
 Notice: suricata: Configuration provided was successfully loaded. Exiting.
 ```
 
@@ -285,7 +285,7 @@ tail -f /var/log/suricata/suricata.log | grep enX0
 
 You should see a line like:
 
-```
+```plaintext
 Info: iface-conf: Configuring af-packet for enX0
 ```
 
@@ -307,7 +307,7 @@ This makes it very good at catching **known, unsophisticated attacks** — autom
 
 **Rule 1 — UNION SELECT** catches classic UNION-based payloads like:
 
-```
+```sql
 ' UNION SELECT username, password FROM users--
 ```
 
@@ -336,7 +336,7 @@ The real defenses against SQL injection are at the application layer — paramet
 
 ### Rule 1: SQL Injection — UNION SELECT
 
-```
+```shell
 alert tcp any any -> $HOME_NET 80 (msg:"SQL Injection UNION SELECT Attempt"; content:"UNION"; nocase; content:"SELECT"; nocase; sid:9000001; rev:4;)
 ```
 
@@ -354,7 +354,7 @@ alert tcp any any -> $HOME_NET 80 (msg:"SQL Injection UNION SELECT Attempt"; con
 - **`rev:4`** — the revision number of this rule. This reached revision 4 through iterative tuning during lab setup — a realistic example of how rules evolve in practice.
 
 **Example payload it catches:**
-```
+```sql
 ' UNION SELECT username, password FROM users--
 ```
 
@@ -365,7 +365,7 @@ alert tcp any any -> $HOME_NET 80 (msg:"SQL Injection UNION SELECT Attempt"; con
 
 ### Rule 2: SQL Injection — Comment Bypass
 
-```
+```shell
 alert tcp any any -> $HOME_NET 80 (msg:"SQL Injection Comment Bypass Attempt"; content:"OR"; nocase; content:"="; nocase; sid:9000002; rev:6;)
 ```
 
@@ -383,7 +383,7 @@ alert tcp any any -> $HOME_NET 80 (msg:"SQL Injection Comment Bypass Attempt"; c
 - **`rev:6`** — this rule went through 6 revisions during lab setup, starting as a PCRE pattern and ending as a reliable dual content match — a realistic example of iterative rule tuning.
 
 **Example payloads it catches:**
-```
+```sql
 ' OR 1=1--
 %27 OR 1%3D1--
 ' AND 1=1--
@@ -403,13 +403,13 @@ Rule 2 originally used a PCRE pattern instead of simple `content` matching. PCRE
 
 The Suricata keyword is `pcre` and the syntax is:
 
-```
+```shell
 pcre:"/pattern/flags";
 ```
 
 The original Rule 2 PCRE pattern was:
 
-```
+```shell
 alert http any any -> $HOME_NET any (msg:"SQL Injection Comment Bypass Attempt"; pcre:"/(\%27|\')\s*(or|and)\s*[\w\s]*(\%3D|=)/i"; sid:9000002; rev:1;)
 ```
 
@@ -437,7 +437,7 @@ Breaking down the pattern `/(\%27|\')\s*(or|and)\s*[\w\s]*(\%3D|=)/i`:
 
 ### Rule 3: Port Scan — SYN Threshold
 
-```
+```shell
 alert tcp any any -> $HOME_NET any (msg:"Possible Port Scan Detected"; flags:S; threshold:type threshold,track by_src,count 5,seconds 10; sid:9000003; rev:3;)
 ```
 
@@ -475,7 +475,7 @@ A scanner like `nmap` sending SYN packets to ports 1 through 1000 in rapid succe
 
 ### Rule 4: C2 Beaconing — HTTP Threshold
 
-```
+```shell
 alert http $HOME_NET any -> any any (msg:"Possible C2 Beaconing Detected"; flow:to_server,established; threshold:type both,track by_src,count 10,seconds 60; sid:9000004; rev:1;)
 ```
 
@@ -511,7 +511,7 @@ Malware beaconing to a C2 server every 5 seconds — 10 connections in under 60 
 
 ### Rule 5: DNS Tunneling — Large DNS Query
 
-```
+```shell
 alert udp any any -> any 53 (msg:"Possible DNS Tunneling - Large Query"; dsize:>200; sid:9000005; rev:1;)
 ```
 
@@ -550,7 +550,7 @@ nano /etc/suricata/rules/custom.rules
 
 Paste all rules — the two `pass` rules first, then the five alert rules:
 
-```
+```shell
 pass http $HOME_NET any -> 169.254.169.254 any (msg:"IMDS traffic - whitelist"; sid:9000010; rev:1;)
 pass tcp $HOME_NET any -> any 443 (msg:"AWS HTTPS services whitelist"; sid:9000011; rev:1;)
 alert tcp any any -> $HOME_NET any (msg:"SQL Injection UNION SELECT Attempt"; content:"UNION"; nocase; content:"SELECT"; nocase; sid:9000001; rev:4;)
@@ -606,13 +606,13 @@ suricata -T -c /etc/suricata/suricata.yaml -v
 
 Look for:
 
-```
+```plaintext
 Notice: suricata: Configuration provided was successfully loaded. Exiting.
 ```
 
 If instead you see:
 
-```
+```plaintext
 Error: suricata: The logging directory "/var/log/suricata/" is not writable. Shutting down the engine
 ```
 
@@ -639,7 +639,7 @@ sudo grep "rules loaded\|signatures processed" /var/log/suricata/suricata.log | 
 
 Expected output:
 
-```
+```plaintext
 Info: detect: 6 signatures processed. 0 are IP-only rules, 2 are inspecting packet payload, 2 inspect application layer, 0 are decoder event only
 ```
 
@@ -718,13 +718,13 @@ Leave this running. Every alert Suricata generates will appear here immediately.
 
 Each alert line in `fast.log` follows this format:
 
-```
+```plaintext
 TIMESTAMP  [**] [GID:SID:REV] MESSAGE [**] [Classification] [Priority] {PROTO} SRC_IP:PORT -> DST_IP:PORT
 ```
 
 For example:
 
-```
+```plaintext
 03/18/2026-18:22:58.822948  [**] [1:9000004:1] Possible C2 Beaconing Detected [**] [Classification: (null)] [Priority: 3] {TCP} 172.31.23.15:43900 -> 169.254.169.254:80
 ```
 
@@ -741,7 +741,7 @@ Breaking this down:
 
 Before even running any test traffic, Rule 4 fires immediately after Suricata starts:
 
-```
+```plaintext
 03/18/2026-18:22:58.822948  [**] [1:9000004:1] Possible C2 Beaconing Detected [**] [Classification: (null)] [Priority: 3] {TCP} 172.31.23.15:43900 -> 169.254.169.254:80
 03/18/2026-21:27:58.844144  [**] [1:9000004:2] Possible C2 Beaconing Detected [**] [Classification: (null)] [Priority: 3] {TCP} 172.31.23.15:44068 -> xx.xxx.xx.xxx:443
 03/18/2026-21:29:35.909465  [**] [1:9000004:2] Possible C2 Beaconing Detected [**] [Classification: (null)] [Priority: 3] {TCP} 172.31.23.15:34952 -> xx.xxx.xx.xxx:443
@@ -760,7 +760,7 @@ The fix is two `pass` rules — one for IMDS (HTTP) and one for all outbound HTT
 
 Your final `custom.rules` file should look exactly like this:
 
-```
+```shell
 pass http $HOME_NET any -> 169.254.169.254 any (msg:"IMDS traffic - whitelist"; sid:9000010; rev:1;)
 pass tcp $HOME_NET any -> any 443 (msg:"AWS HTTPS services whitelist"; sid:9000011; rev:1;)
 alert tcp any any -> $HOME_NET any (msg:"SQL Injection UNION SELECT Attempt"; content:"UNION"; nocase; content:"SELECT"; nocase; sid:9000001; rev:4;)
@@ -796,7 +796,7 @@ sudo cat /var/log/suricata/fast.log
 
 Expected alert:
 
-```
+```plaintext
 03/18/2026-20:37:50.935403  [**] [1:9000001:4] SQL Injection UNION SELECT Attempt [**] [Classification: (null)] [Priority: 3] {TCP} 172.31.23.15:32850 -> 172.31.23.15:80
 ```
 
@@ -812,7 +812,7 @@ sudo cat /var/log/suricata/fast.log
 
 Expected alert:
 
-```
+```plaintext
 03/18/2026-21:24:54.092935  [**] [1:9000002:6] SQL Injection Comment Bypass Attempt [**] [Classification: (null)] [Priority: 3] {TCP} 172.31.23.15:36692 -> 172.31.23.15:80
 ```
 
@@ -834,7 +834,7 @@ sudo cat /var/log/suricata/fast.log
 
 Expected output — one alert per port probed, showing the scan working through many different destination ports from the same source IP:
 
-```
+```plaintext
 03/18/2026-22:07:29.315182  [**] [1:9000003:3] Possible Port Scan Detected [**] [Classification: (null)] [Priority: 3] {TCP} 172.31.23.15:36871 -> 172.31.23.15:1720
 03/18/2026-22:07:29.815169  [**] [1:9000003:3] Possible Port Scan Detected [**] [Classification: (null)] [Priority: 3] {TCP} 172.31.23.15:36871 -> 172.31.23.15:139
 03/18/2026-22:07:30.315156  [**] [1:9000003:3] Possible Port Scan Detected [**] [Classification: (null)] [Priority: 3] {TCP} 172.31.23.15:36871 -> 172.31.23.15:587
@@ -862,7 +862,7 @@ This creates a domain with three 60-character labels — `AAAA...60.BBBB...60.CC
 
 Expected alert:
 
-```
+```plaintext
 03/18/2026-22:28:42.595604  [**] [1:9000005:2] Possible DNS Tunneling - Large Query [**] [Classification: (null)] [Priority: 3] {UDP} 172.31.23.15:60507 -> 8.8.8.8:53
 ```
 
@@ -915,7 +915,7 @@ sudo tcpdump -r /tmp/lab_capture.pcap -A 'tcp port 80' | grep -i "UNION\|SELECT\
 
 The `-A` flag prints packet contents in ASCII. Real output from this lab:
 
-```
+```plaintext
 01:25:37.636597 IP ip-172-31-26-99.56868 > ip-172-31-26-99.http: Flags [P.], length 130: HTTP: GET /?id=1%27+UNION+SELECT+username%2cpassword+FROM+users-- HTTP/1.1
 GET /?id=1%27+UNION+SELECT+username%2cpassword+FROM+users-- HTTP/1.1
 
@@ -933,7 +933,7 @@ sudo tcpdump -r /tmp/lab_capture.pcap 'tcp[tcpflags] == tcp-syn'
 
 `tcp[tcpflags] == tcp-syn` is a Berkeley Packet Filter (BPF) expression matching only SYN-flagged packets — the same condition as `flags:S` in the Suricata rule. Real output:
 
-```
+```plaintext
 01:28:36.551927 IP ip-172-31-26-99.58404 > ip-172-31-26-99.smtp:   Flags [S]
 01:28:36.641851 IP ip-172-31-26-99.58404 > ip-172-31-26-99.http:   Flags [S]
 01:28:36.741904 IP ip-172-31-26-99.58404 > ip-172-31-26-99.ssh:    Flags [S]
@@ -952,7 +952,7 @@ sudo tcpdump -r /tmp/lab_capture.pcap -v 'udp port 53'
 
 Real output:
 
-```
+```plaintext
 01:26:38.113545 localhost.60801 > _localdnsstub.domain: A? ssm.us-east-1.amazonaws.com. (56)
 01:26:38.115187 _localdnsstub.domain > localhost.60801: ssm.us-east-1.amazonaws.com. A xx.xxx.xx.xxx (72)
 
@@ -1038,7 +1038,7 @@ The 5 rules from this lab are directly usable in AWS Network Firewall. Here is h
 
 **Step 1 — Create a rule group in the AWS Console:**
 
-```
+```plaintext
 AWS Console → VPC → Network Firewall → Rule groups
 → Create rule group
 → Rule group type: Stateful
@@ -1049,7 +1049,7 @@ AWS Console → VPC → Network Firewall → Rule groups
 
 **Step 2 — Paste your rules directly:**
 
-```
+```shell
 pass http $HOME_NET any -> 169.254.169.254 any (msg:"IMDS traffic - whitelist"; sid:9000010; rev:1;)
 pass tcp $HOME_NET any -> any 443 (msg:"AWS HTTPS services whitelist"; sid:9000011; rev:1;)
 alert tcp any any -> $HOME_NET any (msg:"SQL Injection UNION SELECT Attempt"; content:"UNION"; nocase; content:"SELECT"; nocase; sid:9000001; rev:4;)
@@ -1132,7 +1132,7 @@ Comment out the rule with `#` at the start of the line:
 sudo nano /etc/suricata/rules/custom.rules
 ```
 
-```
+```shell
 alert tcp any any -> $HOME_NET 80 (msg:"SQL Injection UNION SELECT Attempt"; ...)
 # alert http $HOME_NET any -> any any (msg:"Possible C2 Beaconing Detected"; ...)
 alert udp any any -> any 53 (msg:"Possible DNS Tunneling - Large Query"; ...)
@@ -1239,7 +1239,7 @@ sudo tail -20 /var/log/suricata/eve.json | while read line; do echo $line | pyth
 
 **Fix:** Switch to `tcp` protocol with `port 80` which matches raw TCP stream bytes directly:
 
-```
+```shell
 alert tcp any any -> $HOME_NET 80 (msg:"SQL Injection UNION SELECT Attempt"; content:"UNION"; nocase; content:"SELECT"; nocase; sid:9000001; rev:4;)
 ```
 
@@ -1269,7 +1269,7 @@ sudo nmap -sS --max-rate 10 172.31.23.15
 
 **Fix:** Add two `pass` rules at the top of `custom.rules` — before all alert rules:
 
-```
+```shell
 pass http $HOME_NET any -> 169.254.169.254 any (msg:"IMDS traffic - whitelist"; sid:9000010; rev:1;)
 pass tcp $HOME_NET any -> any 443 (msg:"AWS HTTPS services whitelist"; sid:9000011; rev:1;)
 ```
@@ -1302,7 +1302,7 @@ These five exercises test the core Suricata skills a Security Engineer specializ
 
 Given this rule you have never seen before, explain in plain English what it does, what attack it is designed to detect, and what each keyword means:
 
-```
+```shell
 alert http any any -> $HOME_NET any (msg:"Possible XSS Attempt"; flow:to_server,established; content:"<script>"; nocase; http_uri; sid:9000010; rev:1;)
 ```
 
@@ -1320,7 +1320,7 @@ Answer these questions:
 The port scan rule from this post is generating too many false positives on a busy web server that receives high volumes of legitimate connection attempts from load balancers.
 
 Original rule:
-```
+```shell
 alert tcp any any -> $HOME_NET any (msg:"Possible Port Scan Detected"; flags:S; threshold:type threshold,track by_src,count 5,seconds 10; sid:9000003; rev:3;)
 ```
 
@@ -1337,7 +1337,7 @@ Write the modified rule.
 
 You have the following three rules in `/etc/suricata/rules/custom.rules`. The C2 beaconing rule (sid:9000004) is generating hundreds of false positives because your monitoring tool makes frequent outbound HTTP calls.
 
-```
+```shell
 alert tcp any any -> $HOME_NET 80 (msg:"SQL Injection UNION SELECT Attempt"; content:"UNION"; nocase; content:"SELECT"; nocase; sid:9000001; rev:4;)
 alert http $HOME_NET any -> any any (msg:"Possible C2 Beaconing Detected"; flow:to_server,established; threshold:type both,track by_src,count 10,seconds 60; sid:9000004; rev:1;)
 alert udp any any -> any 53 (msg:"Possible DNS Tunneling - Large Query"; dsize:>200; sid:9000005; rev:1;)
@@ -1437,7 +1437,7 @@ Takes 10 seconds.
 
 ### Exercise 2
 
-```
+```shell
 alert tcp any any -> $HOME_NET 1:1024 (msg:"Possible Port Scan Detected"; flags:S; threshold:type threshold,track by_src,count 50,seconds 10; sid:9000003; rev:4;)
 ```
 
@@ -1447,7 +1447,7 @@ alert tcp any any -> $HOME_NET 1:1024 (msg:"Possible Port Scan Detected"; flags:
 
 Disabled rule:
 
-```
+```shell
 alert tcp any any -> $HOME_NET 80 (msg:"SQL Injection UNION SELECT Attempt"; content:"UNION"; nocase; content:"SELECT"; nocase; sid:9000001; rev:4;)
 # alert http $HOME_NET any -> any any (msg:"Possible C2 Beaconing Detected"; flow:to_server,established; threshold:type both,track by_src,count 10,seconds 60; sid:9000004; rev:1;)
 alert udp any any -> any 53 (msg:"Possible DNS Tunneling - Large Query"; dsize:>200; sid:9000005; rev:1;)
@@ -1483,7 +1483,7 @@ Since there was no output of "Possible C2 Beaconing Detected" the above tactic w
 
 **Part 1 — 22 sources available:**
 
-```
+```shell
 root@ip-172-31-24-247:~# suricata-update list-sources | grep -i "Name"
 Name: et/open
 Name: et/pro
@@ -1511,14 +1511,14 @@ Name: aleksibovellan/nmap
 
 **Part 4 — Rule count after enabling ET:**
 
-```
+```shell
 root@ip-172-31-24-247:~# sudo grep "signatures processed" /var/log/suricata/suricata.log | tail -1
 [875 - Suricata-Main] 2026-03-21 18:31:15 Info: detect: 6 signatures processed.
 ```
 
 **Part 5 — ET SQL injection rules:**
 
-```
+```shell
 root@ip-172-31-24-247:~# grep -i "sql injection" /var/lib/suricata/rules/suricata.rules | wc -l
 4361
 ```
@@ -1533,5 +1533,230 @@ The alternative is to build your own rules from scratch — but achieving compre
 
 ---
 
+### Replace Snapshots with a [Simple BASH Script](https://github.com/fosres/SecEng-Exercises/blob/main/aws/suricata/bootstrap_suricata.sh)
+
+I am aware I said one can store a snapshot and restore the snapshot later to save progress for this lab. This is a good idea while doing the lab the first time. If one wants to revisit the state of the EC2 environment after they complete the lab a cheaper and more efficient option is to simply launch a fresh, vanilla EC2 instance and run the following BASH script. It will install `suricata` for you in the EC2 instance and store and save the correct `suricata` rules--allowing you to test if the `suricata` rules are effective. You won't need to any longer store snapshots once you can run and test the following BASH script:
+
+```shell
+#!/usr/bin/env bash
+# ============================================================
+# Suricata IDS Lab — Bootstrap Script
+# Run this inside a fresh lab-create instance to recreate
+# the full Suricata lab setup from Week 9.
+#
+# Usage:
+#   lab-connect (connect to fresh instance via SSM)
+#   sudo bash bootstrap_suricata.sh
+#
+# What this does:
+#   1. Installs Suricata 7.x from the official OISF PPA
+#   2. Installs nginx as the HTTP target for SQLi tests
+#   3. Installs nmap and dnsutils for testing rules
+#   4. Configures suricata.yaml (HOME_NET, af-packet, rule-files)
+#   5. Writes custom.rules with all 7 detection rules
+#   6. Validates config and starts Suricata
+#   7. Prints verification output
+#
+# Prerequisites:
+#   - Debian 13 EC2 instance (lab-create)
+#   - Outbound internet access (security group allows egress)
+#   - Run as root (sudo)
+# ============================================================
+
+set -euo pipefail
+
+# ── Colours ──────────────────────────────────────────────────
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+log()  { echo -e "${GREEN}[+]${NC} $1"; }
+warn() { echo -e "${YELLOW}[!]${NC} $1"; }
+die()  { echo -e "${RED}[✗]${NC} $1" >&2; exit 1; }
+
+# ── Must run as root ─────────────────────────────────────────
+[[ $EUID -eq 0 ]] || die "Run as root: sudo bash $0"
+
+# ── Detect network interface and subnet ──────────────────────
+log "Detecting network interface..."
+IFACE=$(ip route | awk '/default/ {print $5}' | head -1)
+[[ -n "$IFACE" ]] || die "Could not detect network interface"
+
+# Get the subnet in CIDR notation from the interface address
+# e.g. inet 172.31.29.30/20 → calculate network address 172.31.16.0/20
+IFACE_CIDR=$(ip addr show "$IFACE" | grep "inet " | awk '{print $2}' | head -1)
+[[ -n "$IFACE_CIDR" ]] || die "Could not detect IP for $IFACE"
+
+SUBNET=$(python3 -c "
+import ipaddress
+net = ipaddress.IPv4Interface('$IFACE_CIDR').network
+print(str(net))
+")
+[[ -n "$SUBNET" ]] || die "Could not calculate subnet from $IFACE_CIDR"
+
+log "Interface: $IFACE"
+log "Subnet (HOME_NET): $SUBNET"
+
+# ── Install dependencies ──────────────────────────────────────
+log "Updating package lists..."
+apt-get update -y -q
+
+log "Installing prerequisites..."
+apt-get install -y -q \
+	curl \
+	wget \
+	gnupg \
+	lsb-release \
+	nginx \
+	nmap \
+	dnsutils \
+	tcpdump \
+	python3
+
+# ── Install Suricata from Debian backports ────────────────────
+log "Installing Suricata..."
+# Suricata is available directly in Debian trixie (13) repos
+apt-get install -y -q suricata || die "Suricata install failed — check apt output above"
+
+# ── Create custom rules directory ────────────────────────────
+log "Creating rules directory..."
+mkdir -p /etc/suricata/rules
+
+# ── Write custom.rules ───────────────────────────────────────
+log "Writing custom.rules..."
+cat > /etc/suricata/rules/custom.rules << 'RULES'
+# ============================================================
+# Suricata Custom Rules — Week 9 Lab
+# Pass rules must come FIRST — Suricata processes top to bottom
+# ============================================================
+
+# ── Pass rules (whitelist legitimate AWS traffic) ────────────
+pass http $HOME_NET any -> 169.254.169.254 any (msg:"IMDS traffic - whitelist"; sid:9000010; rev:1;)
+pass tcp $HOME_NET any -> any 443 (msg:"AWS HTTPS services whitelist"; sid:9000011; rev:1;)
+
+# ── Alert rules ──────────────────────────────────────────────
+alert tcp any any -> $HOME_NET any (msg:"SQL Injection UNION SELECT Attempt"; content:"UNION"; nocase; content:"SELECT"; nocase; sid:9000001; rev:4;)
+alert tcp any any -> $HOME_NET 80 (msg:"SQL Injection Comment Bypass Attempt"; content:"OR"; nocase; content:"="; nocase; sid:9000002; rev:6;)
+alert tcp any any -> $HOME_NET any (msg:"Possible Port Scan Detected"; flags:S; threshold:type threshold,track by_src,count 5,seconds 10; sid:9000003; rev:3;)
+# alert tcp $HOME_NET any -> any any (msg:"Possible C2 Beaconing Detected"; flow:to_server,established; threshold:type both,track by_src,count 10,seconds 60; sid:9000004; rev:2;)
+alert udp any any -> any 53 (msg:"Possible DNS Tunneling - Large Query"; dsize:>200; sid:9000005; rev:2;)
+RULES
+
+log "custom.rules written (C2 rule commented out — re-enable after whitelisting all AWS endpoints)"
+
+# ── Configure suricata.yaml ───────────────────────────────────
+log "Configuring suricata.yaml..."
+
+# Set HOME_NET to the detected subnet
+sed -i "s|HOME_NET: \".*\"|HOME_NET: \"[$SUBNET]\"|" /etc/suricata/suricata.yaml
+
+# Set af-packet to monitor both enX0/eth0 and lo
+python3 - << PYEOF
+import re
+
+with open('/etc/suricata/suricata.yaml', 'r') as f:
+	content = f.read()
+
+# Replace af-packet interface section
+iface = "$IFACE"
+new_afpacket = f"""af-packet:
+  - interface: {iface}
+  - interface: lo
+"""
+
+content = re.sub(
+	r'af-packet:.*?(?=\n\S|\Z)',
+	new_afpacket,
+	content,
+	flags=re.DOTALL
+)
+
+with open('/etc/suricata/suricata.yaml', 'w') as f:
+	f.write(content)
+
+print("af-packet configured")
+PYEOF
+
+# Set rule-files to only load custom.rules
+python3 - << PYEOF
+import re
+
+with open('/etc/suricata/suricata.yaml', 'r') as f:
+	content = f.read()
+
+content = re.sub(
+	r'rule-files:.*?(?=\n\S|\Z)',
+	'rule-files:\n  - /etc/suricata/rules/custom.rules\n',
+	content,
+	flags=re.DOTALL
+)
+
+with open('/etc/suricata/suricata.yaml', 'w') as f:
+	f.write(content)
+
+print("rule-files configured")
+PYEOF
+
+# ── Enable and start nginx ────────────────────────────────────
+log "Starting nginx (HTTP target for SQLi tests)..."
+systemctl enable nginx -q
+systemctl start nginx
+
+# ── Validate Suricata config ──────────────────────────────────
+log "Validating Suricata configuration..."
+suricata -T -c /etc/suricata/suricata.yaml -v 2>&1 | grep -E "Configuration|Error|Warning|rules" || true
+
+# ── Start Suricata ────────────────────────────────────────────
+log "Starting Suricata..."
+systemctl enable suricata -q
+systemctl restart suricata
+sleep 5
+
+# ── Verify ───────────────────────────────────────────────────
+log "Verifying Suricata is running..."
+systemctl is-active suricata || die "Suricata failed to start — check: journalctl -u suricata"
+
+log "Checking rules loaded..."
+sleep 3
+SIGS=$(grep "signatures processed" /var/log/suricata/suricata.log | tail -1)
+echo "  $SIGS"
+
+# ── Print instance IP ─────────────────────────────────────────
+INSTANCE_IP=$(ip addr show "$IFACE" | grep "inet " | awk '{print $2}' | cut -d/ -f1)
+
+echo ""
+echo -e "${GREEN}============================================================${NC}"
+echo -e "${GREEN} Suricata Lab Ready${NC}"
+echo -e "${GREEN}============================================================${NC}"
+echo ""
+echo "  Interface:    $IFACE"
+echo "  HOME_NET:     $SUBNET"
+echo "  Instance IP:  $INSTANCE_IP"
+echo "  fast.log:     /var/log/suricata/fast.log"
+echo "  custom.rules: /etc/suricata/rules/custom.rules"
+echo ""
+echo "  Test commands:"
+echo ""
+echo "  Rule 1 (SQLi UNION):"
+echo "  curl -v -G \"http://$INSTANCE_IP/\" --data-urlencode \"id=1' UNION SELECT username,password FROM users--\""
+echo ""
+echo "  Rule 2 (SQLi OR):"
+echo "  curl -v \"http://$INSTANCE_IP/?id=1%27%20OR%201%3D1--\""
+echo ""
+echo "  Rule 3 (Port scan):"
+echo "  sudo nmap -sS --max-rate 10 $INSTANCE_IP"
+echo ""
+echo "  Rule 5 (DNS tunneling):"
+echo "  dig \$(python3 -c \"print('A'*60 + '.' + 'B'*60 + '.' + 'C'*60)\").google.com @8.8.8.8"
+echo ""
+echo "  Watch alerts:"
+echo "  sudo tail -f /var/log/suricata/fast.log"
+echo ""
+```
+
+---
+
 *Series: Security Engineering Interview Prep | Week 9 Part 2 | March 2026*
 *GitHub: [fosres/SecEng-Exercises](https://github.com/fosres/SecEng-Exercises)*
+

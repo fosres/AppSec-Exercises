@@ -145,7 +145,13 @@ Part C
 
 1. 19 / 94 vendors red-flagged the suspicious URL:
 
-rubrique-details-activiter.info
+rubrique-details-activiter.info. A lot of these mark
+
+the URL suspicious to phishing--which confirms my hypothesis
+
+that the attacker is trying to trick the user into submitting
+
+credentials.
 
 2. There are no Sibling Domains nor multiple pages
 
@@ -191,6 +197,99 @@ _dmarc.craigslist.org.  300     IN      TXT     "v=DMARC1; p=quarantine; pct=100
 
 Craigslist is vulnerable to DNS Cache Poisoning Attacks.
 
-4. Now this attack would only work if the attacker is maliciously
 
-sending from one of the approved IPs in the SPF. And this attack
+4 and 5. Judging by the fact that `craigslist.org` has DNS verification
+
+records and that the real `craigslist.org` is already registered
+
+even if an attacker sends an email from `jobs@craigslist.org` the
+
+email will be thrown into spam since the DMARC records would fail.
+
+Exercise 4
+
+Part B
+
+1. `paypal.com`'s DMARC policy is:
+
+```
+_dmarc.paypal.com.      3600    IN      TXT     "v=DMARC1; p=reject; rua=mailto:d@rua.agari.com; ruf=mailto:d@ruf.agari.com"
+```
+
+So it is `p=reject`
+
+Paypal does publish a `rua=` address in their DMARC record.
+
+`rua` records specify the URI of the mailbox to receive DMARC aggregate
+
+reports. It's required to request for DMARC aggregate reports.
+
+3. Paypal does show `fully validated` for its domain which means
+
+it is protected by DNSSEC. However the phishing domain does not.
+
+Since PayPal is fully validted by my DNSSEC resolver we have reliable
+
+assurance the IP address associated with `paypal.com` is the authentic
+
+IP address registered for `paypal.com`.
+
+4. Here are the results of the DMARC record record retrievals:
+
+```
+[I] fosres@fosres ~/P/g/A/n/email (main)> delv TXT _dmarc.amazon.com
+                                          delv TXT _dmarc.linkedin.com
+                                          delv TXT _dmarc.wikipedia.org
+; unsigned answer
+_dmarc.amazon.com.      900     IN      TXT     "v=DMARC1;" "p=quarantine;" "pct=100;" "rua=mailto:report@dmarc.amazon.com;" "ruf=mailto:report@dmarc.amazon.com"
+; unsigned answer
+_dmarc.linkedin.com.    3600    IN      TXT     "v=DMARC1; p=reject; rua=mailto:d@rua.agari.com,mailto:yfy3q-9359@rua.dmarc.emailanalyst.com; ruf=mailto:d@ruf.agari.com"
+; unsigned answer
+_dmarc.wikipedia.org.   600     IN      TXT     "v=DMARC1; p=reject; rua=mailto:dmarc-rua@wikimedia.org;"
+```
+
+So LinkedIn and Wikipedia both have `p=reject`. Only Amazon has
+
+`p=qurantine`. `quarantine` means if an email will stil be sent
+
+to the user's inbox but flagged as suspicious.
+
+5. NXDOMAIN means the DNS Resource Record was not found. In fact
+
+the question gives the answer away :D
+
+If no DMARC records are found for a domain--that is NOT a good sign!
+
+Be suspicious of emails sent from such a domain!
+
+Exercise 5
+
+1. So the abuse confidence is 95%--which isn't surprising considering
+
+the IP address is a TOR exit node IP address.
+
+2. There are 6491 reports of abuse since 2021! The most recent
+
+report was only 6 hours ago when I queried!
+
+3. Web App Attack ; Brute Force ; Spam ; the list goes on
+
+4. This is a TOR exit node IP address! Not what you expect
+
+the authentic domain owner to send from!
+
+5. A malicious Tor user is impersonating `paypal.com` and trying
+
+to trick the email recipient into giving away their credentials
+
+to the attacker.
+
+Answers to Shodan:
+
+1. Shodan uses TCP Port 80
+
+2. HTTP service is being used
+
+3. Here is the banner: Tor built-in httpd
+
+It is clear that a Tor service is running
