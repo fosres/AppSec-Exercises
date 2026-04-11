@@ -1002,7 +1002,7 @@ Which port was used for DNS
 
 Port 53
 
-Question 20
+Question 21
 
 Describe HTTPS and how it is used
 
@@ -1066,11 +1066,11 @@ and that is what websites should be using to encrypt data in transit
 
 to clients with.
 
-Question 21
+Question 22
 
 How does threat modeling work?
 
-According to Shostack and Ryder's work "Threat Modeling Designing for
+According to Shostack's work "Threat Modeling Designing for
 
 Security" the entire point of threat modeling is to detect weaknesses
 
@@ -1127,3 +1127,124 @@ generic databases of exploits that can affect various systems since
 said organization can be very large--such as a corporation with 
 
 an international staff.
+
+Questions 23 and 24
+
+What is a subnet and how is it useful in security?
+
+A subnet is a subrange of IP addresses allocated to machines.
+
+The first several bits of a 32-bit IP address for a network
+
+is the IP Address for what is known as a CIDR Subnet notation.
+
+The number of the first bits part of the subnet IP address
+
+constitute the subnet mask.
+
+The subnet mask is a 32-bit number that when binary ANDed to
+
+an IP address of any machine in the network yields the network address.
+
+A subnet separates machines from others in a computer network
+
+--restricting other machines' access to those networks.
+
+This is an essential security feature that protects access to
+
+machines from adversary machines.
+
+Smaller subnets have less risk of exposure.
+
+Question 25 
+
+Explain what traceroute is and how it works?
+
+traceroute prints the route packets trace to a network host.
+
+traceroute tries to do this by launching probe packets with a
+
+small Time-To-Live then listening to an ICMP "time exceeded"
+
+reply from the gateway. If the probe answers from different
+
+gateways the answer of each probe will be listed. This is how
+
+traceroute lists the routers through which packets are hopping
+
+to in an attempt to reach the destination.
+
+Q26 Draw a network, then find where an issue happened.
+
+Question 29
+
+What is the OSI model?
+
+The OSI Model has  7 layers where bottom layers support upper layers.
+
+It is an abstraction and is not perfect.
+
+Below are the 7 layers:
+
+Physical Layer: Physical hardware applying electric integrated circuits
+
+to carry information (Someone destroys cables or smashes hardware
+
+--not a formal cyberattack just saying this is the layer where that
+
+happens :) )
+
+Data Link Layer: This is the layer where Ethernet carries Internet
+
+Data. (MAC Address Spoofing and ARP Spoofing takes place here )
+
+Network Layer: This is the logical layer where IPv4 operates. In this
+
+layer machines are allocated IPv4 addresses. (IP Address Spoofing
+
+takes place here) 
+
+Transport Layer: This is the layer that is part of TCP/IP.
+
+This is the layer where attacks such as SYN floods, port scanning,
+
+and TCP session hijacking take place.
+
+Session Layer: It is argued TLS truly begins here
+
+Presentation Layer - Serialization, Encoding, and Encryption
+
+Negotiation here
+
+Application Layer: The layer where protocols like HTTPS and WebSockets
+
+(SQLi ; XSS attacks take place here!) exist.
+
+
+Q30 How does a router differ from a switch?
+
+A router transfers network packets amongst machines in the Network
+
+Layer.
+
+A switch transfers network packets amongst machines in the Data
+
+Link Layer. Switches cannot segment broadcast domains without
+
+VLANs. Routers enforce network boundaries. 
+
+Q32:
+
+How does a packet travel between two hosts on the same network?
+
+A packet is transported either through the Network Layer or
+
+Data Link Layer on a switch. Routers are not needed here since they
+
+transport packets across networks. 
+
+ARP translates network address to MAC addresses when a packet must
+
+be translated from the Network Layer to Data Link Layer and
+
+vice-versa.
