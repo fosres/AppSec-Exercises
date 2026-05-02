@@ -11,6 +11,7 @@ on:
       - main
     paths:
       - 'aws/terraform/terraworkspace/**'
+  workflow_dispatch:
 
 # Default all permissions to read-only
 permissions:
@@ -28,7 +29,7 @@ jobs:
       - name: Run Checkov
         uses: bridgecrewio/checkov-action@v12
         with:
-          directory: aws/terraworkspace
+          directory: aws/terraform/terraworkspace
           framework: terraform
           soft_fail: false
 
