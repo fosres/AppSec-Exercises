@@ -66,9 +66,9 @@ jobs:
           terragrunt --version
 
       - name: Apply global/s3 first
-        working-directory: aws/terraworkspace/global/s3
+        working-directory: aws/terraform/terraworkspace/global/s3
         run: terragrunt apply --terragrunt-non-interactive
 
       - name: Apply all modules
-        working-directory: aws/terraworkspace
+        working-directory: aws/terraform/terraworkspace
         run: terragrunt run --all apply --terragrunt-non-interactive

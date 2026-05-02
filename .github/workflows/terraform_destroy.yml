@@ -39,5 +39,5 @@ jobs:
           sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
 
       - name: Destroy all modules
-        working-directory: aws/terraworkspace
+        working-directory: aws/terraform/terraworkspace
         run: terragrunt run --all destroy --terragrunt-non-interactive
