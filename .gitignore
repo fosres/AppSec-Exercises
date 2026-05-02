@@ -1,0 +1,29 @@
+# Terragrunt cache
+**/.terragrunt-cache/
+
+# Terraform cache and state
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfstate.d/
+*.terraform.lock.hcl
+
+# Sensitive files
+terraform.tfvars
+*.tfvars
+
+# Stray files
+--scheduled-action-name
+
+# Fish shell
+*.fish
+
+# Editor
+*.swp
+*.swo
+.DS_Store
+
+# Local scripts with sensitive data
+store_database_secrets.sh
+create_secret_secretmanager.sh
+delete_database_secrets_aws_ssm.sh
