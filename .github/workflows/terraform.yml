@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - 'aws/terraworkspace/**'
+      - 'aws/terraform/terraworkspace/**'
   pull_request:
     branches:
       - main
     paths:
-      - 'aws/terraworkspace/**'
+      - 'aws/terraform/terraworkspace/**'
 
 # Default all permissions to read-only
 permissions:
