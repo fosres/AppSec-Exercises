@@ -1,13 +1,18 @@
 name: Terraform Destroy
 
 on:
-  workflow_dispatch:    # Manual trigger only — never runs automatically
+  workflow_dispatch:
+
+# Default all permissions to read-only
+permissions:
+  contents: read
 
 jobs:
   terraform_destroy:
     name: Terraform Destroy
     runs-on: ubuntu-latest
 
+    # Override at job level — only this job needs id-token
     permissions:
       id-token: write
       contents: read

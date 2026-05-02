@@ -33,6 +33,61 @@ system:
 
 [Challenge_1_Secure_System_Design_Authentication.png]
 
+## STRIDE Threat Model
+
+## STRIDE Threat Model — Challenge 1: Authentication Service
+
+**S — Spoofing**
+
+An attacker brute-force guesses the correct password and TOTP code stolen
+from a previous phishing attack. Alternatively, the attacker launches a
+Stored XSS attack that steals the victim user's session credentials and
+exfiltrates them to the attacker's server — bypassing authentication
+entirely. Mitigations: Rate Limiter blocks brute force attempts, CAPTCHA
+blocks automated credential stuffing, MFA Store ensures stolen passwords
+alone are insufficient, HTTPOnly cookie flag prevents XSS-based session
+token theft.
+
+**T — Tampering**
+
+An attacker uses a SQL Injection attack to tamper with database records
+directly. Additionally, an attacker modifies a JWT payload to claim
+elevated privileges. Mitigations: Parameterized queries prevent SQL
+injection, cryptographic signature verification on every token at the Auth
+Service prevents JWT payload tampering.
+
+**R — Repudiation**
+
+An attacker, after compromising an account and logging in as the victim to
+perform malicious activity, deletes all log records from Kafka to cover
+their tracks and deny wrongdoing. Mitigation: Kafka is configured as a
+write-once, append-only log with no delete permissions granted to the Auth
+Service — even a fully compromised Auth Service cannot erase past events.
+
+**I — Information Disclosure**
+
+An attacker exfiltrates the PostgreSQL database, leaking password hashes
+and TOTP secrets stored within. Mitigations: Argon2ID renders leaked
+password hashes computationally useless, encryption at rest on the
+database, and least-privilege database access so the Auth Service cannot
+read tables it does not own.
+
+**D — Denial of Service**
+
+An attacker launches a botnet to overwhelm the server with excessive
+requests, depleting server resources and rendering it unable to respond to
+legitimate users — for example an HTTP Flood Attack or a Slowloris Attack.
+Mitigations: Rate Limiter and CAPTCHA in the DMZ absorb and block malicious
+traffic before it reaches the Auth Services.
+
+**E — Elevation of Privilege**
+
+An attacker gains admin-level privileges via a UNION SQL Injection attack
+against PostgreSQL, allowing modification of other users' data. Mitigation:
+Parameterized queries prevent SQL injection from executing against the
+database.
+
+
 ## Compliance
 
 I intend the web application to be GDPR compliant (Claude help
@@ -64,11 +119,6 @@ The following is ASCII-based art:
 ║  │  Salt   : master password │                               ║
 ║  └─────────────┬─────────────┘                               ║
 ║                │Intermediate Hash                            ║
-║                ▼                                             ║
-║  ┌──────────────────────┐                                    ║
-║  │  Master Password     │                                    ║
-║  │  Hash (SHA-256)      │                                    ║
-║  └──────────────────────┘                                    ║
 ║                │                                             ║
 ╚════════════════╪═════════════════════════════════════════════╝
                  │                   🔒 https://
@@ -76,14 +126,19 @@ The following is ASCII-based art:
 ╔══════════════════════════════════════════════════════════════╗
 ║  CLOUD                                                       ║
 ║                                                              ║
+║  ┌──────────────────────────────────────┐                    ║
+║  │  SHA-256(Intermediate Hash)          │                    ║
+║  │  = Verification Hash                 │                    ║
+║  └──────────────────┬───────────────────┘                    ║
+║                     │                                        ║
 ║      KMS – Data Protection Key – XChaCha20-Poly1305          ║
 ║  ┌────────────────────────────────┐                          ║
-║  │  SHA-256(Master Password Hash) │                          ║
+║  │  Verification Hash             │                          ║
 ║  ├────────────────────────────────┤                          ║
 ║  │  Database with Transparent     │                          ║
 ║  │  Data Encryption (TDE)         │                          ║
 ║  ├────────────────────────────────┤                          ║
-║  │  SHA-256(Master Password Hash) │                          ║
+║  │  Verification Hash             │                          ║
 ║  └────────────────────────────────┘                          ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
@@ -101,6 +156,12 @@ Key Derivation Function: Argon2ID
 HKDF: HKDF-SHA-256 which offers 128 bits of quantum security
 
 Symmetric Key Algorithm: XChaCha20-Poly1305
+
+### Frontend Crypto Libraries
+
+For Angular.js the frontend crypto libraries will be:
+
+`@noble/hashes`.
 
 -------------------------------------------
 
@@ -174,6 +235,16 @@ with the newest key until the entire database has been updated.
 I estimate this should take up to 15 minutes total given 10 million
 
 records.
+
+## CAPTCHA
+
+ALTCHA and email verification are both required. Modern email
+
+providers monitor the behavior of their clients to flag and
+
+potentially ban suspicious users. ALTCHA is a GDPR-compliant
+
+self-hosting friendly CAPTCHA library.
 
 ## MFA Methods:
 
@@ -307,6 +378,128 @@ bugs)
 
 List of Features and Functions to be Generated in Order:
 
-1. Account Registration Page
+Each item gives the feature/function and its REST API handle.
 
-a. 
+1. Account Registration Page (/register)
+
+This is a simple registration page that asks the user for the following:
+
+a. Username
+
+b. Password
+
+c. ALTCHA Challenge Response
+
+The user fills out the above fields of info. The frontend of
+
+the registration must next do the following work:
+
+2. Calculate Master Key (function name: master_key_gen)
+
+That is calculating the following:
+
+
+║  ┌───────────────────────────┐                               ║
+║  │  Argon2ID (KDF)           │                               ║
+║  │  Salt   : username        │──────── Master Key            ║
+║  │  Payload: master password │                               ║
+║  └───────────────────────────┘                               ║
+
+The name of the Angular.js function that does this is named
+
+"master_key_gen" as said above. Please have test cases testing
+
+that a proper Argon2ID hash is generated.
+
+Using `@noble/hashes` in Angular.js let us use
+[the](https://libsodium.gitbook.io/doc/password_hashing/default_phf)
+[following](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
+[parameters](https://github.com/jedisct1/libsodium/blob/master/src/libsodium/include/sodium/crypto_pwhash_argon2id.h):
+
+```typescript
+argon2id(password, salt, {
+	t: 2,
+	m: 65536,   // 64 MiB in KiB — LibSodium Interactive
+	p: 1,
+	dkLen: 32,
+});
+```
+
+The above code snippet features parameters for interactive online
+
+use as recommended by Libsodium documentation and are suitable
+
+for use with `@noble/hashes`.
+
+3. Calculate Intermediate Hash 
+
+The next step is to calculate the Intermediate Hash based on the
+
+following:
+
+
+║  ┌───────────────────────────┐                               ║
+║  │  Argon2ID (KDF)           │◀── Master Key                 ║
+║  │  Payload: master key      │                               ║
+║  │  Salt   : master password │                               ║
+║  └─────────────┬─────────────┘                               ║
+║                │Intermediate Hash                            ║
+║                ▼                                             ║
+
+Same parameters to calculate the Master Key are used to calculate
+
+Intermediate Hash.
+
+4. Calculate Verification Hash
+
+The frontend first checks if TLS is enforced. If not registration
+
+automatically fails.
+
+The Intermediate Hash is transmitted over HTTPS to the server.
+
+The server is responsible for computing the Verification Hash
+
+by applying SHA-256 to the received Intermediate Hash:
+
+```
+SHA-256(Intermediate Hash) = Verification Hash
+```
+
+This design intentionally offloads the expensive Argon2ID
+
+operations to the client. By the time the Intermediate Hash
+
+reaches the server, all memory-hard KDF work is already done.
+
+The server performs only a single fast SHA-256 operation to
+
+derive the Verification Hash before storing it. This means
+
+the server never stores or sees the Intermediate Hash directly —
+
+only its SHA-256 digest is persisted in the database. In case
+
+an attacker steals the password database the attacker is stuck
+
+with the verification hash and cannot resend it to the server
+
+to bypass authentication since that would result in a distinct
+
+verification hash.
+
+The verification hash is stored with Django ORM in a PostGreSQL
+
+Database.
+
+## Secure System Design: Authentication
+
+Let's use Terraform for all Infrastructure-as-Code:
+
+Load Balancer:  AWS Load Balancer
+
+Rate Limiter: AWS WAF Rate Limiter
+
+Kafka: Append Only Log Rate Limit Policy
+
+Following Secure System Diagram for Challenge 1

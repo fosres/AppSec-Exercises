@@ -12,6 +12,10 @@ on:
     paths:
       - 'aws/terraworkspace/**'
 
+# Default all permissions to read-only
+permissions:
+  contents: read
+
 jobs:
   checkov:
     name: Checkov IaC Security Scan
@@ -31,11 +35,12 @@ jobs:
   terraform_apply:
     name: Terraform Apply
     runs-on: ubuntu-latest
-    needs: checkov        # Only run if Checkov passes
+    needs: checkov
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
+    # Override at job level — only this job needs id-token
     permissions:
-      id-token: write     # Required for OIDC keyless auth
+      id-token: write
       contents: read
 
     steps:

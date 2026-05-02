@@ -1,0 +1,106 @@
+fosres/
+├── docker-compose.yml                # local dev — wires Django + PostgreSQL + Redis
+├── .gitignore                        # excludes .env, terraform.tfstate, node_modules,
+│                                     # __pycache__, *.pyc, dist/
+│
+├── backend/                          # Django project root
+│   ├── Dockerfile
+│   ├── entrypoint.sh                 # runs migrations then starts Gunicorn
+│   ├── gunicorn.conf.py
+│   ├── pytest.ini
+│   ├── conftest.py                   # shared pytest fixtures
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── .env                          # secrets — never commit
+│   │
+│   ├── fosres/                       # Django root (project config)
+│   │   ├── __init__.py
+│   │   ├── settings/
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py               # shared settings
+│   │   │   ├── development.py        # DEBUG=True, local DB
+│   │   │   └── production.py         # DEBUG=False, RDS, KMS
+│   │   ├── urls.py
+│   │   ├── wsgi.py
+│   │   └── asgi.py
+│   │
+│   ├── authentication/               # Django app — auth endpoints
+│   │   ├── __init__.py
+│   │   ├── models.py                 # User model, verification hash
+│   │   ├── views.py                  # /register, /login, /recover
+│   │   ├── urls.py
+│   │   ├── serializers.py            # DRF serializers
+│   │   ├── services.py               # SHA-256, business logic
+│   │   ├── validators.py             # input validation
+│   │   ├── migrations/
+│   │   │   └── 0001_initial.py
+│   │   └── tests/
+│   │       ├── __init__.py
+│   │       ├── test_models.py
+│   │       ├── test_views.py
+│   │       └── test_services.py
+│   │
+│   └── core/                         # Django app — shared utilities
+│       ├── __init__.py
+│       ├── middleware.py             # TLS enforcement, security headers
+│       └── exceptions.py
+│
+├── frontend/                         # Angular project root
+│   ├── package.json
+│   ├── angular.json
+│   ├── tsconfig.json
+│   ├── tsconfig.app.json
+│   ├── tsconfig.spec.json
+│   ├── proxy.conf.json               # forwards /api/* to Django on port 8000
+│   │
+│   └── src/
+│       ├── main.ts
+│       ├── polyfills.ts
+│       ├── index.html
+│       ├── favicon.ico
+│       ├── styles.css
+│       │
+│       ├── environments/
+│       │   ├── environment.ts        # development — API at localhost:8000
+│       │   └── environment.prod.ts   # production — API at AWS ALB URL
+│       │
+│       └── app/
+│           ├── app.module.ts
+│           ├── app.component.ts
+│           ├── app-routing.module.ts
+│           │
+│           ├── auth/                 # auth feature module
+│           │   ├── auth.module.ts
+│           │   ├── auth-routing.module.ts
+│           │   ├── services/
+│           │   │   ├── master-key.service.ts       ← generated
+│           │   │   ├── master-key.service.spec.ts  ← generated
+│           │   │   ├── intermediate-hash.service.ts
+│           │   │   └── registration.service.ts
+│           │   └── components/
+│           │       └── register/
+│           │           ├── register.component.ts
+│           │           ├── register.component.html
+│           │           ├── register.component.css
+│           │           └── register.component.spec.ts
+│           │
+│           └── shared/               # shared Angular utilities
+│               ├── models/
+│               │   └── user.model.ts
+│               └── interceptors/
+│                   └── tls-check.interceptor.ts
+│
+└── infrastructure/                   # Terraform — all IaC
+    ├── main.tf
+    ├── variables.tf
+    ├── outputs.tf
+    ├── providers.tf
+    └── modules/
+        ├── alb/                      # Application Load Balancer
+        ├── waf/                      # WAF rate limiter
+        ├── ecs/                      # Auth Service containers
+        ├── rds/                      # PostgreSQL
+        ├── elasticache/              # Redis
+        ├── msk/                      # Kafka
+        ├── kms/                      # KMS keys
+        └── vpc/                      # VPC, subnets, security groups

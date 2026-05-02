@@ -1,0 +1,41 @@
+Files required to run master_key_gen
+=====================================
+
+fosres/
+└── frontend/
+    ├── package.json                  ✅ REQUIRED — declares @noble/hashes dependency
+    ├── tsconfig.json                 ✅ REQUIRED — root TypeScript configuration
+    ├── tsconfig.app.json             ✅ REQUIRED — TypeScript config for app build
+    ├── tsconfig.spec.json            ✅ REQUIRED — TypeScript config for test build
+    ├── angular.json                  ✅ REQUIRED — Angular CLI build configuration
+    │
+    └── src/
+        ├── main.ts                   ✅ REQUIRED — Angular bootstrap entry point
+        ├── polyfills.ts              ✅ REQUIRED — browser compatibility shims
+        ├── index.html                ✅ REQUIRED — root HTML shell
+        │
+        └── app/
+            ├── app.module.ts         ✅ REQUIRED — root module, registers MasterKeyService
+            │
+            └── auth/
+                └── services/
+                    ├── master-key.service.ts       ✅ REQUIRED — the implementation
+                    └── master-key.service.spec.ts  ✅ REQUIRED — the test suite
+
+
+Install command (run from frontend/):
+======================================
+
+npm install @noble/hashes
+
+
+Run tests (run from frontend/):
+================================
+
+ng test --include="**/master-key.service.spec.ts"
+
+
+Run integration tests only (slow — 64 MiB Argon2ID):
+======================================================
+
+ng test --include="**/master-key.service.spec.ts" --grep "Integration"

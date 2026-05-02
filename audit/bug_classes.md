@@ -1,3 +1,14 @@
+-1. Error Handling Leaks Information Disclosure
+
+0. Failure to close Database Connection
+
+	a. `cursor.close()`
+
+	b. Not using the `with` clause when connecting to SQL
+
+	Database
+
+
 1. Broken Authentication / Authorization
 
 	a. Session Cookie Authentication + CSRF
