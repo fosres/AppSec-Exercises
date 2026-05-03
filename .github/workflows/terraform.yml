@@ -74,4 +74,4 @@ jobs:
         run: |
           terragrunt run --all apply \
             --non-interactive \
-            --exclude-dir global/s3
+            --queue-exclude-dir global/s3
