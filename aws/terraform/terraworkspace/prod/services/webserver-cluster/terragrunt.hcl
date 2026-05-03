@@ -20,6 +20,7 @@ terraform {
 
 dependency "s3" {
 	config_path = "../../../global/s3"
+	skip_outputs = true
 
 	mock_outputs = {
 		s3_bucket_arn       = "arn:aws:s3:::mock-bucket"
@@ -30,7 +31,6 @@ dependency "s3" {
 
 dependency "db" {
 	config_path = "../../data-stores/mysql"
-
 	mock_outputs = {
 		address = "mock-db-address"
 		port    = 3306
