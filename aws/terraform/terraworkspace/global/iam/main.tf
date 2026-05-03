@@ -37,6 +37,7 @@ resource "aws_iam_role_policy_attachment" "github_actions_terraform" {
 	policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
 }
 
+#checkov:skip=CKV_AWS_273:IAM user neo is a tutorial resource — SSO used for real access
 resource "aws_iam_user" "neo" {
 	name = "neo"
 }
@@ -71,12 +72,14 @@ data "aws_iam_policy_document" "cloudwatch_full_access" {
 	}
 }
 
+#checkov:skip=CKV_AWS_40:Direct user policy attachment used for tutorial — groups not required
 resource "aws_iam_user_policy_attachment" "neo_cloudwatch_full_access" {
 	count      = var.give_neo_cloudwatch_full_access ? 1 : 0
 	user       = aws_iam_user.neo.name
 	policy_arn = aws_iam_policy.cloudwatch_full_access.arn
 }
 
+#checkov:skip=CKV_AWS_40:Direct user policy attachment used for tutorial — groups not required
 resource "aws_iam_user_policy_attachment" "neo_cloudwatch_read_only" {
 	count      = var.give_neo_cloudwatch_full_access ? 0 : 1
 	user       = aws_iam_user.neo.name
