@@ -38,6 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkov
     if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
     # Override at job level — only this job needs id-token
     permissions:
       id-token: write
@@ -67,7 +68,7 @@ jobs:
 
       - name: Apply global/s3 first
         working-directory: aws/terraform/terraworkspace/global/s3
-        run: terragrunt apply --terragrunt-non-interactive
+        run: terragrunt apply --terragrunt-non-interactive --auto-approve
 
       - name: Apply all modules
         working-directory: aws/terraform/terraworkspace
