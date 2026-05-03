@@ -2,6 +2,17 @@ include "root" {
 	path = find_in_parent_folders()
 }
 
+generate "provider_override" {
+	path      = "provider.tf"
+	if_exists = "overwrite"
+	contents  = <<EOF
+provider "aws" {
+  region  = "us-east-2"
+  profile = "lab-sso"
+}
+EOF
+}
+
 terraform {
 	source = "."
 }
