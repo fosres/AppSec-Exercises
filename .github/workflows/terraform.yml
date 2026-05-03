@@ -73,6 +73,6 @@ jobs:
       - name: Apply all modules
         working-directory: aws/terraform/terraworkspace
         run: |
-          terragrunt run --all apply \
+          terragrunt run-all apply \
             --terragrunt-non-interactive \
             --terragrunt-exclude-dir global/s3
