@@ -74,5 +74,5 @@ jobs:
         working-directory: aws/terraform/terraworkspace
         run: |
           terragrunt run --all apply \
-            --terragrunt-non-interactive \
-            --terragrunt-exclude-dir global/s3
+	    --non-interactive \
+            --exclude-dir global/s3
