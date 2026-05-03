@@ -8,7 +8,6 @@ generate "provider_override" {
 	contents  = <<EOF
 provider "aws" {
   region  = "us-east-2"
-  profile = "lab-sso"
 }
 EOF
 }
