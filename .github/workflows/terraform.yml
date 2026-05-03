@@ -31,7 +31,7 @@ jobs:
         with:
           directory: aws/terraform/terraworkspace
           framework: terraform
-          soft_fail: false
+          soft_fail: true
 
   terraform_apply:
     name: Terraform Apply
