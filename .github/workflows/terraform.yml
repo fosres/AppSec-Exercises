@@ -1,4 +1,3 @@
-# Terraform CI/CD Pipeline
 name: Terraform Security Pipeline
 
 on:
@@ -40,7 +39,6 @@ jobs:
     needs: checkov
     if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
-    # Override at job level — only this job needs id-token
     permissions:
       id-token: write
       contents: read
@@ -75,5 +73,5 @@ jobs:
         working-directory: aws/terraform/terraworkspace
         run: |
           terragrunt run --all apply \
-	    --non-interactive \
+            --non-interactive \
             --exclude-dir global/s3
