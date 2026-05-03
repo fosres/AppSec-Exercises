@@ -7,8 +7,7 @@ generate "provider_override" {
 	if_exists = "overwrite"
 	contents  = <<EOF
 provider "aws" {
-  region  = "us-east-2"
-  profile = "lab-sso"
+  region = "us-east-2"
 }
 EOF
 }
