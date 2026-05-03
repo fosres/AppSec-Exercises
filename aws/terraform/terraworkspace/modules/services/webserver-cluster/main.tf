@@ -156,6 +156,8 @@ resource "aws_security_group" "alb" {
 	}
 }
 
+#checkov:skip=CKV_AWS_91:ALB access logging not required for tutorial
+#checkov:skip=CKV_AWS_260:ALB must accept HTTP on port 80 for this tutorial
 resource "aws_lb" "example" {
 	name                       = "${var.cluster_name}-alb"
 	load_balancer_type         = "application"

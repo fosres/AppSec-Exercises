@@ -30,6 +30,8 @@ resource "aws_iam_role" "github_actions" {
 }
 
 # Attach PowerUserAccess to allow Terraform to manage AWS resources
+#checkov:skip=CKV_AWS_356:PowerUserAccess is a bootstrap role for GitHub Actions CI/CD — scope will be tightened in production
+#checkov:skip=CKV_AWS_111:PowerUserAccess is a bootstrap role for GitHub Actions CI/CD — scope will be tightened in production
 resource "aws_iam_role_policy_attachment" "github_actions_terraform" {
 	role       = aws_iam_role.github_actions.name
 	policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"

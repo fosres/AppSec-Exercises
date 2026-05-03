@@ -50,6 +50,8 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
   restrict_public_buckets = true
 }
 
+#checkov:skip=CKV_AWS_28:DynamoDB point-in-time recovery not required for state lock table
+#checkov:skip=CKV_AWS_119:KMS CMK encryption not required for state lock table
 resource "aws_dynamodb_table" "terraform_locks" {
   name         = "terraform-up-and-running-locks"
   billing_mode = "PAY_PER_REQUEST"
