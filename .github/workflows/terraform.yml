@@ -70,10 +70,9 @@ jobs:
         run: |
           find aws/terraform/terraworkspace -name ".terragrunt-cache" -type d -exec rm -rf {} + 2>/dev/null || true
 
-      - name: Apply global/s3 first
-        working-directory: aws/terraform/terraworkspace/global/s3
-        run: terragrunt apply --terragrunt-non-interactive --auto-approve
-
       - name: Apply all modules
         working-directory: aws/terraform/terraworkspace
-        run: terragrunt run --all apply --terragrunt-non-interactive
+        run: |
+          terragrunt run --all apply \
+            --terragrunt-non-interactive \
+            --terragrunt-exclude-dir global/s3
