@@ -66,6 +66,10 @@ jobs:
           sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
           terragrunt --version
 
+      - name: Clear Terragrunt cache
+        run: |
+          find aws/terraform/terraworkspace -name ".terragrunt-cache" -type d -exec rm -rf {} + 2>/dev/null || true
+
       - name: Apply global/s3 first
         working-directory: aws/terraform/terraworkspace/global/s3
         run: terragrunt apply --terragrunt-non-interactive --auto-approve
