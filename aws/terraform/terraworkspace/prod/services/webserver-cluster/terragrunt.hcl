@@ -2,6 +2,16 @@ include "root" {
 	path = find_in_parent_folders()
 }
 
+generate "provider" {
+	path      = "provider.tf"
+	if_exists = "overwrite"
+	contents  = <<EOF
+provider "aws" {
+  region = "us-east-2"
+}
+EOF
+}
+
 errors {
 	retry "s3_backend_not_ready" {
 		retryable_errors = [
@@ -19,7 +29,7 @@ terraform {
 }
 
 dependency "s3" {
-	config_path = "../../../global/s3"
+	config_path  = "../../../global/s3"
 	skip_outputs = true
 
 	mock_outputs = {
