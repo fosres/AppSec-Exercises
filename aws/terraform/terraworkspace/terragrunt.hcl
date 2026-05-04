@@ -4,7 +4,7 @@ remote_state {
 	backend = "s3"
 	generate = {
 		path      = "backend.tf"
-		if_exists = "overwrite_terragrunt"
+		if_exists = "overwrite"
 	}
 	config = {
 		bucket       = "fosres-terraform-state"
@@ -16,7 +16,7 @@ remote_state {
 }
 
 generate "provider" {
-	if_exists = "overwrite_terragrunt"
+	if_exists = "overwrite"
 	path      = "provider.tf"
 	contents  = <<EOF
 provider "aws" {
