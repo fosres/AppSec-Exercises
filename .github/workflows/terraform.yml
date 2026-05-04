@@ -67,15 +67,8 @@ jobs:
 
       - name: Clear Terragrunt cache
         run: |
-          find aws/terraform/terraworkspace -name ".terragrunt-cache" -type d -exec rm -rf {} + 2>/dev/null || true
-
-      - name: Debug backend config
-        working-directory: aws/terraform/terraworkspace
-        run: |
-          terragrunt run --all init --non-interactive 2>/dev/null || true
-          find . -name "backend.tf" -not -path "*/.git/*" \
-            -exec echo "=== {} ===" \; \
-            -exec cat {} \; 2>/dev/null || true
+          find . -maxdepth 10 -type d -name ".terragrunt-cache" | xargs rm -rf 2>/dev/null || true
+          find . -maxdepth 10 -type f -name "provider.tf" -path "*terragrunt-cache*" | xargs rm -f 2>/dev/null || true
 
       - name: Apply all modules
         working-directory: aws/terraform/terraworkspace
