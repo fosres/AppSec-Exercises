@@ -86,6 +86,9 @@ resource "aws_iam_user_policy_attachment" "neo_cloudwatch_read_only" {
 	policy_arn = aws_iam_policy.cloudwatch_read_only.arn
 }
 
+
+#checkov:skip=CKV_AWS_356:IAM read-only inline policy required for GitHub Actions to manage global/iam resources
+#checkov:skip=CKV_AWS_111:IAM read-only inline policy required for GitHub Actions to manage global/iam resources
 resource "aws_iam_role_policy" "github_actions_iam_read" {
 	name = "github-actions-iam-read"
 	role = aws_iam_role.github_actions.name
@@ -103,7 +106,8 @@ resource "aws_iam_role_policy" "github_actions_iam_read" {
 				"iam:ListAttachedRolePolicies",
 				"iam:ListAttachedUserPolicies",
 				"iam:ListRolePolicies",
-				"iam:ListPolicyVersions"
+				"iam:ListPolicyVersions",
+				"iam:ListEntitiesForPolicy"
 			]
 			Resource = "*"
 		}]
