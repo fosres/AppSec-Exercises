@@ -2,7 +2,7 @@ include "root" {
 	path = find_in_parent_folders()
 }
 
-generate "provider" {
+generate "provider_local" {
 	path      = "provider.tf"
 	if_exists = "overwrite"
 	contents  = <<EOF
