@@ -85,3 +85,27 @@ resource "aws_iam_user_policy_attachment" "neo_cloudwatch_read_only" {
 	user       = aws_iam_user.neo.name
 	policy_arn = aws_iam_policy.cloudwatch_read_only.arn
 }
+
+resource "aws_iam_role_policy" "github_actions_iam_read" {
+	name = "github-actions-iam-read"
+	role = aws_iam_role.github_actions.name
+
+	policy = jsonencode({
+		Version = "2012-10-17"
+		Statement = [{
+			Effect = "Allow"
+			Action = [
+				"iam:GetRole",
+				"iam:GetUser",
+				"iam:GetPolicy",
+				"iam:GetPolicyVersion",
+				"iam:GetOpenIDConnectProvider",
+				"iam:ListAttachedRolePolicies",
+				"iam:ListAttachedUserPolicies",
+				"iam:ListRolePolicies",
+				"iam:ListPolicyVersions"
+			]
+			Resource = "*"
+		}]
+	})
+}
