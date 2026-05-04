@@ -99,6 +99,7 @@ resource "aws_iam_role_policy" "github_actions_iam_read" {
 			Effect = "Allow"
 			Action = [
 				"iam:GetRole",
+				"iam:GetRolePolicy",
 				"iam:GetUser",
 				"iam:GetPolicy",
 				"iam:GetPolicyVersion",
