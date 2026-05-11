@@ -1,4 +1,3 @@
-
 name: Terraform Destroy
 
 on:
@@ -13,7 +12,6 @@ jobs:
     name: Terraform Destroy
     runs-on: ubuntu-latest
 
-    # Override at job level — only this job needs id-token
     permissions:
       id-token: write
       contents: read
@@ -35,10 +33,18 @@ jobs:
 
       - name: Setup Terragrunt
         run: |
-          wget -q https://github.com/gruntwork-io/terragrunt/releases/download/v0.68.0/terragrunt_linux_amd64
+          wget -q https://github.com/gruntwork-io/terragrunt/releases/download/v1.0.0/terragrunt_linux_amd64
           chmod +x terragrunt_linux_amd64
           sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+          terragrunt --version
+
+      - name: Clear Terragrunt cache
+        run: |
+          find . -maxdepth 10 -type d -name ".terragrunt-cache" | xargs rm -rf 2>/dev/null || true
 
       - name: Destroy all modules
         working-directory: aws/terraform/terraworkspace
-        run: terragrunt run --all destroy --terragrunt-non-interactive
+        run: |
+          terragrunt run --all destroy \
+            --non-interactive \
+            --queue-exclude-dir global/s3
