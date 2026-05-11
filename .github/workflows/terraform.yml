@@ -76,3 +76,11 @@ jobs:
           terragrunt run --all apply \
             --non-interactive \
             --queue-exclude-dir global/s3
+
+      - name: Debug provider.tf in webserver cache
+        if: always()
+        working-directory: aws/terraform/terraworkspace
+        run: |
+          find . -path "*/webserver-cluster*" -name "provider.tf" \
+            -exec echo "=== {} ===" \; \
+            -exec cat {} \; 2>/dev/null || true
