@@ -2,17 +2,7 @@ include "root" {
 	path = find_in_parent_folders()
 }
 
-errors {
-	retry "s3_backend_not_ready" {
-		retryable_errors = [
-			"(?s).*NoSuchBucket.*",
-			"(?s).*Failed to get existing workspaces.*",
-			"(?s).*error loading the remote state.*"
-		]
-		max_attempts       = 10
-		sleep_interval_sec = 10
-	}
-}
+
 
 terraform {
 	source = "."

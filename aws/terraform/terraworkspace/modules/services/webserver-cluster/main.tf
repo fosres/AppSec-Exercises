@@ -39,7 +39,6 @@ data "terraform_remote_state" "db" {
 		bucket  = var.db_remote_state_bucket
 		key     = var.db_remote_state_key
 		region  = "us-east-2"
-		profile = "lab-sso"
 	}
 }
 

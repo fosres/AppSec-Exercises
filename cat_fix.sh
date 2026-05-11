@@ -1,3 +1,4 @@
+cat > ~/Personal/git/AppSec-Exercises/.github/workflows/terraform.yml << 'EOF'
 name: Terraform Security Pipeline
 
 on:
@@ -67,23 +68,12 @@ jobs:
 
       - name: Clear Terragrunt cache
         run: |
-          find . -maxdepth 10 -type d -name ".terragrunt-cache" | xargs rm -rf 2>/dev/null || true
-          find . -maxdepth 10 -type f -name "provider.tf" -path "*terragrunt-cache*" | xargs rm -f 2>/dev/null || true
+          find aws/terraform/terraworkspace -name ".terragrunt-cache" -type d -exec rm -rf {} + 2>/dev/null || true
 
       - name: Apply all modules
         working-directory: aws/terraform/terraworkspace
         run: |
           terragrunt run --all apply \
             --non-interactive \
-            --queue-exclude-dir global/s3
-
-      - name: Debug provider.tf and backend.tf in webserver cache
-        if: always()
-        working-directory: aws/terraform/terraworkspace
-        run: |
-          find . -path "*/webserver-cluster*" -name "provider.tf" \
-            -exec echo "=== {} ===" \; \
-            -exec cat {} \; 2>/dev/null || true
-          find . -path "*/webserver-cluster*" -name "backend.tf" \
-            -exec echo "=== {} ===" \; \
-            -exec cat {} \; 2>/dev/null || true
+            --exclude-dir global/s3
+EOF
