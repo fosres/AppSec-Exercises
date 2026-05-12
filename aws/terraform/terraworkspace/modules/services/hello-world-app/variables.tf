@@ -47,3 +47,18 @@ variable "server_text" {
 	type        = string
 	default     = "Hello, World"
 }
+
+variable "environment" {
+  description = "The name of the environment we're deploying to"
+  type        = string
+}
+
+variable "ami" {
+	description = "The AMI to run in the cluster"
+	type        = string
+}
+
+variable "instance_type" {
+	description = "The type of EC2 instances to run (e.g. t3.micro)"
+	type        = string
+}
