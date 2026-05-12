@@ -3,7 +3,7 @@ variable "alb_name" {
 	type        = string
 }
 
-variable "subnets" {
+variable "subnet_ids" {
 	description = "The subnet IDs to deploy the ALB into"
 	type        = list(string)
 }

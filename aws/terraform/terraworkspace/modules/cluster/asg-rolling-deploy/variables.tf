@@ -63,19 +63,3 @@ variable "user_data" {
 	type        = string
 	default     = null
 }
-
-variable "db_address" {
-	description = "The address of the database"
-	type        = string
-}
-
-variable "db_port" {
-	description = "The port of the database"
-	type        = number
-}
-
-variable "server_text" {
-	description = "The text the web server should return"
-	type        = string
-	default     = "Hello, World"
-}

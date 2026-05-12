@@ -71,7 +71,8 @@ module "asg" {
 	source = "../../cluster/asg-rolling-deploy"
 
 	cluster_name       = var.cluster_name
-	instance_type      = "t3.micro"
+	ami                = var.ami
+	instance_type      = var.instance_type
 	min_size           = var.min_size
 	max_size           = var.max_size
 	enable_autoscaling = var.enable_autoscaling

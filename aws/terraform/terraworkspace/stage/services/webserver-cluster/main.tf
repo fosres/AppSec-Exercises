@@ -1,12 +1,15 @@
 module "webserver_cluster" {
-	source = "../../../modules/services/webserver-cluster"
+	source                 = "../../../modules/services/hello-world-app"
 	cluster_name           = "webservers-stage"
 	db_remote_state_bucket = "fosres-terraform-state"
 	db_remote_state_key    = "stage/data-stores/mysql/terraform.tfstate"
 	server_port            = 8080
 	min_size               = 2
 	max_size               = 10
-	enable_autoscaling = false
+	enable_autoscaling     = false
+	environment            = "stage"
+	instance_type          = "t3.micro"
+	ami                    = null
 }
 
 resource "aws_security_group_rule" "allow_testing_inbound" {
