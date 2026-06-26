@@ -7,17 +7,18 @@ import sys
 import os
 import tempfile
 
-# --- CONFIGURATION (via environment variables) ---
-SENDER = os.environ.get('SES_SENDER_EMAIL', 'noreply@yourdomain.com')
-AWS_REGION = os.environ.get('AWS_REGION', 'us-east-1')
-TEST_EMAIL = os.environ.get('SES_TEST_EMAIL', 'test@yourdomain.com')
-CONTACT_LIST_NAME = os.environ.get('SES_CONTACT_LIST', 'YourContactList')
-S3_BUCKET = os.environ.get('SES_S3_BUCKET', 'your-ses-contacts-bucket')
-DB_FILE = os.environ.get('DB_FILE', 'email_tracker.db')
+# --- CONFIGURATION (Example - use your own values) ---
+SENDER = "noreply@YOURDOMAIN.com"  # Your verified SES sender
+AWS_REGION = "us-east-1"  # Your AWS region
+TEST_EMAIL = "test@YOURDOMAIN.com"  # Your test email
+CONTACT_LIST_NAME = "YourContactListName"  # Your SES contact list
+S3_BUCKET = "your-ses-contacts-bucket"  # Your S3 bucket
+DB_FILE = "email_tracker.db"  # Local SQLite database
+CONFIGURATION_SET_NAME = "your-configuration-set"  # Your SES config set
 # -----------------------------------
 
 def init_db():
-    """Initialize SQLite database and create subscriptions table."""
+    """Initialize SQLite database and create subscriptions table if it doesn't exist."""
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     cursor.execute('''
@@ -29,6 +30,7 @@ def init_db():
     ''')
     conn.commit()
     conn.close()
+    print(f"Database initialized at: {os.path.abspath(DB_FILE)}")
 
 def upload_to_s3(local_file):
     """Upload a file to S3 bucket for AWS SES import."""
@@ -40,7 +42,9 @@ def upload_to_s3(local_file):
             'import_list.csv',
             ExtraArgs={'ContentType': 'text/csv'}
         )
-        return f"s3://{S3_BUCKET}/import_list.csv"
+        s3_uri = f"s3://{S3_BUCKET}/import_list.csv"
+        print(f"Uploaded to {s3_uri}")
+        return s3_uri
     except Exception as e:
         print(f"Failed to upload to S3: {e}")
         return None
@@ -48,45 +52,100 @@ def upload_to_s3(local_file):
 def import_to_ses(s3_uri):
     """Import contacts to AWS SES contact list using SESv2."""
     sesv2 = boto3.client('sesv2', region_name=AWS_REGION)
+    s3 = boto3.client('s3', region_name=AWS_REGION)
     try:
         with tempfile.NamedTemporaryFile(mode='w+b', suffix='.csv', delete=False) as tmp:
             temp_path = tmp.name
-        # Download and process CSV
+        s3.download_file(S3_BUCKET, 'import_list.csv', temp_path)
+
+        with open(temp_path, 'r') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                email = row['emailAddress']
+                sesv2.create_contact(
+                    ContactListName=CONTACT_LIST_NAME,
+                    EmailAddress=email
+                )
+        print(f"Imported contacts to AWS SES contact list: {CONTACT_LIST_NAME}")
+        os.unlink(temp_path)
         return True
     except Exception as e:
         print(f"Failed to import to AWS SES: {e}")
+        if 'temp_path' in locals():
+            try:
+                os.unlink(temp_path)
+            except:
+                pass
         return None
 
 def fetch_aws_contacts_to_csv():
-    """Download AWS SES contact list and save as CSV."""
+    """Download AWS SES contact list and save as aws_list.csv."""
     sesv2 = boto3.client("sesv2", region_name=AWS_REGION)
-    # Implementation omitted for brevity
-    pass
+    all_contacts = []
+    next_token = None
+    try:
+        while True:
+            params = {'ContactListName': CONTACT_LIST_NAME}
+            if next_token:
+                params['NextToken'] = next_token
+            response = sesv2.list_contacts(**params)
+            all_contacts.extend(response.get('Contacts', []))
+            next_token = response.get('NextToken')
+            if not next_token:
+                break
+        with open('aws_list.csv', 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['emailAddress', 'unsubscribeAll'])
+            for contact in all_contacts:
+                writer.writerow([contact['EmailAddress'], 'false'])
+        print(f"Downloaded {len(all_contacts)} contacts from AWS SES to aws_list.csv")
+        return len(all_contacts)
+    except Exception as e:
+        print(f"Failed to fetch AWS contacts: {e}")
+        return 0
 
 def save_new_subscribers_to_csv(new_subscribers, filename='new_subscribers.csv'):
-    """Save new subscribers to CSV in AWS SES format."""
+    """Save a set of new email subscribers to CSV in AWS SES format."""
     with open(filename, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['emailAddress', 'unsubscribeAll'])
         for email in new_subscribers:
             writer.writerow([email, 'false'])
+    print(f"Saved {len(new_subscribers)} new subscribers to {filename}")
     return filename
 
 def read_emails(filename):
-    """Read emails from CSV file, return as set."""
+    """Read emails from CSV file, return as set of lowercase emails."""
     emails = set()
     try:
         with open(filename, 'r', encoding='utf-8-sig') as f:
             reader = csv.DictReader(f)
-            # Parse emails from CSV
-            pass
+            if not reader.fieldnames:
+                print(f"No headers found in {filename}")
+                return set()
+            email_col = None
+            for col in reader.fieldnames:
+                if col.strip().lower() in ['email', 'emailaddress', 'email_address']:
+                    email_col = col
+                    break
+            if email_col is None:
+                email_col = reader.fieldnames[0]
+                print(f"Using first column '{email_col}' as email in {filename}")
+            for row in reader:
+                email = row.get(email_col, '').strip().lower()
+                if email:
+                    emails.add(email)
+        print(f"Read {len(emails)} emails from {filename}")
         return emails
+    except FileNotFoundError:
+        print(f"File not found: {filename}")
+        return set()
     except Exception as e:
         print(f"Error reading {filename}: {e}")
         return set()
 
 def read_html(path):
-    """Read pre-compiled HTML file."""
+    """Read pre-compiled HTML file"""
     try:
         with open(path, "r", encoding="utf-8") as f:
             return f.read()
@@ -95,7 +154,7 @@ def read_html(path):
         sys.exit(1)
 
 def html_to_text(html):
-    """Convert HTML to plain text."""
+    """Convert HTML to plain text"""
     h = html2text.HTML2Text()
     h.ignore_links = True
     h.ignore_images = True
@@ -105,13 +164,60 @@ def sync_subscriptions():
     """Synchronize Substack, AWS SES, and Database."""
     substack_emails = read_emails('substack_list.csv')
     aws_emails = read_emails('aws_list.csv')
-    # Sync logic between sources
-    return set()
+
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT email, substack_subscribed, ses_subscribed FROM subscriptions")
+    db_state = {}
+    for email, substack_sub, ses_sub in cursor.fetchall():
+        db_state[email.lower()] = (bool(substack_sub), bool(ses_sub))
+
+    new_subscribers = set()
+
+    for email in substack_emails:
+        email_lower = email.lower()
+        if email_lower not in aws_emails:
+            new_subscribers.add(email_lower)
+            if email_lower in db_state:
+                cursor.execute(
+                    "UPDATE subscriptions SET substack_subscribed = TRUE, ses_subscribed = TRUE WHERE email = ?",
+                    (email_lower,)
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO subscriptions (email, substack_subscribed, ses_subscribed) VALUES (?, ?, ?)",
+                    (email_lower, True, True)
+                )
+
+    for email in aws_emails:
+        email_lower = email.lower()
+        if email_lower in db_state and email_lower not in substack_emails:
+            s, k = db_state[email_lower]
+            if s:
+                cursor.execute(
+                    "UPDATE subscriptions SET substack_subscribed = FALSE WHERE email = ?",
+                    (email_lower,)
+                )
+
+    for email in substack_emails:
+        email_lower = email.lower()
+        if email_lower in db_state:
+            s, k = db_state[email_lower]
+            if k and email_lower not in aws_emails:
+                cursor.execute(
+                    "UPDATE subscriptions SET ses_subscribed = FALSE WHERE email = ?",
+                    (email_lower,)
+                )
+
+    conn.commit()
+    conn.close()
+    return new_subscribers
 
 def send_email(html_content, recipient, subject, sesv2_client):
-    """Send HTML email with unsubscribe endpoint."""
+    """Send HTML email with custom unsubscribe endpoint."""
     text_content = html_to_text(html_content)
-    unsubscribe_link = f"https://your-api-gateway.execute-api.{AWS_REGION}.amazonaws.com/prod/unsubscribe?email={recipient}&list={CONTACT_LIST_NAME}"
+
+    unsubscribe_link = f"https://YOUR-API-GATEWAY.execute-api.{AWS_REGION}.amazonaws.com/prod/unsubscribe?email={recipient}&list={CONTACT_LIST_NAME}"
 
     html_with_unsubscribe = f"""
     {html_content}
@@ -124,7 +230,7 @@ def send_email(html_content, recipient, subject, sesv2_client):
         response = sesv2_client.send_email(
             FromEmailAddress=SENDER,
             Destination={'ToAddresses': [recipient]},
-            ConfigurationSetName='my-first-configuration-set',
+            ConfigurationSetName=CONFIGURATION_SET_NAME,
             Content={
                 'Simple': {
                     'Subject': {'Data': subject, 'Charset': 'UTF-8'},
@@ -161,18 +267,40 @@ def main():
     args = parser.parse_args()
 
     html_content = read_html(args.file)
-    subject = input("Enter Email Subject: ").strip()
-    recipients = read_emails('aws_list.csv') or read_emails('substack_list.csv')
+
+    subject = ""
+    while not subject:
+        subject = input("Enter Email Subject: ").strip()
+        if not subject:
+            print("Subject cannot be empty. Please try again.")
+
+    recipients = read_emails('aws_list.csv')
+    if not recipients:
+        print("No recipients in aws_list.csv, falling back to substack_list.csv")
+        recipients = read_emails('substack_list.csv')
+        if not recipients:
+            print("No valid emails in substack_list.csv")
+            sys.exit(1)
 
     confirmation = input("Type 'test' or 'official' to send: ").strip()
 
     if confirmation == "test":
+        print(f"TEST MODE: Sending to {TEST_EMAIL} only")
         message_id = send_email(html_content, TEST_EMAIL, subject, sesv2_client)
-        print(f"Test sent to {TEST_EMAIL}" if message_id else f"Failed to send test")
+        if message_id:
+            print(f"Test sent to {TEST_EMAIL} (MessageId: {message_id})")
+        else:
+            print(f"Failed to send test email to {TEST_EMAIL}")
     elif confirmation == "official":
+        print(f"OFFICIAL MODE: Sending to {len(recipients)} recipients")
         for email in recipients:
             message_id = send_email(html_content, email, subject, sesv2_client)
-            print(f"Sent to {email}" if message_id else f"Failed to send to {email}")
+            if message_id:
+                print(f"Sent to {email} (MessageId: {message_id})")
+            else:
+                print(f"Failed to send to {email}")
+    else:
+        print("Error: Invalid confirmation")
 
 if __name__ == "__main__":
     main()
